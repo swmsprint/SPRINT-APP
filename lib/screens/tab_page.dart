@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:sprint/battle_page.dart';
-import 'package:sprint/stats_page.dart';
-import 'package:sprint/group_page.dart';
-import 'package:sprint/home_page.dart';
-import 'package:sprint/run_page.dart';
+import 'package:sprint/screens/battle_page.dart';
+import 'package:sprint/screens/stats_page.dart';
+import 'package:sprint/screens/group_page.dart';
+import 'package:sprint/screens/home_page.dart';
+import 'package:sprint/screens/run_page.dart';
 
 class TabPage extends StatefulWidget {
   const TabPage({Key? key}) : super(key: key);
