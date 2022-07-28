@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:sprint/utils/geolocator.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:sprintf/sprintf.dart';
@@ -16,61 +18,10 @@ class RunPage extends StatefulWidget {
 class _RunPageState extends State<RunPage> {
   late RunningStatus _runningStatus;
   late int _timer;
+  late double _distance;
+  late List<Position?> _currentPosition;
 
-  @override
-  void initState() {
-    super.initState();
-    _runningStatus = RunningStatus.stopped;
-    print(_runningStatus.toString());
-    _timer = 0;
-    // postUser()
-  }
-
-  void run() {
-    setState(() {
-      _runningStatus = RunningStatus.running;
-      print("[=>] " + _runningStatus.toString());
-      runTimer();
-    });
-  }
-
-  void pause() {
-    setState(() {
-      _runningStatus = RunningStatus.paused;
-      print("[=>] " + _runningStatus.toString());
-    });
-  }
-
-  void resume() {
-    run();
-  }
-
-  void stop() {
-    setState(() {
-      _timer = 0;
-      _runningStatus = RunningStatus.stopped;
-      print("[=>] " + _runningStatus.toString());
-    });
-  }
-
-  void runTimer() {
-    Timer.periodic(Duration(seconds: 1), (Timer t) {
-      switch (_runningStatus) {
-        case RunningStatus.paused:
-          t.cancel();
-          break;
-        case RunningStatus.stopped:
-          t.cancel();
-          break;
-        case RunningStatus.running:
-          setState(() {
-            _timer++;
-          });
-          break;
-      }
-    });
-  }
-
+  /*
   _postUser() async {
     final response =
         await http.post(Uri.parse('http://localhost:8080/api/running/start'),
@@ -86,6 +37,72 @@ class _RunPageState extends State<RunPage> {
       print("Failed");
     }
   }
+  */
+
+  _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentPosition.add(position);
+      //Update Distance
+      if (_timer > 0 && _runningStatus == RunningStatus.running) {
+        _distance += Geolocator.distanceBetween(
+          _currentPosition[_currentPosition.length - 1]!.latitude,
+          _currentPosition[_currentPosition.length - 1]!.longitude,
+          _currentPosition[_currentPosition.length - 2]!.latitude,
+          _currentPosition[_currentPosition.length - 2]!.longitude,
+        );
+      }
+    });
+  }
+
+  void run() {
+    setState(() {
+      _getCurrentLocation().then((_) {
+        _runningStatus = RunningStatus.running;
+        runTimer();
+      });
+    });
+  }
+
+  void pause() {
+    setState(() {
+      _runningStatus = RunningStatus.paused;
+    });
+  }
+
+  void resume() {
+    run();
+  }
+
+  void stop() {
+    setState(() {
+      _timer = 0;
+      _distance = 0;
+      _currentPosition = [];
+      _runningStatus = RunningStatus.stopped;
+    });
+  }
+
+  void runTimer() {
+    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      switch (_runningStatus) {
+        case RunningStatus.paused:
+          t.cancel();
+          break;
+        case RunningStatus.stopped:
+          t.cancel();
+          break;
+        case RunningStatus.running:
+          setState(() {
+            _timer++;
+            _getCurrentLocation();
+          });
+          break;
+      }
+    });
+  }
 
   String secondsToString(int seconds) {
     return seconds >= 3600
@@ -95,8 +112,19 @@ class _RunPageState extends State<RunPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    getPermission();
+    _runningStatus = RunningStatus.stopped;
+    _timer = 0;
+    _distance = 0;
+    _currentPosition = [];
+    // postUser()
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final List<Widget> _runningButtons = [
+    final List<Widget> runningButtons = [
       ElevatedButton(
         onPressed: _runningStatus == RunningStatus.paused ? resume : pause,
         style: ElevatedButton.styleFrom(primary: Colors.blue),
@@ -116,7 +144,7 @@ class _RunPageState extends State<RunPage> {
             style: TextStyle(fontSize: 16),
           ))
     ];
-    final List<Widget> _stoppedButtons = [
+    final List<Widget> stoppedButtons = [
       ElevatedButton(
           onPressed: run,
           style: ElevatedButton.styleFrom(primary: Colors.green),
@@ -133,14 +161,14 @@ class _RunPageState extends State<RunPage> {
           Container(
             height: MediaQuery.of(context).size.height * 0.5,
             width: MediaQuery.of(context).size.width * 0.6,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.blue,
             ),
             child: Center(
               child: Text(
                 secondsToString(_timer),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
@@ -148,11 +176,20 @@ class _RunPageState extends State<RunPage> {
               ),
             ),
           ),
+          Text(
+            _timer == 0
+                ? ""
+                : _distance < 1000
+                    ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s",
+                        [_distance, _distance / _timer])
+                    : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s",
+                        [_distance / 1000, _distance / _timer]),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: _runningStatus == RunningStatus.stopped
-                ? _stoppedButtons
-                : _runningButtons,
+                ? stoppedButtons
+                : runningButtons,
           )
         ],
       ),

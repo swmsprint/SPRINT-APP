@@ -5,5 +5,4 @@ void getPermission() async {
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
   }
-  print(permission);
 }

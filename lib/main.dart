@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/widgets/bottom_navbar.dart';
 
-import 'package:sprint/utils/geolocator.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -12,8 +10,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getPermission();
-
     return MaterialApp(
       title: 'Sprint',
       theme: ThemeData(
