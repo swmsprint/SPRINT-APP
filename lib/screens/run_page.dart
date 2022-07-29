@@ -8,6 +8,30 @@ import 'package:sprintf/sprintf.dart';
 
 enum RunningStatus { running, paused, stopped }
 
+class PositionData {
+  final double latitude;
+  final double longitude;
+  final double altitude;
+  final double speed;
+  final String timestamp;
+
+  const PositionData({
+    required this.latitude,
+    required this.longitude,
+    required this.altitude,
+    required this.speed,
+    required this.timestamp,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'latitude': latitude,
+        'longitude': longitude,
+        'altitude': altitude,
+        'speed': speed,
+        'timestamp': timestamp
+      };
+}
+
 class RunPage extends StatefulWidget {
   const RunPage({Key? key}) : super(key: key);
 
@@ -20,7 +44,7 @@ class _RunPageState extends State<RunPage> {
   late RunningStatus _runningStatus;
   late int _timer;
   late double _distance;
-  late List<Position?> _currentPosition;
+  late List<PositionData> _positionDataList;
 
   _postUser() async {
     final response =
@@ -39,19 +63,45 @@ class _RunPageState extends State<RunPage> {
     }
   }
 
+  // 백엔드 서버 완성된 후 Test 필요
+  _postResult() async {
+    var body = jsonEncode({
+      'userId': 1, //Demo user
+      'runningId': _runningID,
+      "duration": _timer,
+      "runningData": _positionDataList,
+    });
+    final response =
+        await http.post(Uri.parse('http://localhost:8080/api/running/finish'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: body);
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
   _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-
     setState(() {
-      _currentPosition.add(position);
+      _positionDataList.add(PositionData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        altitude: position.altitude,
+        speed: position.speed,
+        timestamp: position.timestamp.toString(),
+      ));
       //Update Distance
       if (_timer > 0 && _runningStatus == RunningStatus.running) {
         _distance += Geolocator.distanceBetween(
-          _currentPosition[_currentPosition.length - 1]!.latitude,
-          _currentPosition[_currentPosition.length - 1]!.longitude,
-          _currentPosition[_currentPosition.length - 2]!.latitude,
-          _currentPosition[_currentPosition.length - 2]!.longitude,
+          _positionDataList[_positionDataList.length - 1].latitude,
+          _positionDataList[_positionDataList.length - 1].longitude,
+          _positionDataList[_positionDataList.length - 2].latitude,
+          _positionDataList[_positionDataList.length - 2].longitude,
         );
       }
     });
@@ -80,12 +130,12 @@ class _RunPageState extends State<RunPage> {
   }
 
   void stop() {
-    setState(() {
-      _timer = 0;
-      _distance = 0;
-      _currentPosition = [];
-      _runningStatus = RunningStatus.stopped;
-    });
+    _postResult().then((_) => setState(() {
+          _runningStatus = RunningStatus.stopped;
+          _timer = 0;
+          _distance = 0;
+          _positionDataList = [];
+        }));
   }
 
   void runTimer() {
@@ -121,8 +171,7 @@ class _RunPageState extends State<RunPage> {
     _runningStatus = RunningStatus.stopped;
     _timer = 0;
     _distance = 0;
-    _currentPosition = [];
-    // postUser()
+    _positionDataList = [];
   }
 
   @override
@@ -183,10 +232,14 @@ class _RunPageState extends State<RunPage> {
             _timer == 0
                 ? ""
                 : _distance < 1000
-                    ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s",
-                        [_distance, _distance / _timer])
-                    : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s",
-                        [_distance / 1000, _distance / _timer]),
+                    ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s", [
+                        _distance,
+                        _positionDataList[_positionDataList.length - 1].speed
+                      ])
+                    : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s", [
+                        _distance / 1000,
+                        _positionDataList[_positionDataList.length - 1].speed
+                      ]),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
