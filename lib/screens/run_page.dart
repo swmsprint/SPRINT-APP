@@ -16,12 +16,12 @@ class RunPage extends StatefulWidget {
 }
 
 class _RunPageState extends State<RunPage> {
+  late int _runningID;
   late RunningStatus _runningStatus;
   late int _timer;
   late double _distance;
   late List<Position?> _currentPosition;
 
-  /*
   _postUser() async {
     final response =
         await http.post(Uri.parse('http://localhost:8080/api/running/start'),
@@ -29,15 +29,15 @@ class _RunPageState extends State<RunPage> {
               'Content-Type': 'application/json',
             },
             body: jsonEncode({
-              'user_id': 1,
+              'userId': 1, //Demo user
             }));
     if (response.statusCode == 200) {
-      print("Success");
+      _runningID = jsonDecode(response.body)['runningId'];
+      print(_runningID);
     } else {
-      print("Failed");
+      print("Failed : ${response.statusCode}");
     }
   }
-  */
 
   _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -58,6 +58,9 @@ class _RunPageState extends State<RunPage> {
   }
 
   void run() {
+    if (_timer == 0) {
+      _postUser();
+    }
     setState(() {
       _getCurrentLocation().then((_) {
         _runningStatus = RunningStatus.running;
