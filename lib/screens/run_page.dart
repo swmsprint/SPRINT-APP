@@ -1,3 +1,5 @@
+//ToDo: GPS 측정 주기 설정, 러닝 버튼 누르면 카운트다운 후 자동 시작
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
@@ -136,6 +138,8 @@ class _RunPageState extends State<RunPage> {
           _distance = 0;
           _positionDataList = [];
         }));
+
+    Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
   }
 
   void runTimer() {
