@@ -133,7 +133,7 @@ class _TabPageState extends State<TabPage> {
                             MaterialPageRoute(builder: (context) => RunPage()),
                           );
                         },
-                        child: const Icon(Icons.run_circle_outlined),
+                        child: const Icon(Icons.directions_run_rounded),
                       ),
                     ),
                     SizedBox(
