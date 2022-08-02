@@ -137,9 +137,8 @@ class _RunPageState extends State<RunPage> {
           _timer = 0;
           _distance = 0;
           _positionDataList = [];
+          Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
         }));
-
-    Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
   }
 
   void runTimer() {
