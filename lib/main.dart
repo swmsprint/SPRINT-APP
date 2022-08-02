@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/screens/tab_page.dart';
+import 'package:sprint/widgets/bottom_navbar.dart';
 
 void main() {
   runApp(const MyApp());
