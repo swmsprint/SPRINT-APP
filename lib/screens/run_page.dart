@@ -1,5 +1,4 @@
 //ToDo: GPS 측정 주기 설정, 러닝 버튼 누르면 카운트다운 후 자동 시작
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
@@ -112,14 +111,22 @@ class _RunPageState extends State<RunPage> {
 
   void run() {
     if (_timer == 0) {
-      _postUser();
-    }
-    setState(() {
-      _getCurrentLocation().then((_) {
-        _runningStatus = RunningStatus.running;
-        runTimer();
+      _postUser().then((_) {
+        setState(() {
+          _getCurrentLocation().then((_) {
+            _runningStatus = RunningStatus.running;
+            runTimer();
+          });
+        });
       });
-    });
+    } else {
+      setState(() {
+        _getCurrentLocation().then((_) {
+          _runningStatus = RunningStatus.running;
+          runTimer();
+        });
+      });
+    }
   }
 
   void pause() {
@@ -134,15 +141,13 @@ class _RunPageState extends State<RunPage> {
 
   void stop() {
     _postResult().then((_) => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => RunResult(
-                      positionDataList: _positionDataList,
-                      duration: _timer,
-                      distance: _distance)),
-            )
-        //Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
-        );
+          context,
+          MaterialPageRoute(
+              builder: (context) => RunResult(
+                  positionDataList: _positionDataList,
+                  duration: _timer,
+                  distance: _distance)),
+        ));
   }
 
   void runTimer() {
@@ -235,19 +240,17 @@ class _RunPageState extends State<RunPage> {
               ),
             ),
           ),
-          Text(
-            _timer == 0
-                ? ""
-                : _distance < 1000
-                    ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s", [
-                        _distance,
-                        _positionDataList[_positionDataList.length - 1].speed
-                      ])
-                    : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s", [
-                        _distance / 1000,
-                        _positionDataList[_positionDataList.length - 1].speed
-                      ]),
-          ),
+          Text(_timer == 0
+              ? ""
+              : _distance < 1000
+                  ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s", [
+                      _distance,
+                      _positionDataList[_positionDataList.length - 1].speed
+                    ])
+                  : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s", [
+                      _distance / 1000,
+                      _positionDataList[_positionDataList.length - 1].speed
+                    ])),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: _runningStatus == RunningStatus.stopped
