@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-import 'package:sprint/utils/geolocator.dart';
+import 'package:sprint/screens/running_result_page.dart';
+import 'package:sprint/utils/permission.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:sprintf/sprintf.dart';
@@ -132,13 +133,16 @@ class _RunPageState extends State<RunPage> {
   }
 
   void stop() {
-    _postResult().then((_) => setState(() {
-          _runningStatus = RunningStatus.stopped;
-          _timer = 0;
-          _distance = 0;
-          _positionDataList = [];
-          Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
-        }));
+    _postResult().then((_) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RunResult(
+                      positionDataList: _positionDataList,
+                      duration: _timer,
+                      distance: _distance)),
+            )
+        //Navigator.pop(context); // 나중에는 결과 창으로 이동하도록 수정
+        );
   }
 
   void runTimer() {
