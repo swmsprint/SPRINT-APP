@@ -105,97 +105,100 @@ class _TabPageState extends State<TabPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: Colors.white.withAlpha(55),
-        body: Stack(
-          children: [
-            Center(child: _pages[currentIndex]),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: SizedBox(
-                width: size.width,
-                height: 80,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    CustomPaint(
-                      size: Size(size.width, 80),
-                      painter: BNBCustomPainter(),
+      backgroundColor: Colors.white.withAlpha(55),
+      body: Stack(
+        children: [
+          Center(child: _pages[currentIndex]),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: SizedBox(
+              width: size.width,
+              height: 80,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CustomPaint(
+                    size: Size(size.width, 80),
+                    painter: BNBCustomPainter(),
+                  ),
+                  Center(
+                    heightFactor: 0.6,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.orange,
+                      elevation: 0.1,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RunPage(),
+                              fullscreenDialog: true),
+                        );
+                      },
+                      child: const Icon(Icons.directions_run_rounded),
                     ),
-                    Center(
-                      heightFactor: 0.6,
-                      child: FloatingActionButton(
-                        backgroundColor: Colors.orange,
-                        elevation: 0.1,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RunPage()),
-                          );
-                        },
-                        child: const Icon(Icons.directions_run_rounded),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width,
-                      height: 80,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
+                  ),
+                  SizedBox(
+                    width: size.width,
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.home,
+                            color: currentIndex == 0
+                                ? Colors.orange
+                                : Colors.grey.shade400,
+                          ),
+                          onPressed: () {
+                            setBottomBarIndex(0);
+                          },
+                          splashColor: Colors.white,
+                        ),
+                        IconButton(
                             icon: Icon(
-                              Icons.home,
-                              color: currentIndex == 0
+                              Icons.group,
+                              color: currentIndex == 1
                                   ? Colors.orange
                                   : Colors.grey.shade400,
                             ),
                             onPressed: () {
-                              setBottomBarIndex(0);
-                            },
-                            splashColor: Colors.white,
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.group,
-                                color: currentIndex == 1
-                                    ? Colors.orange
-                                    : Colors.grey.shade400,
-                              ),
-                              onPressed: () {
-                                setBottomBarIndex(1);
-                              }),
-                          Container(
-                            width: size.width * 0.20,
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.star,
-                                color: currentIndex == 2
-                                    ? Colors.orange
-                                    : Colors.grey.shade400,
-                              ),
-                              onPressed: () {
-                                setBottomBarIndex(2);
-                              }),
-                          IconButton(
-                              icon: Icon(
-                                Icons.table_chart_outlined,
-                                color: currentIndex == 3
-                                    ? Colors.orange
-                                    : Colors.grey.shade400,
-                              ),
-                              onPressed: () {
-                                setBottomBarIndex(3);
-                              }),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                              setBottomBarIndex(1);
+                            }),
+                        Container(
+                          width: size.width * 0.20,
+                        ),
+                        IconButton(
+                            icon: Icon(
+                              Icons.star,
+                              color: currentIndex == 2
+                                  ? Colors.orange
+                                  : Colors.grey.shade400,
+                            ),
+                            onPressed: () {
+                              setBottomBarIndex(2);
+                            }),
+                        IconButton(
+                            icon: Icon(
+                              Icons.table_chart_outlined,
+                              color: currentIndex == 3
+                                  ? Colors.orange
+                                  : Colors.grey.shade400,
+                            ),
+                            onPressed: () {
+                              setBottomBarIndex(3);
+                            }),
+                      ],
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
-        ));
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 

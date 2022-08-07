@@ -16,20 +16,30 @@ class RunResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return RootPage();
+            }));
+          },
+        ),
+      ),
       body: Column(
         children: <Widget>[
           Padding(padding: const EdgeInsets.all(30)),
           Container(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Distance: $distance miles',
+              'Distance: $distance m',
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
           Container(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Average Speed: ${distance / duration} miles per hour',
+              'Average Speed: ${distance / duration} m/s',
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
@@ -40,14 +50,9 @@ class RunResult extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return RootPage();
-                }));
-              },
-              child: Text('Exit')),
-          Expanded(
+          Container(
+            width: 300,
+            height: 500,
             child: RunMap(
               positionDataList: positionDataList,
             ),

@@ -146,7 +146,8 @@ class _RunPageState extends State<RunPage> {
               builder: (context) => RunResult(
                   positionDataList: _positionDataList,
                   duration: _timer,
-                  distance: _distance)),
+                  distance: _distance),
+              fullscreenDialog: true),
         ));
   }
 
