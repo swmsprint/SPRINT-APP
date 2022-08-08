@@ -96,7 +96,7 @@ class _RunPageState extends State<RunPage> {
         longitude: position.longitude,
         altitude: position.altitude,
         speed: position.speed,
-        timestamp: position.timestamp.toString(),
+        timestamp: position.timestamp.toString().substring(0, 23),
       ));
       //Update Distance
       if (_timer > 0 && _runningStatus == RunningStatus.running) {
