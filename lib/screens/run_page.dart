@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/utils/permission.dart';
+import 'package:sprint/utils/secondstostring.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:sprintf/sprintf.dart';
@@ -168,13 +169,6 @@ class _RunPageState extends State<RunPage> {
           break;
       }
     });
-  }
-
-  String secondsToString(int seconds) {
-    return seconds >= 3600
-        ? sprintf("%d:%02d:%02d",
-            [seconds ~/ 3600, (seconds ~/ 60) % 60, seconds % 60])
-        : sprintf("%02d:%02d", [seconds ~/ 60, seconds % 60]);
   }
 
   @override
