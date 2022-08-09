@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/widgets/appbar.dart';
 import 'package:sprint/widgets/bottom_navbar.dart';
+import 'package:flutter_config/flutter_config.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+  await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());
 }
 
@@ -31,10 +35,33 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sprint"),
-      ),
+      appBar: CustomAppBar(),
       body: const TabPage(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: const Text('Item 1'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Item 2'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
