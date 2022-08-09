@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:sprint/screens/running_result_page.dart';
-import 'package:sprint/utils/permission.dart';
+import 'package:sprint/services/permission.dart';
 import 'package:sprint/utils/secondstostring.dart';
 import 'dart:convert';
 import 'dart:async';

@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sprint',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.blueGrey,
+          scaffoldBackgroundColor: Color.fromRGBO(212, 219, 247, 1)),
       home: const RootPage(),
     );
   }
@@ -32,11 +32,13 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body: const TabPage(),
+      body: TabPage(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
