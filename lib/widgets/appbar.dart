@@ -28,7 +28,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           child: InkWell(
             onTap: () {},
             child: CircleAvatar(
-              backgroundImage: NetworkImage('https://i.imgur.com/BoN9kdC.png'),
+              backgroundImage: NetworkImage(
+                  "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"),
             ),
           ),
         ),
