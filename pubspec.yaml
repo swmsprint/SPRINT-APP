@@ -41,6 +41,7 @@ dependencies:
   flutter_config: ^2.0.0
   flutter_heatmap_calendar: ^1.0.4
   toggle_switch: ^2.0.1
+  flutter_neumorphic: ^3.2.0
 
 dev_dependencies:
   flutter_test:

@@ -6,9 +6,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(_key);
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xfff3f5fc),
       elevation: 0.0,
       title: const Text(
         "SPRINT",
