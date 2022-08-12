@@ -8,7 +8,7 @@ import 'package:sprint/screens/home_page.dart';
 class TabPage extends StatefulWidget {
   TabPage({Key? key}) : super(key: key);
 
-  final Color selectedColor = const Color.fromARGB(255, 93, 118, 218);
+  final Color selectedColor = const Color(0xff5563de);
   @override
   State<TabPage> createState() => _TabPageState();
 }
@@ -56,19 +56,48 @@ class _TabPageState extends State<TabPage> {
                     painter: BNBCustomPainter(),
                   ),
                   Center(
-                    heightFactor: 0.6,
-                    child: FloatingActionButton(
-                      backgroundColor: widget.selectedColor,
-                      elevation: 0.1,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RunPage(),
-                              fullscreenDialog: true),
-                        );
-                      },
-                      child: const Icon(Icons.directions_run_rounded),
+                    heightFactor: 0.1,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xff7a85e9), Color(0xff5563de)],
+                          stops: [0.0, 1.0],
+                        ),
+                        borderRadius:
+                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff828cdf),
+                            offset: Offset(3, 8),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          primary: Colors.transparent,
+                          onSurface: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: EdgeInsets.zero,
+                          fixedSize: const Size(70, 70),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RunPage(),
+                                fullscreenDialog: true),
+                          );
+                        },
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -80,6 +109,7 @@ class _TabPageState extends State<TabPage> {
                         IconButton(
                           icon: Icon(
                             Icons.home,
+                            size: 30,
                             color: currentIndex == 0
                                 ? widget.selectedColor
                                 : Colors.grey.shade400,
@@ -91,7 +121,8 @@ class _TabPageState extends State<TabPage> {
                         ),
                         IconButton(
                             icon: Icon(
-                              Icons.group,
+                              Icons.groups,
+                              size: 30,
                               color: currentIndex == 1
                                   ? widget.selectedColor
                                   : Colors.grey.shade400,
@@ -105,6 +136,7 @@ class _TabPageState extends State<TabPage> {
                         IconButton(
                             icon: Icon(
                               Icons.star,
+                              size: 30,
                               color: currentIndex == 2
                                   ? widget.selectedColor
                                   : Colors.grey.shade400,
@@ -115,6 +147,7 @@ class _TabPageState extends State<TabPage> {
                         IconButton(
                             icon: Icon(
                               Icons.table_chart_outlined,
+                              size: 30,
                               color: currentIndex == 3
                                   ? widget.selectedColor
                                   : Colors.grey.shade400,
@@ -144,16 +177,21 @@ class BNBCustomPainter extends CustomPainter {
 
     Path path = Path();
     path.moveTo(0, 0); // Start
-    path.lineTo(size.width * 0.35, 0);
-    path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 20);
-    path.arcToPoint(Offset(size.width * 0.60, 20),
-        radius: Radius.circular(20.0), clockwise: false);
-    path.quadraticBezierTo(size.width * 0.60, 0, size.width * 0.65, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, 20);
-    canvas.drawShadow(path, Colors.black, 5, true);
+    path.lineTo(size.width * 0.69, 0);
+    path.cubicTo(size.width * 0.65, 0, size.width * 0.62, size.height * 0.11,
+        size.width * 0.6, size.height * 0.28);
+    path.cubicTo(size.width * 0.58, size.height * 0.46, size.width * 0.54,
+        size.height * 0.57, size.width / 2, size.height * 0.57);
+    path.cubicTo(size.width * 0.46, size.height * 0.57, size.width * 0.42,
+        size.height * 0.46, size.width * 0.4, size.height * 0.28);
+    path.cubicTo(size.width * 0.38, size.height * 0.11, size.width * 0.35, 0,
+        size.width * 0.31, 0);
+    path.cubicTo(size.width * 0.31, 0, 0, 0, 0, 0);
+    path.cubicTo(0, 0, 0, size.height, 0, size.height);
+    path.cubicTo(
+        0, size.height, size.width, size.height, size.width, size.height);
+    path.cubicTo(size.width, size.height, size.width, 0, size.width, 0);
+    path.cubicTo(size.width, 0, size.width * 0.69, 0, size.width * 0.69, 0);
     canvas.drawPath(path, paint);
   }
 

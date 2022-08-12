@@ -17,8 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sprint',
       theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
-          scaffoldBackgroundColor: Color.fromRGBO(212, 219, 247, 1)),
+        primarySwatch: Colors.blueGrey,
+        scaffoldBackgroundColor: const Color(0xfff3f5fc),
+      ),
       home: const RootPage(),
     );
   }
