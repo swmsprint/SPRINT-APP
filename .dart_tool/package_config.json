@@ -254,12 +254,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "toggle_switch",
-      "rootUri": "file:///Users/kunheekim/Development/flutter/.pub-cache/hosted/pub.dartlang.org/toggle_switch-2.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "typed_data",
       "rootUri": "file:///Users/kunheekim/Development/flutter/.pub-cache/hosted/pub.dartlang.org/typed_data-1.3.1",
       "packageUri": "lib/",
@@ -278,7 +272,7 @@
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-08-12T07:26:17.648680Z",
+  "generated": "2022-08-12T17:52:06.287639Z",
   "generator": "pub",
   "generatorVersion": "2.17.6"
 }
