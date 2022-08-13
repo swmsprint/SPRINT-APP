@@ -158,6 +158,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "infinite_scroll_pagination",
+      "rootUri": "file:///Users/kunheekim/Development/flutter/.pub-cache/hosted/pub.dartlang.org/infinite_scroll_pagination-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "js",
       "rootUri": "file:///Users/kunheekim/Development/flutter/.pub-cache/hosted/pub.dartlang.org/js-0.6.4",
       "packageUri": "lib/",
@@ -202,6 +208,12 @@
     {
       "name": "sky_engine",
       "rootUri": "file:///Users/kunheekim/Development/flutter/bin/cache/pkg/sky_engine",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sliver_tools",
+      "rootUri": "file:///Users/kunheekim/Development/flutter/.pub-cache/hosted/pub.dartlang.org/sliver_tools-0.2.7",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -272,7 +284,7 @@
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2022-08-12T17:52:06.287639Z",
+  "generated": "2022-08-12T18:57:02.909425Z",
   "generator": "pub",
   "generatorVersion": "2.17.6"
 }
