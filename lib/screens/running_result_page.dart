@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/main.dart';
 import 'package:sprint/screens/run_page.dart';
-import 'package:sprint/widgets/run_map.dart';
-import 'package:sprint/utils/secondstostring.dart';
-import 'package:sprintf/sprintf.dart';
+import 'package:sprint/widgets/runmap.dart';
+import 'package:sprint/widgets/runningsummary.dart';
 
 class RunResult extends StatelessWidget {
   final List<PositionData> positionDataList;
@@ -19,9 +18,10 @@ class RunResult extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Summary'),
+        backgroundColor: const Color(0xff5563de),
+        title: const Text('Summary'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return RootPage();
@@ -31,65 +31,28 @@ class RunResult extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Padding(padding: const EdgeInsets.all(10)),
+          const Padding(padding: EdgeInsets.all(10)),
           Container(
             padding: const EdgeInsets.all(8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "${positionDataList[0].timestamp.substring(0, 16)} ~ ${positionDataList[positionDataList.length - 1].timestamp.substring(0, 16)}",
-                textAlign: TextAlign.left,
+            child: Text(
+              "${positionDataList[0].timestamp.substring(0, 16)} ~ ${positionDataList[positionDataList.length - 1].timestamp.substring(0, 16)}",
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: 'Segoe UI',
+                color: const Color(0xfffa7531),
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Distance: ${distance.toStringAsFixed(2)} m",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Running Time \n ${secondsToString(duration)}",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Average Pace \n ${secondsToString((1000 * duration / distance).round())}",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Calories \n ${(60 * 2 * duration / 900).toStringAsFixed(2)}", // 나중에 체중으로 변경
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-          Padding(padding: const EdgeInsets.all(10)),
-          Container(
-            width: 300,
-            height: 500,
-            child: RunMap(
+          const Padding(padding: EdgeInsets.all(10)),
+          RunningSummary(distance, duration),
+          const Padding(padding: EdgeInsets.all(10)),
+          Expanded(
+            child: RunResultMap(
               positionDataList: positionDataList,
             ),
           ),
         ],
       ),
     );
-    //MapSample(positionDataList: positionDataList);
   }
 }

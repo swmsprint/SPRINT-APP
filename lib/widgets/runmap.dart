@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sprint/utils/heatmap.dart';
 
-class RunMap extends StatefulWidget {
+class RunResultMap extends StatefulWidget {
   final List<PositionData> positionDataList;
-  const RunMap({super.key, required this.positionDataList});
+  const RunResultMap({super.key, required this.positionDataList});
   @override
-  State<RunMap> createState() => _RunMapState();
+  State<RunResultMap> createState() => _RunResultMapState();
 }
 
-class _RunMapState extends State<RunMap> {
+class _RunResultMapState extends State<RunResultMap> {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polyline = {};
 
@@ -80,22 +80,28 @@ class _RunMapState extends State<RunMap> {
           maxLong = widget.positionDataList[i].longitude;
         }
         if (i != s - 1) {
-          _polyline.add(
-            Polyline(
-                polylineId: PolylineId('line$i'),
-                visible: true,
-                points: [
-                  LatLng(widget.positionDataList[i].latitude,
-                      widget.positionDataList[i].longitude),
-                  LatLng(widget.positionDataList[i + 1].latitude,
-                      widget.positionDataList[i + 1].longitude)
-                ],
-                width: 5,
-                startCap: Cap.roundCap,
-                endCap: Cap.roundCap,
-                jointType: JointType.round,
-                color: speedtocolor(widget.positionDataList[i].speed)),
-          );
+          DateTime t1 = DateTime.parse(widget.positionDataList[i].timestamp);
+          DateTime t2 =
+              DateTime.parse(widget.positionDataList[i + 1].timestamp);
+          Duration d = t2.difference(t1);
+          if (d.inSeconds < 2) {
+            _polyline.add(
+              Polyline(
+                  polylineId: PolylineId('line$i'),
+                  visible: true,
+                  points: [
+                    LatLng(widget.positionDataList[i].latitude,
+                        widget.positionDataList[i].longitude),
+                    LatLng(widget.positionDataList[i + 1].latitude,
+                        widget.positionDataList[i + 1].longitude)
+                  ],
+                  width: 5,
+                  startCap: Cap.roundCap,
+                  endCap: Cap.roundCap,
+                  jointType: JointType.round,
+                  color: speedtocolor(widget.positionDataList[i].speed)),
+            );
+          }
         }
       }
 
