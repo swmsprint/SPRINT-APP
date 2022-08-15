@@ -60,6 +60,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
               'Content-Type': 'application/json',
             },
             body: jsonEncode({
+              "startTime": DateTime.now().toUtc().toString(),
               'userId': 1, //Demo user
             }));
     if (response.statusCode == 200) {
