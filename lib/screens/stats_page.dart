@@ -107,68 +107,71 @@ class _StatsPageState extends State<StatsPage> {
       width: MediaQuery.of(context).size.width,
       child: CustomScrollView(
         slivers: <Widget>[
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: [
-                Row(
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 0.075 * MediaQuery.of(context).size.width),
-                    ),
-                    Column(
+                    Row(
                       children: [
-                        Container(
-                          height: 110,
-                          width: 110,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"))),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 0.075 * MediaQuery.of(context).size.width),
                         ),
-                        SizedBox(
-                          height: 10,
+                        Column(
+                          children: [
+                            Container(
+                              height: 110,
+                              width: 110,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"))),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "성이름",
+                              style: TextStyle(
+                                fontFamily: 'Segoe UI',
+                                fontSize: 20,
+                                color: const Color(0xff5563de),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "성이름",
+                      ],
+                      // ToDo: 배지 박기
+                    ),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 0.075 * MediaQuery.of(context).size.width),
+                        ),
+                        const Text(
+                          "기록",
                           style: TextStyle(
                             fontFamily: 'Segoe UI',
-                            fontSize: 20,
-                            color: const Color(0xff5563de),
+                            fontSize: 15,
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                  // ToDo: 배지 박기
-                ),
-                const Padding(padding: EdgeInsets.all(10)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 0.075 * MediaQuery.of(context).size.width),
-                    ),
-                    const Text(
-                      "기록",
-                      style: TextStyle(
-                        fontFamily: 'Segoe UI',
-                        fontSize: 15,
-                        color: Color(0xff5563de),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    const Padding(padding: EdgeInsets.all(5)),
+                    Record(),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    HMCalendar(),
+                    const Padding(padding: EdgeInsets.all(10)),
                   ],
                 ),
-                const Padding(padding: EdgeInsets.all(5)),
-                Record(),
-                const Padding(padding: EdgeInsets.all(10)),
-                HMCalendar(),
-                const Padding(padding: EdgeInsets.all(10)),
               ],
             ),
           ),
