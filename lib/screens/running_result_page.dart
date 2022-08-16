@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/main.dart';
-import 'package:sprint/screens/run_page.dart';
-import 'package:sprint/widgets/run_map.dart';
-import 'package:sprint/utils/secondstostring.dart';
-import 'package:sprintf/sprintf.dart';
+
+import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/widgets/running_result_page/runmap.dart';
+import 'package:sprint/widgets/running_result_page/runningfinishsummary.dart';
+import 'package:sprint/widgets/running_result_page/runningresultappbar.dart';
 
 class RunResult extends StatelessWidget {
   final List<PositionData> positionDataList;
@@ -18,78 +18,41 @@ class RunResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Summary'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return RootPage();
-            }));
-          },
-        ),
-      ),
+      appBar: const RunningResultAppBar(),
       body: Column(
         children: <Widget>[
-          Padding(padding: const EdgeInsets.all(10)),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "${positionDataList[0].timestamp.substring(0, 16)} ~ ${positionDataList[positionDataList.length - 1].timestamp.substring(0, 16)}",
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Distance: ${distance.toStringAsFixed(2)} m",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-          ),
+          const Padding(padding: EdgeInsets.all(10)),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Running Time \n ${secondsToString(duration)}",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Average Pace \n ${secondsToString((1000 * duration / distance).round())}",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Calories \n ${(60 * 2 * duration / 900).toStringAsFixed(2)}", // 나중에 체중으로 변경
-                  textAlign: TextAlign.center,
+              Padding(
+                  padding: EdgeInsets.all(
+                      0.025 * MediaQuery.of(context).size.width)),
+              Text(
+                positionDataList[0].timestamp.substring(0, 16),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Segoe UI',
+                  color: Color(0xff5563de),
                 ),
               ),
             ],
           ),
-          Padding(padding: const EdgeInsets.all(10)),
-          Container(
-            width: 300,
-            height: 500,
-            child: RunMap(
+          Divider(
+            indent: (0.05 * MediaQuery.of(context).size.width),
+            endIndent: (0.05 * MediaQuery.of(context).size.width),
+            thickness: 4,
+            color: Colors.grey[300],
+          ),
+          const Padding(padding: EdgeInsets.all(5)),
+          RunningFinishSummary(distance, duration),
+          const Padding(padding: EdgeInsets.all(10)),
+          Expanded(
+            child: RunResultMap(
               positionDataList: positionDataList,
             ),
           ),
         ],
       ),
     );
-    //MapSample(positionDataList: positionDataList);
   }
 }

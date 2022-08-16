@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/widgets/appbar.dart';
-import 'package:sprint/widgets/bottom_navbar.dart';
+import 'package:sprint/widgets/main/appbar.dart';
+import 'package:sprint/widgets/main/bottomnavbar.dart';
 import 'package:flutter_config/flutter_config.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
@@ -17,8 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sprint',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blueGrey,
+        scaffoldBackgroundColor: const Color(0xfff3f5fc),
       ),
+      debugShowCheckedModeBanner: false,
       home: const RootPage(),
     );
   }
@@ -32,12 +35,15 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      body: const TabPage(),
-      drawer: Drawer(
+      key: _scaffoldKey,
+      appBar: CustomAppBar(_scaffoldKey),
+      body: TabPage(),
+      endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [

@@ -1,166 +1,133 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/models/runningdata.dart';
+import 'package:sprint/widgets/stats_page/profile.dart';
+import 'package:sprint/widgets/stats_page/calendar.dart';
+import 'package:sprint/widgets/stats_page/record.dart';
+import 'package:sprint/widgets/stats_page/getrunningdatas.dart';
+
+RunningData rn = RunningData(
+    runnningId: 2,
+    duration: 1609,
+    distance: 4005.321413,
+    startTime: "2022-08-02 07:48:26.382");
+
+List<PositionData> rawdata = const [
+  PositionData(
+      latitude: 37.33028771,
+      longitude: -122.02810514,
+      altitude: 0,
+      speed: 4.05,
+      timestamp: "2022-08-02 07:48:26.382Z"),
+  PositionData(
+      latitude: 37.33028312,
+      longitude: -122.02805328,
+      altitude: 0,
+      speed: 4.05,
+      timestamp: "2022-08-02 07:48:27.310Z"),
+  PositionData(
+      latitude: 37.33028179,
+      longitude: -122.02799851,
+      altitude: 0,
+      speed: 4.21,
+      timestamp: "2022-08-02 07:48:28.280Z"),
+  PositionData(
+      latitude: 37.33027655,
+      longitude: -122.02794361,
+      altitude: 0,
+      speed: 4.2,
+      timestamp: "2022-08-02 07:48:29.391Z"),
+  PositionData(
+      latitude: 37.33025622,
+      longitude: -122.02763446,
+      altitude: 0,
+      speed: 4.13,
+      timestamp: "2022-08-02 07:48:35.348Z"),
+  PositionData(
+      latitude: 37.33025362,
+      longitude: -122.02758396,
+      altitude: 0,
+      speed: 4.16,
+      timestamp: "2022-08-02 07:48:36.377Z"),
+  PositionData(
+      latitude: 37.33025232,
+      longitude: -122.02753387,
+      altitude: 0,
+      speed: 4.14,
+      timestamp: "2022-08-02 07:48:37.341Z"),
+  PositionData(
+      latitude: 37.33025158,
+      longitude: -122.02748438,
+      altitude: 0,
+      speed: 4.11,
+      timestamp: "2022-08-02 07:48:38.296Z"),
+  PositionData(
+      latitude: 37.3302507,
+      longitude: -122.027435,
+      altitude: 0,
+      speed: 4.1,
+      timestamp: "2022-08-02 07:48:39.341Z"),
+  PositionData(
+      latitude: 37.33024596,
+      longitude: -122.02719578,
+      altitude: 0,
+      speed: 3.91,
+      timestamp: "2022-08-02 07:48:44.371Z"),
+  PositionData(
+      latitude: 37.33023967,
+      longitude: -122.02714858,
+      altitude: 0,
+      speed: 4.02,
+      timestamp: "2022-08-02 07:48:45.378Z"),
+];
 
 class StatsPage extends StatelessWidget {
   const StatsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(children: [
-        Container(
-            height: 150,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  height: 110,
-                  width: 110,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"))),
-                ),
-                Container(
-                  height: 110,
-                  width: 200,
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Name",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[500]),
-                      ),
-                      Padding(padding: EdgeInsets.all(10.0)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://toppng.com/uploads/preview/lightning-bolt-11549723188q9jgshmchb.png"),
-                              ),
-                            ),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Column(
+                  children: [
+                    const Profile(),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 0.075 * MediaQuery.of(context).size.width),
+                        ),
+                        const Text(
+                          "기록",
+                          style: TextStyle(
+                            fontFamily: 'Segoe UI',
+                            fontSize: 15,
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.w600,
                           ),
-                          Padding(padding: EdgeInsets.all(10.0)),
-                          Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://toppng.com/uploads/preview/lightning-bolt-11549723188q9jgshmchb.png"),
-                              ),
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.all(10.0)),
-                          Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://toppng.com/uploads/preview/lightning-bolt-11549723188q9jgshmchb.png"),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    const Padding(padding: EdgeInsets.all(5)),
+                    const Record(),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    const HMCalendar(),
+                    const Padding(padding: EdgeInsets.all(10)),
+                  ],
                 ),
               ],
-            )),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Row(children: [
-            Text(
-              "     Stats",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue[500],
-              ),
             ),
-          ]),
-        ),
-        Container(
-          height: 150,
-          width: MediaQuery.of(context).size.width - 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            color: Colors.grey[300],
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(padding: EdgeInsets.all(10.0)),
-              Text(
-                "Total Distance",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[500],
-                ),
-                textAlign: TextAlign.left,
-              ),
-              Text(
-                "2.1 km",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[500],
-                ),
-                textAlign: TextAlign.left,
-              ),
-              ToggleSwitch(
-                minWidth: 60,
-                minHeight: 20,
-                initialLabelIndex: 0,
-                totalSwitches: 5,
-                fontSize: 10,
-                activeBgColor: [Colors.orange],
-                labels: ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All Time'],
-                animate: true,
-                curve: Curves.easeInOut,
-                onToggle: (index) {
-                  print('switched to: $index');
-                },
-              ),
-            ],
-          ),
-        ),
-        Padding(padding: EdgeInsets.all(10)),
-        HeatMapCalendar(
-            defaultColor: Colors.white,
-            flexible: true,
-            colorMode: ColorMode.opacity,
-            colorsets: const {
-              1: Colors.orange
-            },
-            datasets: {
-              DateTime(2022, 8, 6): 3,
-              DateTime(2022, 8, 7): 7,
-              DateTime(2022, 8, 8): 10,
-              DateTime(2022, 8, 9): 13,
-              DateTime(2022, 8, 13): 6,
-            }),
-        Padding(padding: EdgeInsets.all(50)),
-      ]),
+          const CharacterListView(),
+        ],
+      ),
     );
   }
 }
