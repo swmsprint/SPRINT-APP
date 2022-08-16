@@ -2,6 +2,8 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_config/flutter_config.dart';
+
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/services/permission.dart';
 import 'package:sprint/utils/secondstostring.dart';
@@ -37,6 +39,8 @@ class PositionData {
       };
 }
 
+String serverurl = FlutterConfig.get('SERVER_ADDRESS');
+
 class RunPage extends StatefulWidget {
   const RunPage({Key? key}) : super(key: key);
 
@@ -55,7 +59,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
 
   _postUser() async {
     final response =
-        await http.post(Uri.parse('http://localhost:8080/api/running/start'),
+        await http.post(Uri.parse('$serverurl:8080/api/running/start'),
             headers: {
               'Content-Type': 'application/json',
             },
@@ -80,7 +84,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
       "runningData": _positionDataList,
     });
     final response =
-        await http.post(Uri.parse('http://localhost:8080/api/running/finish'),
+        await http.post(Uri.parse('$serverurl:8080/api/running/finish'),
             headers: {
               'Content-Type': 'application/json',
             },
