@@ -1,19 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:sprint/models/runningdata.dart';
 import 'package:sprint/utils/secondstostring.dart';
-
-class RunningData {
-  int runnningId;
-  int duration;
-  double distance;
-  String startTime;
-
-  RunningData({
-    required this.runnningId,
-    required this.duration,
-    required this.distance,
-    required this.startTime,
-  });
-}
 
 RunningData rn = RunningData(
     runnningId: 2,
@@ -72,10 +59,10 @@ class _RecordState extends State<Record> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+              children: const [
                 Text(
                   "2.1 km",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Anton',
                     fontSize: 37,
                     color: Color(0xfffa7531),

@@ -1,23 +1,10 @@
 // 무한스크롤 구현용 러닝 데이터 수집기
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:sprint/screens/run_page.dart';
+import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/models/runningdata.dart';
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/utils/secondstostring.dart';
-
-class RunningData {
-  int runnningId;
-  int duration;
-  double distance;
-  String startTime;
-
-  RunningData({
-    required this.runnningId,
-    required this.duration,
-    required this.distance,
-    required this.startTime,
-  });
-}
 
 RunningData rn = RunningData(
     runnningId: 2,
@@ -196,7 +183,7 @@ class CharacterListItem extends StatelessWidget {
             ),
           ),
         ),
-        Padding(padding: EdgeInsets.all(10)),
+        const Padding(padding: EdgeInsets.all(10)),
       ],
     );
   }

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sprint/utils/secondstostring.dart';
 
 class RunningFinishSummary extends StatelessWidget {
-  late String starttime;
-  late String endtime;
-  late double distance;
-  late int duration;
+  final double distance;
+  final int duration;
   RunningFinishSummary(this.distance, this.duration);
 
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/widgets/appbar.dart';
-import 'package:sprint/widgets/bottomnavbar.dart';
+import 'package:sprint/widgets/main/appbar.dart';
+import 'package:sprint/widgets/main/bottomnavbar.dart';
 import 'package:flutter_config/flutter_config.dart';
 
 

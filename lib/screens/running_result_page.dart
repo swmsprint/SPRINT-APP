@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/main.dart';
-import 'package:sprint/screens/run_page.dart';
-import 'package:sprint/widgets/runmap.dart';
-import 'package:sprint/widgets/runningfinishsummary.dart';
+
+import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/widgets/running_result_page/runmap.dart';
+import 'package:sprint/widgets/running_result_page/runningfinishsummary.dart';
+import 'package:sprint/widgets/running_result_page/runningresultappbar.dart';
 
 class RunResult extends StatelessWidget {
   final List<PositionData> positionDataList;
@@ -17,24 +18,7 @@ class RunResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xfff3f5fc),
-        title: const Text('Summary',
-            style: TextStyle(
-              color: const Color(0xff5563de),
-            )),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: const Color(0xff5563de),
-          ),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return RootPage();
-            }));
-          },
-        ),
-      ),
+      appBar: const RunningResultAppBar(),
       body: Column(
         children: <Widget>[
           const Padding(padding: EdgeInsets.all(10)),

@@ -1,22 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:sprint/screens/run_page.dart';
-import 'package:sprint/widgets/calendar.dart';
-import 'package:sprint/widgets/record.dart';
-import 'package:sprint/widgets/getrunningdatas.dart';
-
-class RunningData {
-  int runnningId;
-  int duration;
-  double distance;
-  String startTime;
-
-  RunningData({
-    required this.runnningId,
-    required this.duration,
-    required this.distance,
-    required this.startTime,
-  });
-}
+import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/models/runningdata.dart';
+import 'package:sprint/widgets/stats_page/profile.dart';
+import 'package:sprint/widgets/stats_page/calendar.dart';
+import 'package:sprint/widgets/stats_page/record.dart';
+import 'package:sprint/widgets/stats_page/getrunningdatas.dart';
 
 RunningData rn = RunningData(
     runnningId: 2,
@@ -93,14 +81,9 @@ List<PositionData> rawdata = const [
       timestamp: "2022-08-02 07:48:45.378Z"),
 ];
 
-class StatsPage extends StatefulWidget {
+class StatsPage extends StatelessWidget {
   const StatsPage({Key? key}) : super(key: key);
 
-  @override
-  State<StatsPage> createState() => _StatsPageState();
-}
-
-class _StatsPageState extends State<StatsPage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -112,40 +95,7 @@ class _StatsPageState extends State<StatsPage> {
               [
                 Column(
                   children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 0.075 * MediaQuery.of(context).size.width),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              height: 110,
-                              width: 110,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"))),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "성이름",
-                              style: TextStyle(
-                                fontFamily: 'Segoe UI',
-                                fontSize: 20,
-                                color: const Color(0xff5563de),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      // ToDo: 배지 박기
-                    ),
+                    const Profile(),
                     const Padding(padding: EdgeInsets.all(10)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -166,16 +116,16 @@ class _StatsPageState extends State<StatsPage> {
                       ],
                     ),
                     const Padding(padding: EdgeInsets.all(5)),
-                    Record(),
+                    const Record(),
                     const Padding(padding: EdgeInsets.all(10)),
-                    HMCalendar(),
+                    const HMCalendar(),
                     const Padding(padding: EdgeInsets.all(10)),
                   ],
                 ),
               ],
             ),
           ),
-          CharacterListView(),
+          const CharacterListView(),
         ],
       ),
     );

@@ -25,7 +25,7 @@ class FriendRecord extends StatelessWidget {
             ),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
+                children: const [
                   CircleAvatar(
                     radius: 24,
                     backgroundImage: NetworkImage(
@@ -36,7 +36,7 @@ class FriendRecord extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Segoe UI',
                       fontSize: 13,
-                      color: const Color(0xff5563de),
+                      color: Color(0xff5563de),
                     ),
                   ),
                 ]),

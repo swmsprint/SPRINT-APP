@@ -7,37 +7,15 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/services/permission.dart';
 import 'package:sprint/utils/secondstostring.dart';
-import 'package:sprint/widgets/currentmap.dart';
+import 'package:sprint/widgets/run_page/currentmap.dart';
+import 'package:sprint/widgets/run_page/pacemaker.dart';
+import 'package:sprint/models/positiondata.dart';
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:sprint/widgets/runningsummary.dart';
+import 'package:sprint/widgets/run_page/runningsummary.dart';
 
 enum RunningStatus { running, paused, stopped }
-
-class PositionData {
-  final double latitude;
-  final double longitude;
-  final double altitude;
-  final double speed;
-  final String timestamp;
-
-  const PositionData({
-    required this.latitude,
-    required this.longitude,
-    required this.altitude,
-    required this.speed,
-    required this.timestamp,
-  });
-
-  Map<String, dynamic> toJson() => {
-        'latitude': latitude,
-        'longitude': longitude,
-        'altitude': altitude,
-        'speed': speed,
-        'timestamp': timestamp
-      };
-}
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -56,129 +34,6 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
   late List<PositionData> _positionDataList;
 
   late AnimationController controller;
-
-  _postUser() async {
-    final response =
-        await http.post(Uri.parse('$serverurl:8080/api/running/start'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "startTime": DateTime.now().toUtc().toString(),
-              'userId': 1, //Demo user
-            }));
-    if (response.statusCode == 200) {
-      _runningID = jsonDecode(response.body)['runningId'];
-      print(_runningID);
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
-  }
-
-  // 백엔드 서버 완성된 후 Test 필요
-  _postResult() async {
-    var body = jsonEncode({
-      'userId': 1, //Demo user
-      'runningId': _runningID,
-      "duration": _timer,
-      "runningData": _positionDataList,
-    });
-    final response =
-        await http.post(Uri.parse('$serverurl:8080/api/running/finish'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: body);
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
-  }
-
-  _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      _positionDataList.add(PositionData(
-        latitude: position.latitude,
-        longitude: position.longitude,
-        altitude: position.altitude,
-        speed: position.speed,
-        timestamp: position.timestamp.toString().substring(0, 23),
-      ));
-      //Update Distance
-      if (_timer > 0 && _runningStatus == RunningStatus.running) {
-        _distance += Geolocator.distanceBetween(
-          _positionDataList[_positionDataList.length - 1].latitude,
-          _positionDataList[_positionDataList.length - 1].longitude,
-          _positionDataList[_positionDataList.length - 2].latitude,
-          _positionDataList[_positionDataList.length - 2].longitude,
-        );
-      }
-    });
-  }
-
-  void run() {
-    if (_timer == 0) {
-      _postUser().then((_) {
-        setState(() {
-          _getCurrentLocation().then((_) {
-            _runningStatus = RunningStatus.running;
-            runTimer();
-          });
-        });
-      });
-    } else {
-      setState(() {
-        _getCurrentLocation().then((_) {
-          _runningStatus = RunningStatus.running;
-          runTimer();
-        });
-      });
-    }
-  }
-
-  void pause() {
-    setState(() {
-      _runningStatus = RunningStatus.paused;
-    });
-  }
-
-  void resume() {
-    run();
-  }
-
-  void stop() {
-    _postResult().then((_) => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => RunResult(
-                  positionDataList: _positionDataList,
-                  duration: _timer,
-                  distance: _distance),
-              fullscreenDialog: true),
-        ));
-  }
-
-  void runTimer() {
-    Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      switch (_runningStatus) {
-        case RunningStatus.paused:
-          t.cancel();
-          break;
-        case RunningStatus.stopped:
-          t.cancel();
-          break;
-        case RunningStatus.running:
-          setState(() {
-            _timer++;
-            _getCurrentLocation();
-          });
-          break;
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -251,7 +106,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _runningStatus == RunningStatus.paused
-              ? CurrentMap()
+              ? const CurrentMap()
               : AspectRatio(
                   aspectRatio: 1,
                   child: Stack(
@@ -325,47 +180,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
                 ),
           _runningStatus == RunningStatus.paused
               ? RunningSummary(_distance, _timer)
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                      Text(
-                        '다음 5분은 이렇게 추천해요',
-                        style: TextStyle(
-                          fontFamily: 'Segoe UI',
-                          fontSize: 15,
-                          color: const Color(0xff5563de),
-                        ),
-                      ),
-                      Text(
-                        '7"00" 페이스',
-                        style: TextStyle(
-                          color: Color(0xff5563de),
-                          fontFamily: 'Anton',
-                          fontSize: 30,
-                        ),
-                      ),
-                      Text(
-                        '안쪽으로 10분간 달려보아요!',
-                        style: TextStyle(
-                          fontFamily: 'Segoe UI',
-                          fontSize: 15,
-                          color: Color(0xff5563de),
-                        ),
-                      ),
-                    ]),
-          /*
-          Text(_timer == 0
-              ? ""
-              : _distance < 1000
-                  ? sprintf("Distance Run: %.2f m\n Pace: %.2f m/s", [
-                      _distance,
-                      _positionDataList[_positionDataList.length - 1].speed
-                    ])
-                  : sprintf("Distance Run: %.2f km\n Pace: %.2f m/s", [
-                      _distance / 1000,
-                      _positionDataList[_positionDataList.length - 1].speed
-                    ])),
-                    */
+              : const PaceMaker(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: _runningStatus == RunningStatus.stopped
@@ -376,5 +191,127 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  _getRunningID() async {
+    final response =
+        await http.post(Uri.parse('$serverurl:8080/api/running/start'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              "startTime": DateTime.now().toUtc().toString(),
+              'userId': 1, //Demo user
+            }));
+    if (response.statusCode == 200) {
+      _runningID = jsonDecode(response.body)['runningId'];
+      print(_runningID);
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _postResult() async {
+    var body = jsonEncode({
+      'userId': 1, //Demo user
+      'runningId': _runningID,
+      "duration": _timer,
+      "runningData": _positionDataList,
+    });
+    final response =
+        await http.post(Uri.parse('$serverurl:8080/api/running/finish'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: body);
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      _positionDataList.add(PositionData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        altitude: position.altitude,
+        speed: position.speed,
+        timestamp: position.timestamp.toString().substring(0, 23),
+      ));
+      //Update Distance
+      if (_timer > 0 && _runningStatus == RunningStatus.running) {
+        _distance += Geolocator.distanceBetween(
+          _positionDataList[_positionDataList.length - 1].latitude,
+          _positionDataList[_positionDataList.length - 1].longitude,
+          _positionDataList[_positionDataList.length - 2].latitude,
+          _positionDataList[_positionDataList.length - 2].longitude,
+        );
+      }
+    });
+  }
+
+  void run() {
+    if (_timer == 0) {
+      _getRunningID().then((_) {
+        setState(() {
+          _getCurrentLocation().then((_) {
+            _runningStatus = RunningStatus.running;
+            runTimer();
+          });
+        });
+      });
+    } else {
+      setState(() {
+        _getCurrentLocation().then((_) {
+          _runningStatus = RunningStatus.running;
+          runTimer();
+        });
+      });
+    }
+  }
+
+  void pause() {
+    setState(() {
+      _runningStatus = RunningStatus.paused;
+    });
+  }
+
+  void resume() {
+    run();
+  }
+
+  void stop() {
+    _postResult().then((_) => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RunResult(
+                  positionDataList: _positionDataList,
+                  duration: _timer,
+                  distance: _distance),
+              fullscreenDialog: true),
+        ));
+  }
+
+  void runTimer() {
+    Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      switch (_runningStatus) {
+        case RunningStatus.paused:
+          t.cancel();
+          break;
+        case RunningStatus.stopped:
+          t.cancel();
+          break;
+        case RunningStatus.running:
+          setState(() {
+            _timer++;
+            _getCurrentLocation();
+          });
+          break;
+      }
+    });
   }
 }
