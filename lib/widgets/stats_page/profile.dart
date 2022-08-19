@@ -21,11 +21,11 @@ class Profile extends StatelessWidget {
                   image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(
-                          "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"))),
+                          "https://this-person-does-not-exist.com/img/avatar-85a1136f5c868f411a1aaf47007312eb.jpg"))),
             ),
             const Padding(padding: EdgeInsets.all(5)),
             const Text(
-              "성이름",
+              "서다영",
               style: TextStyle(
                 fontFamily: 'Segoe UI',
                 fontSize: 20,

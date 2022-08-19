@@ -34,7 +34,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             onTap: () {},
             child: const CircleAvatar(
               backgroundImage: NetworkImage(
-                  "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"),
+                  "https://this-person-does-not-exist.com/img/avatar-85a1136f5c868f411a1aaf47007312eb.jpg"),
             ),
           ),
         ),

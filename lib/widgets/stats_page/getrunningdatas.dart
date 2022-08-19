@@ -130,7 +130,7 @@ class CharacterListItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "id: $num",
+                        "14:48",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 30,
@@ -144,7 +144,7 @@ class CharacterListItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${(rn.distance / 1000).toStringAsFixed(2)}\n거리",
+                        "${(rn.distance / 1000).toStringAsFixed(2)}KM\n거리",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
