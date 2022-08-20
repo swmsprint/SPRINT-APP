@@ -21,7 +21,7 @@ class Profile extends StatelessWidget {
                   image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(
-                          "https://this-person-does-not-exist.com/img/avatar-85a1136f5c868f411a1aaf47007312eb.jpg"))),
+                          "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"))),
             ),
             const Padding(padding: EdgeInsets.all(5)),
             const Text(
