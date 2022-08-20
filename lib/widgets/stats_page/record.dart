@@ -3,10 +3,11 @@ import 'package:sprint/models/runningdata.dart';
 import 'package:sprint/utils/secondstostring.dart';
 
 RunningData rn = RunningData(
-    runnningId: 2,
+    runningId: 2,
     duration: 1609,
     distance: 4005.321413,
-    startTime: "2022-08-02 07:48:26.382");
+    startTime: "2022-08-02 07:48:26.382",
+    calories: 214.53);
 
 class Record extends StatefulWidget {
   const Record({Key? key}) : super(key: key);
@@ -91,7 +92,7 @@ class _RecordState extends State<Record> {
                   ),
                 ),
                 Text(
-                  "${(60 * 2 * rn.duration / 900).toStringAsFixed(2)}\n칼로리",
+                  "${rn.calories.toStringAsFixed(2)}\n칼로리",
                   style: const TextStyle(
                     fontFamily: 'Anton',
                     fontSize: 14,
