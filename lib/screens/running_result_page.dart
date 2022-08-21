@@ -9,11 +9,13 @@ class RunResult extends StatelessWidget {
   final List<PositionData> positionDataList;
   final double distance;
   final int duration;
+  final double calories;
   const RunResult(
       {super.key,
       required this.positionDataList,
       required this.distance,
-      required this.duration});
+      required this.duration,
+      required this.calories});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class RunResult extends StatelessWidget {
             color: Colors.grey[300],
           ),
           const Padding(padding: EdgeInsets.all(5)),
-          RunningFinishSummary(distance, duration),
+          RunningFinishSummary(distance, duration, calories),
           const Padding(padding: EdgeInsets.all(10)),
           Expanded(
             child: RunResultMap(

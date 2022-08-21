@@ -107,6 +107,21 @@ _getRunningDatas(pageKey) async {
   }
 }
 
+_getRunningDetail(runningId) async {
+  final response = await http.get(
+    Uri.parse(
+        '$serverurl:8080/api/running/detail/?runningId=$runningId&userId=1'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  );
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    print("Failed : ${response.statusCode}");
+  }
+}
+
 class RunningItem extends StatelessWidget {
   const RunningItem({
     required this.data,
@@ -120,14 +135,29 @@ class RunningItem extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => RunResult(
+            _getRunningDetail(data.runningId).then(
+              (value) {
+                List<PositionData> rawdata = [];
+                for (int i = 0; i < value["runningData"].length; i++) {
+                  rawdata.add(PositionData(
+                      latitude: value["runningData"][i]["latitude"],
+                      longitude: value["runningData"][i]["longitude"],
+                      altitude: 0,
+                      speed: value["runningData"][i]["speed"],
+                      timestamp: value["runningData"][i]["timestamp"]));
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RunResult(
                       positionDataList: rawdata,
-                      duration: data.duration,
-                      distance: data.distance),
-                  fullscreenDialog: true),
+                      duration: value["duration"].round(),
+                      distance: value["distance"],
+                      calories: value["energy"],
+                    ),
+                  ),
+                );
+              },
             );
           },
           child: Neumorphic(

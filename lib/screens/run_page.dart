@@ -290,9 +290,11 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
           context,
           MaterialPageRoute(
               builder: (context) => RunResult(
-                  positionDataList: _positionDataList,
-                  duration: _timer,
-                  distance: _distance),
+                    positionDataList: _positionDataList,
+                    duration: _timer,
+                    distance: _distance,
+                    calories: (60 * 2 * _timer / 900),
+                  ),
               fullscreenDialog: true),
         ));
   }
