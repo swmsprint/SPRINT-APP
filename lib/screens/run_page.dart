@@ -215,6 +215,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     var body = jsonEncode({
       'userId': 1, //Demo user
       'runningId': _runningID,
+      "distance": _distance,
       "duration": _timer,
       "runningData": _positionDataList,
     });

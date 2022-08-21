@@ -1,4 +1,6 @@
 // 무한스크롤 구현용 러닝 데이터 수집기
+import 'dart:convert';
+
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:sprint/models/positiondata.dart';
@@ -6,11 +8,11 @@ import 'package:sprint/models/runningdata.dart';
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/utils/secondstostring.dart';
 
-RunningData rn = RunningData(
-    runnningId: 2,
-    duration: 1609,
-    distance: 4005.321413,
-    startTime: "2022-08-02 07:48:26.382");
+import 'package:http/http.dart' as http;
+
+import 'package:flutter_config/flutter_config.dart';
+
+String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 List<PositionData> rawdata = const [
   PositionData(
@@ -81,13 +83,37 @@ List<PositionData> rawdata = const [
       timestamp: "2022-08-02 07:48:45.378Z"),
 ];
 
-class CharacterListItem extends StatelessWidget {
-  const CharacterListItem({
-    required this.num,
+_getRunningDatas(pageKey) async {
+  final response = await http.get(
+    Uri.parse('$serverurl:8080/api/runnings/?pageNumber=$pageKey&userId=1'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  );
+  if (response.statusCode == 200) {
+    List<dynamic> result = jsonDecode(response.body);
+    List<RunningData> runningDatas = [];
+    for (int i = 0; i < result.length; i++) {
+      runningDatas.add(RunningData(
+          runningId: result[i]['runningId'],
+          duration: result[i]['duration'].round(),
+          distance: result[i]['distance'],
+          startTime: result[i]['startTime'],
+          calories: result[i]['energy']));
+    }
+    return runningDatas;
+  } else {
+    print("Failed : ${response.statusCode}");
+  }
+}
+
+class RunningItem extends StatelessWidget {
+  const RunningItem({
+    required this.data,
     Key? key,
   }) : super(key: key);
 
-  final int num;
+  final RunningData data;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -99,8 +125,8 @@ class CharacterListItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => RunResult(
                       positionDataList: rawdata,
-                      duration: rn.duration,
-                      distance: rn.distance),
+                      duration: data.duration,
+                      distance: data.distance),
                   fullscreenDialog: true),
             );
           },
@@ -130,7 +156,7 @@ class CharacterListItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "14:48",
+                        data.startTime.substring(0, 16),
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 30,
@@ -144,7 +170,7 @@ class CharacterListItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${(rn.distance / 1000).toStringAsFixed(2)}KM\n거리",
+                        "${(data.distance / 1000).toStringAsFixed(2)}KM\n거리",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
@@ -152,7 +178,7 @@ class CharacterListItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${secondsToString(rn.duration)}\n시간",
+                        "${secondsToString(data.duration)}\n시간",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
@@ -160,7 +186,7 @@ class CharacterListItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${secondsToString((1000 * rn.duration / rn.distance).round())}\n페이스",
+                        "${secondsToString((1000 * data.duration / data.distance).round())}\n페이스",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
@@ -168,7 +194,7 @@ class CharacterListItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${(60 * 2 * rn.duration / 900).toStringAsFixed(2)}\n칼로리",
+                        "${data.calories.toStringAsFixed(2)}\n칼로리",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
@@ -189,18 +215,17 @@ class CharacterListItem extends StatelessWidget {
   }
 }
 
-class CharacterListView extends StatefulWidget {
-  const CharacterListView({Key? key}) : super(key: key);
+class RunningListView extends StatefulWidget {
+  const RunningListView({Key? key}) : super(key: key);
 
   @override
-  State<CharacterListView> createState() => _CharacterListViewState();
+  State<RunningListView> createState() => _RunningListViewState();
 }
 
-class _CharacterListViewState extends State<CharacterListView> {
-  List<int> local = [];
-  List<int> server = [];
+class _RunningListViewState extends State<RunningListView> {
+  static const _pageSize = 3;
 
-  final PagingController<int, int> _pagingController =
+  final PagingController<int, RunningData> _pagingController =
       PagingController(firstPageKey: 0);
 
   @override
@@ -208,48 +233,36 @@ class _CharacterListViewState extends State<CharacterListView> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    for (int i = 0; i < 30; i++) {
-      server.add(i);
-    }
     super.initState();
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    int nextDataPosition = (pageKey * 3);
-    int dataLength = 3;
-
-    print("nextDataPosition: $nextDataPosition");
-    if (nextDataPosition > server.length) {
-      // 더이상 가져갈 것이 없음
-      return;
+    try {
+      final newItems = await _getRunningDatas(pageKey);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
     }
-
-    // 읽을 데이터는 있지만 10개가 안되는 경우
-    if ((nextDataPosition + 3) > server.length) {
-      // 가능한 최대 개수 얻기
-      dataLength = server.length - nextDataPosition;
-    }
-
-    final newItems =
-        server.sublist(nextDataPosition, nextDataPosition + dataLength);
-
-    final isLastPage = newItems.length < dataLength;
-    if (isLastPage) {
-      _pagingController.appendLastPage(newItems);
-    } else {
-      final nextPageKey = pageKey + 1;
-      _pagingController.appendPage(newItems, nextPageKey.toInt());
-    }
-
-    Future.delayed(const Duration(milliseconds: 10000));
   }
 
   @override
-  Widget build(BuildContext context) => PagedSliverList<int, int>(
+  Widget build(BuildContext context) =>
+      // Don't worry about displaying progress or error indicators on screen; the
+      // package takes care of that. If you want to customize them, use the
+      // [PagedChildBuilderDelegate] properties.
+      PagedListView<int, RunningData>(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
         pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<int>(
-          itemBuilder: (context, item, index) => CharacterListItem(
-            num: item,
+        builderDelegate: PagedChildBuilderDelegate<RunningData>(
+          itemBuilder: (context, item, index) => RunningItem(
+            data: item,
           ),
         ),
       );
