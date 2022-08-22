@@ -13,7 +13,8 @@ String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 _getRunningDatas(pageKey) async {
   final response = await http.get(
-    Uri.parse('$serverurl:8080/api/runnings/?pageNumber=$pageKey&userId=1'),
+    Uri.parse(
+        '$serverurl:8080/api/running/personal/?pageNumber=$pageKey&userId=1'),
     headers: {
       'Content-Type': 'application/json',
     },
