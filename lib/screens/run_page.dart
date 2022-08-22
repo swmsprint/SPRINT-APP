@@ -13,7 +13,29 @@ import 'package:sprint/models/positiondata.dart';
 import 'dart:convert';
 import 'dart:async';
 
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:sprint/widgets/run_page/runningsummary.dart';
+
+class RunningDataStorage {
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/runningData.json');
+  }
+
+  Future<File> writeRunningData(String body) async {
+    final file = await _localFile;
+
+    // 파일 쓰기
+    return file.writeAsString(body);
+  }
+}
 
 enum RunningStatus { running, paused, stopped }
 
@@ -219,6 +241,9 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
       "duration": _timer,
       "runningData": _positionDataList,
     });
+    final RunningDataStorage storage = RunningDataStorage();
+    await storage.writeRunningData(body);
+
     final response =
         await http.post(Uri.parse('$serverurl:8080/api/running/finish'),
             headers: {
