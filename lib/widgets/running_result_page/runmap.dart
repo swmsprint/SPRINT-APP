@@ -64,7 +64,7 @@ class _RunResultMapState extends State<RunResultMap> {
 
       double minLat = widget.positionDataList[0].latitude;
       double minLong = widget.positionDataList[0].longitude;
-      double maxLat = widget.positionDataList[0].longitude;
+      double maxLat = widget.positionDataList[0].latitude;
       double maxLong = widget.positionDataList[0].longitude;
       for (int i = 0; i < s; i++) {
         if (widget.positionDataList[i].latitude < minLat) {
@@ -104,12 +104,11 @@ class _RunResultMapState extends State<RunResultMap> {
           }
         }
       }
-
       _controller.moveCamera(CameraUpdate.newLatLngBounds(
           LatLngBounds(
               southwest: LatLng(minLat, minLong),
               northeast: LatLng(maxLat, maxLong)),
-          20));
+          10));
     });
   }
 }
