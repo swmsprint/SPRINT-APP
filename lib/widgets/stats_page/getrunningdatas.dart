@@ -115,7 +115,10 @@ class RunningItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        data.startTime.substring(0, 16),
+                        DateTime.parse(data.startTime)
+                            .add(const Duration(hours: 9))
+                            .toString()
+                            .substring(0, 16),
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 30,

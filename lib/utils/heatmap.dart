@@ -3,7 +3,7 @@ import 'dart:math';
 
 Color speedtocolor(double speed) {
   // Custom Gradient
-  double percentage = min(speed * 16, 100);
+  double percentage = min(speed * 19, 100);
   double r = 0, g = 0, b = 0;
   if (percentage < 30) {
     r = 0;

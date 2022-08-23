@@ -30,7 +30,10 @@ class RunResult extends StatelessWidget {
                   padding: EdgeInsets.all(
                       0.025 * MediaQuery.of(context).size.width)),
               Text(
-                positionDataList[0].timestamp.substring(0, 16),
+                DateTime.parse(positionDataList[0].timestamp)
+                    .add(const Duration(hours: 9))
+                    .toString()
+                    .substring(0, 16),
                 style: const TextStyle(
                   fontSize: 18,
                   fontFamily: 'Segoe UI',

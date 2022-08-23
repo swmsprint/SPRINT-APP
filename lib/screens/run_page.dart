@@ -26,12 +26,12 @@ class RunningDataStorage {
 
   Future<File> get _localFile async {
     final path = await _localPath;
+    print('$path');
     return File('$path/runningData.json');
   }
 
   Future<File> writeRunningData(String body) async {
     final file = await _localFile;
-
     // 파일 쓰기
     return file.writeAsString(body);
   }
