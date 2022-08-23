@@ -20,8 +20,7 @@ class Profile extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                          "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"))),
+                      image: AssetImage("assets/images/1.png"))),
             ),
             const Padding(padding: EdgeInsets.all(5)),
             const Text(

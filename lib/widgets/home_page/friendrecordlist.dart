@@ -19,26 +19,11 @@ class FriendRecordList extends StatelessWidget {
                     padding: EdgeInsets.only(
                         left:
                             (0.075 * MediaQuery.of(context).size.width) - 20)),
-                const FriendRecord(
-                    name: '신종인',
-                    image:
-                        "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"),
-                const FriendRecord(
-                    name: '예나윤',
-                    image:
-                        "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"),
-                const FriendRecord(
-                    name: '이병창',
-                    image:
-                        "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"),
-                const FriendRecord(
-                    name: '최창현',
-                    image:
-                       "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"),
-                const FriendRecord(
-                    name: '김시은',
-                    image:
-                        "https://i.ibb.co/kcspMdp/Kakao-Talk-Photo-2022-08-17-18-00-24.png"),
+                const FriendRecord(name: '신종인', image: "assets/images/2.png"),
+                const FriendRecord(name: '예나윤', image: "assets/images/3.png"),
+                const FriendRecord(name: '이병창', image: "assets/images/4.png"),
+                const FriendRecord(name: '최창현', image: "assets/images/5.png"),
+                const FriendRecord(name: '김시은', image: "assets/images/6.png"),
               ],
             ),
           ),

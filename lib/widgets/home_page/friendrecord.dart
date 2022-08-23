@@ -31,7 +31,7 @@ class FriendRecord extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundImage: NetworkImage(image),
+                    backgroundImage: AssetImage(image),
                   ),
                   Text(
                     name,
