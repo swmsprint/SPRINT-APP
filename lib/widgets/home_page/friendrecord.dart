@@ -1,7 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class FriendRecord extends StatelessWidget {
-  const FriendRecord({Key? key}) : super(key: key);
+  final String name;
+  final String image;
+  const FriendRecord({Key? key, required this.name, required this.image})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +28,14 @@ class FriendRecord extends StatelessWidget {
             ),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundImage: NetworkImage(
-                        "https://i.pinimg.com/736x/f9/81/d6/f981d67d2ab128e21f0ae278082d0426.jpg"),
+                    backgroundImage: AssetImage(image),
                   ),
                   Text(
-                    '성이름',
-                    style: TextStyle(
+                    name,
+                    style: const TextStyle(
                       fontFamily: 'Segoe UI',
                       fontSize: 13,
                       color: Color(0xff5563de),

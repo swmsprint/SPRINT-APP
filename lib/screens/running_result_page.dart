@@ -9,11 +9,13 @@ class RunResult extends StatelessWidget {
   final List<PositionData> positionDataList;
   final double distance;
   final int duration;
+  final double calories;
   const RunResult(
       {super.key,
       required this.positionDataList,
       required this.distance,
-      required this.duration});
+      required this.duration,
+      required this.calories});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,10 @@ class RunResult extends StatelessWidget {
                   padding: EdgeInsets.all(
                       0.025 * MediaQuery.of(context).size.width)),
               Text(
-                positionDataList[0].timestamp.substring(0, 16),
+                DateTime.parse(positionDataList[0].timestamp)
+                    .add(const Duration(hours: 9))
+                    .toString()
+                    .substring(0, 16),
                 style: const TextStyle(
                   fontSize: 18,
                   fontFamily: 'Segoe UI',
@@ -44,7 +49,7 @@ class RunResult extends StatelessWidget {
             color: Colors.grey[300],
           ),
           const Padding(padding: EdgeInsets.all(5)),
-          RunningFinishSummary(distance, duration),
+          RunningFinishSummary(distance, duration, calories),
           const Padding(padding: EdgeInsets.all(10)),
           Expanded(
             child: RunResultMap(

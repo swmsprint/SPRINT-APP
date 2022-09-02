@@ -4,7 +4,8 @@ import 'package:sprint/utils/secondstostring.dart';
 class RunningFinishSummary extends StatelessWidget {
   final double distance;
   final int duration;
-  RunningFinishSummary(this.distance, this.duration);
+  final double calories;
+  RunningFinishSummary(this.distance, this.duration, this.calories);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +96,7 @@ class RunningFinishSummary extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (60 * 2 * duration / 900).toStringAsFixed(2),
+                    calories.toStringAsFixed(2),
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       fontSize: 24,
