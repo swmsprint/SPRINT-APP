@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
-
+  bool isDrawer = false;
+  Profile({Key? key, this.isDrawer = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -23,12 +23,12 @@ class Profile extends StatelessWidget {
                       image: AssetImage("assets/images/1.png"))),
             ),
             const Padding(padding: EdgeInsets.all(5)),
-            const Text(
+            Text(
               "서다영",
               style: TextStyle(
-                fontFamily: 'Segoe UI',
+                fontFamily: 'YDIYGO',
                 fontSize: 20,
-                color: Color(0xff5563de),
+                color: isDrawer ? Colors.white : const Color(0xff5563de),
               ),
             ),
           ],

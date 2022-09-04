@@ -18,7 +18,7 @@ class StatsPage extends StatelessWidget {
               [
                 Column(
                   children: [
-                    const Profile(),
+                    Profile(),
                     const Padding(padding: EdgeInsets.all(10)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
