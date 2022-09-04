@@ -141,7 +141,7 @@ class _RecordState extends State<Record> {
                         ),
                       ),
                       Text(
-                        "${secondsToString((1000 * _durationList[_selectedIndex] / _distanceList[_selectedIndex]).round())}\n페이스",
+                        "${secondsToString((_distanceList[_selectedIndex] == 0 ? 0 : 1000 * _durationList[_selectedIndex] / _distanceList[_selectedIndex]).round())}\n페이스",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,

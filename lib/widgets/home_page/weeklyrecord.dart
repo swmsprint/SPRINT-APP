@@ -121,7 +121,7 @@ class _WeeklyRecordState extends State<WeeklyRecord> {
                         ),
                       ),
                       Text(
-                        "${secondsToString((1000 * _duration / _distance).round())}\n페이스",
+                        "${secondsToString((_distance == 0 ? 0 : 1000 * _duration / _distance).round())}\n페이스",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
