@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/widgets/stats_page/profile.dart';
+import 'package:sprint/screens/friends_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key}) : super(key: key);
@@ -63,7 +64,12 @@ class CustomDrawer extends StatelessWidget {
               ],
             ),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const FriendsPage(),
+                    fullscreenDialog: true),
+              );
             },
           ),
           ListTile(
