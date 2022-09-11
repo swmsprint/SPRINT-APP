@@ -72,6 +72,12 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
   }
 
   @override
+  dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<Widget> runningButtons = [
       NeumorphicButton(

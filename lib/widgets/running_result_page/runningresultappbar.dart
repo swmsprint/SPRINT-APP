@@ -18,9 +18,7 @@ class RunningResultAppBar extends StatelessWidget with PreferredSizeWidget {
           color: Color(0xff5563de),
         ),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const RootPage();
-          }));
+          Navigator.of(context).popUntil((route) => route.isFirst);
         },
       ),
     );

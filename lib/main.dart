@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sprint/widgets/main/appbar.dart';
 import 'package:sprint/widgets/main/bottomnavbar.dart';
 import 'package:flutter_config/flutter_config.dart';
-
+import 'package:sprint/widgets/main/drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
@@ -43,31 +43,7 @@ class _RootPageState extends State<RootPage> {
       key: _scaffoldKey,
       appBar: CustomAppBar(_scaffoldKey),
       body: TabPage(),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
+      endDrawer: const CustomDrawer(),
     );
   }
 }
