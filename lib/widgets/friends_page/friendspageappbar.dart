@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/screens/add_friends_page.dart';
+import 'package:sprint/screens/friend_request_page.dart';
 
 class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
   bool isAddFriends = false;
@@ -22,7 +23,19 @@ class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
             letterSpacing: 1),
       ),
       actions: isAddFriends
-          ? null
+          ? [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FriendRequestPage(),
+                        fullscreenDialog: true),
+                  );
+                },
+                icon: const Icon(Icons.send),
+              )
+            ]
           : [
               IconButton(
                 icon: const Icon(Icons.group_add),

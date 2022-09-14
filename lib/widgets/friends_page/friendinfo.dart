@@ -56,7 +56,7 @@ class FriendInfo extends StatelessWidget {
                   color: Color(0xff5563de),
                 ),
                 onPressed: () {
-                  _deleteFriendRequest(friend.userId);
+                  _deleteFriend(friend.userId);
                 },
               ),
             ],
@@ -66,14 +66,14 @@ class FriendInfo extends StatelessWidget {
     );
   }
 
-  _deleteFriendRequest(targetUserId) async {
+  _deleteFriend(targetUserId) async {
     final response =
         await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
             headers: {
               'Content-Type': 'application/json',
             },
             body: jsonEncode({
-              "friendState": "DELETED",
+              "friendState": "DELETE",
               "sourceUserId": 1,
               'targetUserId': targetUserId,
             }));

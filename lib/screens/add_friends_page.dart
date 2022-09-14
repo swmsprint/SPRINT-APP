@@ -108,9 +108,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
               ],
             ),
             Column(
-                children: _userList
-                    .map((user) => UserInfo(user: user))
-                    .toList()),
+                children:
+                    _userList.map((user) => UserInfo(user: user)).toList()),
           ],
         ),
       ),

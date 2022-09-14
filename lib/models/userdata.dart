@@ -18,11 +18,11 @@ class UserData {
   });
 
   UserData.fromJson(Map<String, dynamic> json)
-      : userId = json['userId'],
-        nickname = json['nickname'],
-        email = json['email'],
-        height = json['height'],
-        weight = json['weight'],
-        tierId = json['tierId'],
-        isFriend = json['isFriend'];
+      : userId = json['userId'] ?? 0,
+        nickname = json['nickname'] ?? '',
+        email = json['email'] ?? '',
+        height = json['height'] ?? 175,
+        weight = json['weight'] ?? 70,
+        tierId = json['tierId'] ?? 1,
+        isFriend = json['isFriend'] ?? 'NOT_FRIEND';
 }

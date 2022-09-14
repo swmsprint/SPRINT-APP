@@ -1,39 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/models/frienddata.dart';
-import 'package:sprint/widgets/friends_page/friendinfo.dart';
-import 'package:sprint/widgets/friends_page/friendspageappbar.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 
-import 'package:sprint/widgets/friend_requests_page/recievedrequestinfo.dart';
+import '../models/frienddata.dart';
+import '../widgets/friend_requests_page/recievedrequestinfo.dart';
+import '../widgets/friend_requests_page/sentrequestinfo.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class FriendsPage extends StatefulWidget {
-  const FriendsPage({super.key});
+class FriendRequestPage extends StatefulWidget {
+  const FriendRequestPage({super.key});
 
   @override
-  State<FriendsPage> createState() => _FriendsPageState();
+  State<FriendRequestPage> createState() => _FriendRequestPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
+class _FriendRequestPageState extends State<FriendRequestPage> {
   late int _recievedCount;
   late List<FriendData> _recievedList;
-  late int _friendsCount;
-  late List<FriendData> _friendsList;
+  late int _sentCount;
+  late List<FriendData> _sentList;
 
   late Future<dynamic> _recievedData;
-  late Future<dynamic> _friendsData;
+  late Future<dynamic> _sentData;
 
   @override
   void initState() {
-    _friendsCount = 0;
-    _recievedCount = 0;
-    _friendsList = [];
-    _recievedList = [];
     super.initState();
+    _recievedCount = 0;
+    _sentCount = 0;
+    _recievedList = [];
+    _sentList = [];
     _recievedData = _getRecievedRequests().then((data) {
       _recievedCount = data['count'];
       _recievedList = [];
@@ -42,10 +41,11 @@ class _FriendsPageState extends State<FriendsPage> {
       }
       return data;
     });
-    _friendsData = _getFriends().then((data) {
-      _friendsCount = data['count'];
-      for (int i = 0; i < _friendsCount; i++) {
-        _friendsList.add(FriendData.fromJson(data['userList'][i]));
+    _sentData = _getSentRequests().then((data) {
+      _sentCount = data['count'];
+      _sentList = [];
+      for (int i = 0; i < _sentCount; i++) {
+        _sentList.add(FriendData.fromJson(data['userList'][i]));
       }
       return data;
     });
@@ -54,7 +54,20 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: FriendsPageAppBar(),
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff3f5fc),
+        iconTheme: const IconThemeData(
+          color: Color(0xff5563de),
+        ),
+        title: const Text(
+          "친구 요청",
+          style: TextStyle(
+              color: Color(0xff5563de),
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              letterSpacing: 1),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -63,35 +76,35 @@ class _FriendsPageState extends State<FriendsPage> {
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 List<Widget> children;
                 if (snapshot.hasData) {
-                  children = _recievedCount > 0
-                      ? <Widget>[
-                          const Padding(padding: EdgeInsets.all(10)),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 0.075 *
-                                        MediaQuery.of(context).size.width),
-                              ),
-                              Text(
-                                "받은 요청 ($_recievedCount개)",
-                                style: const TextStyle(
-                                  color: Color(0xff5563de),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
+                  children = <Widget>[
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 0.075 * MediaQuery.of(context).size.width),
+                        ),
+                        Text(
+                          _recievedCount == 0
+                              ? "받은 요청이 없습니다"
+                              : "받은 요청 ($_recievedCount개)",
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            letterSpacing: 1,
                           ),
-                          Column(
-                              children: _recievedList
-                                  .map((friend) =>
-                                      RecievedRequestInfo(friend: friend))
-                                  .toList()),
-                        ]
-                      : <Widget>[];
+                        ),
+                      ],
+                    ),
+                    Column(
+                        children: _recievedList
+                            .map(
+                                (friend) => RecievedRequestInfo(friend: friend))
+                            .toList()),
+                  ];
                 } else if (snapshot.hasError) {
+                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -122,9 +135,8 @@ class _FriendsPageState extends State<FriendsPage> {
                 );
               },
             ),
-            FutureBuilder<dynamic>(
-              future:
-                  _friendsData, // a previously-obtained Future<String> or null
+            FutureBuilder(
+              future: _sentData,
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 List<Widget> children;
                 if (snapshot.hasData) {
@@ -137,9 +149,9 @@ class _FriendsPageState extends State<FriendsPage> {
                               left: 0.075 * MediaQuery.of(context).size.width),
                         ),
                         Text(
-                          _friendsCount == 0
-                              ? "친구를 추가해 보세요!"
-                              : "친구 ($_friendsCount명)",
+                          _sentCount == 0
+                              ? "보낸 요청이 없습니다"
+                              : "보낸 요청 ($_sentCount개)",
                           style: const TextStyle(
                             color: Color(0xff5563de),
                             fontWeight: FontWeight.bold,
@@ -150,8 +162,8 @@ class _FriendsPageState extends State<FriendsPage> {
                       ],
                     ),
                     Column(
-                        children: _friendsList
-                            .map((friend) => FriendInfo(friend: friend))
+                        children: _sentList
+                            .map((user) => SentRequestInfo(friend: user))
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
@@ -163,7 +175,7 @@ class _FriendsPageState extends State<FriendsPage> {
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 16),
-                      child: Text('친구 목록을 불러 오는데 실패했습니다. 다시 시도해 주세요.'),
+                      child: Text('보낸 친구 요청을 불러 오는데 실패했습니다. 다시 시도해 주세요.'),
                     ),
                   ];
                 } else {
@@ -175,7 +187,7 @@ class _FriendsPageState extends State<FriendsPage> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 16),
-                      child: Text('친구 목록을 불러오는 중...'),
+                      child: Text('보낸 친구 요청을 불러오는 중...'),
                     ),
                   ];
                 }
@@ -207,9 +219,10 @@ class _FriendsPageState extends State<FriendsPage> {
     }
   }
 
-  _getFriends() async {
+  _getSentRequests() async {
     final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/friends/list?userId=1'),
+      Uri.parse(
+          '$serverurl:8080/api/user-management/friends/list/requested?userId=1'),
       headers: {
         'Content-Type': 'application/json',
       },
