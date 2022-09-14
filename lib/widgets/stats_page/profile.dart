@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
   bool isDrawer = false;
-  Profile({Key? key, this.isDrawer = false}) : super(key: key);
+  final int userId;
+  Profile({Key? key, this.isDrawer = false, required this.userId}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Row(

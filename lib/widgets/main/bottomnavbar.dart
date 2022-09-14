@@ -24,7 +24,9 @@ class _TabPageState extends State<TabPage> {
       const HomePage(),
       const GroupPage(),
       const BattlePage(),
-      const StatsPage(),
+      const StatsPage(
+        userId: 1,
+      ),
     ];
   }
 

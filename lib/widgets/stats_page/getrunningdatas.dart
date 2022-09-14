@@ -11,10 +11,10 @@ import 'package:flutter_config/flutter_config.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-_getRunningDatas(pageKey) async {
+_getRunningDatas(pageKey, userId) async {
   final response = await http.get(
     Uri.parse(
-        '$serverurl:8080/api/running/personal/?pageNumber=$pageKey&userId=1'),
+        '$serverurl:8080/api/running/personal/?pageNumber=$pageKey&userId=$userId'),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -36,10 +36,10 @@ _getRunningDatas(pageKey) async {
   }
 }
 
-_getRunningDetail(runningId) async {
+_getRunningDetail(runningId, userId) async {
   final response = await http.get(
     Uri.parse(
-        '$serverurl:8080/api/running/detail/?runningId=$runningId&userId=1'),
+        '$serverurl:8080/api/running/detail/?runningId=$runningId&userId=$userId'),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -52,19 +52,21 @@ _getRunningDetail(runningId) async {
 }
 
 class RunningItem extends StatelessWidget {
+  final RunningData data;
+  final int userId;
   const RunningItem({
     required this.data,
+    required this.userId,
     Key? key,
   }) : super(key: key);
 
-  final RunningData data;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            _getRunningDetail(data.runningId).then(
+            _getRunningDetail(data.runningId, userId).then(
               (value) {
                 List<PositionData> rawdata = [];
                 for (int i = 0; i < value["runningData"].length; i++) {
@@ -178,7 +180,8 @@ class RunningItem extends StatelessWidget {
 }
 
 class RunningListView extends StatefulWidget {
-  const RunningListView({Key? key}) : super(key: key);
+  final int userId;
+  const RunningListView({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<RunningListView> createState() => _RunningListViewState();
@@ -193,14 +196,14 @@ class _RunningListViewState extends State<RunningListView> {
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+      _fetchPage(pageKey, widget.userId);
     });
     super.initState();
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage(int pageKey, int userId) async {
     try {
-      final newItems = await _getRunningDatas(pageKey);
+      final newItems = await _getRunningDatas(pageKey, userId);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -225,6 +228,7 @@ class _RunningListViewState extends State<RunningListView> {
         builderDelegate: PagedChildBuilderDelegate<RunningData>(
           itemBuilder: (context, item, index) => RunningItem(
             data: item,
+            userId: widget.userId,
           ),
         ),
       );

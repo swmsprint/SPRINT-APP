@@ -4,6 +4,7 @@ import 'package:sprint/models/frienddata.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -33,34 +34,49 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
           const Padding(padding: EdgeInsets.all(5)),
           Row(
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(
-                  "assets/images/${widget.friend.userId}.png",
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FriendsStatsPage(userId: widget.friend.userId),
+                        fullscreenDialog: false),
+                  );
+                },
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(
+                        "assets/images/${widget.friend.userId}.png",
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.friend.nickname,
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text(
+                          widget.friend.email,
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const Padding(padding: EdgeInsets.all(10)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.friend.nickname,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.all(5)),
-                  Text(
-                    widget.friend.email,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
               ),
               const Spacer(),
               _isSent

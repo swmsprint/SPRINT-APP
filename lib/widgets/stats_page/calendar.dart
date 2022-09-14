@@ -2,7 +2,8 @@ import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class HMCalendar extends StatefulWidget {
-  const HMCalendar({Key? key}) : super(key: key);
+  final int userId;
+  const HMCalendar({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<HMCalendar> createState() => _HMCalendarState();

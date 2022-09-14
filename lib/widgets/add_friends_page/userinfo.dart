@@ -4,6 +4,7 @@ import 'package:sprint/models/userdata.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -16,12 +17,10 @@ class UserInfo extends StatefulWidget {
 }
 
 class _UserInfoState extends State<UserInfo> {
-  late bool _isSent;
   late int _actionButtonindex;
 
   @override
   void initState() {
-    _isSent = false;
     if (widget.user.isFriend == "NOT_FRIEND") {
       _actionButtonindex = 0;
     } else {
@@ -36,7 +35,7 @@ class _UserInfoState extends State<UserInfo> {
 
   @override
   Widget build(BuildContext context) {
-    List ActionButtons = [
+    List actionButtons = [
       IconButton(
         icon: const Icon(
           Icons.group_add,
@@ -82,37 +81,52 @@ class _UserInfoState extends State<UserInfo> {
           const Padding(padding: EdgeInsets.all(5)),
           Row(
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(
-                  "assets/images/${widget.user.userId}.png",
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FriendsStatsPage(userId: widget.user.userId),
+                        fullscreenDialog: false),
+                  );
+                },
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(
+                        "assets/images/${widget.user.userId}.png",
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.user.nickname,
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text(
+                          widget.user.email,
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const Padding(padding: EdgeInsets.all(10)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.user.nickname,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.all(5)),
-                  Text(
-                    widget.user.email,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
               const Spacer(),
-              ActionButtons[_actionButtonindex],
+              actionButtons[_actionButtonindex],
             ],
           ),
         ],
