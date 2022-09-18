@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/screens/add_friends_page.dart';
+import 'package:sprint/screens/search_friends_page.dart';
 import 'package:sprint/screens/friend_request_page.dart';
 
 class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
-  bool isAddFriends = false;
-  FriendsPageAppBar({Key? key, this.isAddFriends = false}) : super(key: key);
+  bool isSearchFriends = false;
+  FriendsPageAppBar({Key? key, this.isSearchFriends = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +14,21 @@ class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
       iconTheme: const IconThemeData(
         color: Color(0xff5563de),
       ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        },
+      ),
       title: Text(
-        isAddFriends ? "친구 찾기" : "친구 관리",
+        isSearchFriends ? "친구 찾기" : "친구 관리",
         style: const TextStyle(
             color: Color(0xff5563de),
             fontWeight: FontWeight.bold,
             fontSize: 16,
             letterSpacing: 1),
       ),
-      actions: isAddFriends
+      actions: isSearchFriends
           ? [
               IconButton(
                 onPressed: () {
@@ -43,7 +49,7 @@ class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AddFriendsPage(),
+                        builder: (context) => const SearchFriendsPage(),
                         fullscreenDialog: true),
                   );
                 },

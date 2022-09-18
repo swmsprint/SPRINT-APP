@@ -24,10 +24,14 @@ class _UserInfoState extends State<UserInfo> {
     if (widget.user.isFriend == "NOT_FRIEND") {
       _actionButtonindex = 0;
     } else {
-      if (widget.user.isFriend == "ACCEPT") {
-        _actionButtonindex = 2;
-      } else {
+      if (widget.user.isFriend == "REQUEST") {
         _actionButtonindex = 1;
+      } else {
+        if (widget.user.isFriend == "RECEIVE") {
+          _actionButtonindex = 2;
+        } else {
+          _actionButtonindex = 3;
+        }
       }
     }
     super.initState();
@@ -60,18 +64,33 @@ class _UserInfoState extends State<UserInfo> {
           _deleteFriendRequest(widget.user.userId);
         },
       ),
-      IconButton(
-        icon: const Icon(
-          Icons.group_remove,
-          color: Color(0xff5563de),
+      Row(children: [
+        IconButton(
+          icon: const Icon(
+            Icons.check,
+            color: Color(0xff5563de),
+          ),
+          onPressed: () {
+            _respondFriendRequest(widget.user.userId, "ACCEPT");
+            setState(() {
+              _actionButtonindex = 3;
+            });
+          },
         ),
-        onPressed: () {
-          setState(() {
-            _actionButtonindex = 0;
-          });
-          _deleteFriend(widget.user.userId);
-        },
-      ),
+        IconButton(
+          icon: const Icon(
+            Icons.disabled_by_default,
+            color: Colors.red,
+          ),
+          onPressed: () {
+            _respondFriendRequest(widget.user.userId, "REJECT");
+            setState(() {
+              _actionButtonindex = 0;
+            });
+          },
+        ),
+      ]),
+      const SizedBox()
     ];
 
     return SizedBox(
@@ -177,6 +196,24 @@ class _UserInfoState extends State<UserInfo> {
             },
             body: jsonEncode({
               "friendState": "DELETE",
+              "sourceUserId": 1,
+              'targetUserId': targetUserId,
+            }));
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _respondFriendRequest(targetUserId, acceptance) async {
+    final response =
+        await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              "friendState": acceptance,
               "sourceUserId": 1,
               'targetUserId': targetUserId,
             }));

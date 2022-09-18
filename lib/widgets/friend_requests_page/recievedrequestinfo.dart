@@ -9,107 +9,95 @@ import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class RecievedRequestInfo extends StatefulWidget {
+class RecievedRequestInfo extends StatelessWidget {
   final FriendData friend;
-  const RecievedRequestInfo({Key? key, required this.friend}) : super(key: key);
-
-  @override
-  State<RecievedRequestInfo> createState() => _RecievedRequestInfoState();
-}
-
-class _RecievedRequestInfoState extends State<RecievedRequestInfo> {
-  late bool _show;
-
-  @override
-  void initState() {
-    super.initState();
-    _show = true;
-  }
+  final Function() acceptRequest;
+  final Function() denyRequest;
+  const RecievedRequestInfo(
+      {Key? key,
+      required this.friend,
+      required this.acceptRequest,
+      required this.denyRequest})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return _show
-        ? SizedBox(
-            width: 0.85 * MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                const Padding(padding: EdgeInsets.all(5)),
-                Row(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FriendsStatsPage(
-                                    userId: widget.friend.userId),
-                                fullscreenDialog: false),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: AssetImage(
-                                "assets/images/${widget.friend.userId}.png",
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.all(10)),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.friend.nickname,
-                                  style: const TextStyle(
-                                    color: Color(0xff5563de),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.all(5)),
-                                Text(
-                                  widget.friend.email,
-                                  style: const TextStyle(
-                                    color: Color(0xff5563de),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.check,
-                        color: Color(0xff5563de),
+    return SizedBox(
+      width: 0.85 * MediaQuery.of(context).size.width,
+      child: Column(
+        children: [
+          const Padding(padding: EdgeInsets.all(5)),
+          Row(
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              FriendsStatsPage(userId: friend.userId),
+                          fullscreenDialog: false),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage(
+                          "assets/images/${friend.userId}.png",
+                        ),
                       ),
-                      onPressed: () {
-                        _respondFriendRequest(widget.friend.userId, "ACCEPT");
-                        setState(() {
-                          _show = false;
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.disabled_by_default,
-                        color: Colors.red,
+                      const Padding(padding: EdgeInsets.all(10)),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            friend.nickname,
+                            style: const TextStyle(
+                              color: Color(0xff5563de),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const Padding(padding: EdgeInsets.all(5)),
+                          Text(
+                            friend.email,
+                            style: const TextStyle(
+                              color: Color(0xff5563de),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        _respondFriendRequest(widget.friend.userId, "REJECT");
-                        setState(() {
-                          _show = false;
-                        });
-                      },
-                    ),
-                  ],
+                    ],
+                  )),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(
+                  Icons.check,
+                  color: Color(0xff5563de),
                 ),
-              ],
-            ),
-          )
-        : const SizedBox();
+                onPressed: () {
+                  _respondFriendRequest(friend.userId, "ACCEPT");
+                  acceptRequest();
+                },
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.disabled_by_default,
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  _respondFriendRequest(friend.userId, "REJECT");
+                  denyRequest();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   _respondFriendRequest(targetUserId, acceptance) async {

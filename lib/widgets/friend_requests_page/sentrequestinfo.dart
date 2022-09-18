@@ -8,22 +8,12 @@ import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class SentRequestInfo extends StatefulWidget {
+class SentRequestInfo extends StatelessWidget {
   final FriendData friend;
-  const SentRequestInfo({Key? key, required this.friend}) : super(key: key);
-
-  @override
-  State<SentRequestInfo> createState() => _SentRequestInfoState();
-}
-
-class _SentRequestInfoState extends State<SentRequestInfo> {
-  late bool _isSent;
-
-  @override
-  void initState() {
-    _isSent = true;
-    super.initState();
-  }
+  final Function() cancelRequest;
+  const SentRequestInfo(
+      {Key? key, required this.friend, required this.cancelRequest()})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +30,7 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            FriendsStatsPage(userId: widget.friend.userId),
+                            FriendsStatsPage(userId: friend.userId),
                         fullscreenDialog: false),
                   );
                 },
@@ -48,7 +38,7 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
                   children: [
                     CircleAvatar(
                       backgroundImage: AssetImage(
-                        "assets/images/${widget.friend.userId}.png",
+                        "assets/images/${friend.userId}.png",
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(10)),
@@ -57,7 +47,7 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.friend.nickname,
+                          friend.nickname,
                           style: const TextStyle(
                             color: Color(0xff5563de),
                             fontWeight: FontWeight.bold,
@@ -66,7 +56,7 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
                         ),
                         const Padding(padding: EdgeInsets.all(5)),
                         Text(
-                          widget.friend.email,
+                          friend.email,
                           style: const TextStyle(
                             color: Color(0xff5563de),
                             fontWeight: FontWeight.bold,
@@ -79,31 +69,16 @@ class _SentRequestInfoState extends State<SentRequestInfo> {
                 ),
               ),
               const Spacer(),
-              _isSent
-                  ? IconButton(
-                      icon: const Icon(
-                        Icons.check,
-                        color: Color(0xff5563de),
-                      ),
-                      onPressed: () {
-                        _deleteFriendRequest(widget.friend.userId);
-                        setState(() {
-                          _isSent = false;
-                        });
-                      },
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.group_add,
-                        color: Color(0xff5563de),
-                      ),
-                      onPressed: () {
-                        _postFriendRequest(widget.friend.userId);
-                        setState(() {
-                          _isSent = true;
-                        });
-                      },
-                    ),
+              IconButton(
+                icon: const Icon(
+                  Icons.check,
+                  color: Color(0xff5563de),
+                ),
+                onPressed: () {
+                  _deleteFriendRequest(friend.userId);
+                  cancelRequest();
+                },
+              )
             ],
           ),
         ],

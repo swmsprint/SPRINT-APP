@@ -59,6 +59,13 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
         iconTheme: const IconThemeData(
           color: Color(0xff5563de),
         ),
+        elevation: 0.0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+        ),
         title: const Text(
           "친구 요청",
           style: TextStyle(
@@ -99,8 +106,21 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                     ),
                     Column(
                         children: _recievedList
-                            .map(
-                                (friend) => RecievedRequestInfo(friend: friend))
+                            .map((friend) => RecievedRequestInfo(
+                                  friend: friend,
+                                  acceptRequest: () {
+                                    setState(() {
+                                      _recievedCount--;
+                                      _recievedList.remove(friend);
+                                    });
+                                  },
+                                  denyRequest: () {
+                                    setState(() {
+                                      _recievedCount--;
+                                      _recievedList.remove(friend);
+                                    });
+                                  },
+                                ))
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
@@ -163,7 +183,14 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                     ),
                     Column(
                         children: _sentList
-                            .map((user) => SentRequestInfo(friend: user))
+                            .map((user) => SentRequestInfo(
+                                friend: user,
+                                cancelRequest: () {
+                                  setState(() {
+                                    _sentCount--;
+                                    _sentList.remove(user);
+                                  });
+                                }))
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {

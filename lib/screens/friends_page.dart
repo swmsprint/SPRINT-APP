@@ -86,8 +86,22 @@ class _FriendsPageState extends State<FriendsPage> {
                           ),
                           Column(
                               children: _recievedList
-                                  .map((friend) =>
-                                      RecievedRequestInfo(friend: friend))
+                                  .map((friend) => RecievedRequestInfo(
+                                      friend: friend,
+                                      acceptRequest: () {
+                                        setState(() {
+                                          _recievedCount--;
+                                          _friendsCount++;
+                                          _friendsList.add(friend);
+                                          _recievedList.remove(friend);
+                                        });
+                                      },
+                                      denyRequest: () {
+                                        setState(() {
+                                          _recievedCount--;
+                                          _recievedList.remove(friend);
+                                        });
+                                      }))
                                   .toList()),
                         ]
                       : <Widget>[];
@@ -151,7 +165,14 @@ class _FriendsPageState extends State<FriendsPage> {
                     ),
                     Column(
                         children: _friendsList
-                            .map((friend) => FriendInfo(friend: friend))
+                            .map((friend) => FriendInfo(
+                                friend: friend,
+                                reduceFriendsCount: () {
+                                  setState(() {
+                                    _friendsCount--;
+                                    _friendsList.remove(friend);
+                                  });
+                                }))
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
