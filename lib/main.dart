@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/screens/login_page.dart';
 import 'package:sprint/widgets/main/appbar.dart';
 import 'package:sprint/widgets/main/bottomnavbar.dart';
 import 'package:flutter_config/flutter_config.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xfff3f5fc),
       ),
       debugShowCheckedModeBanner: false,
-      home: const RootPage(),
+      home: const LoginPage(),
     );
   }
 }

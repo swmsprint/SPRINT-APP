@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/widgets/add_friends_page/userinfo.dart';
+import 'package:sprint/widgets/search_friends_page/userinfo.dart';
 import 'package:sprint/widgets/friends_page/friendspageappbar.dart';
 
 import 'package:sprint/models/userdata.dart';
@@ -10,14 +10,14 @@ import 'package:flutter_config/flutter_config.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class AddFriendsPage extends StatefulWidget {
-  const AddFriendsPage({super.key});
+class SearchFriendsPage extends StatefulWidget {
+  const SearchFriendsPage({super.key});
 
   @override
-  State<AddFriendsPage> createState() => _AddFriendsPageState();
+  State<SearchFriendsPage> createState() => _SearchFriendsPageState();
 }
 
-class _AddFriendsPageState extends State<AddFriendsPage> {
+class _SearchFriendsPageState extends State<SearchFriendsPage> {
   late TextEditingController _controller;
   late int _userCount;
   late List<UserData> _userList;
@@ -39,7 +39,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: FriendsPageAppBar(isAddFriends: true),
+      appBar: FriendsPageAppBar(isSearchFriends: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -108,9 +108,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
               ],
             ),
             Column(
-                children: _userList
-                    .map((user) => UserInfo(user: user))
-                    .toList()),
+                children:
+                    _userList.map((user) => UserInfo(user: user)).toList()),
           ],
         ),
       ),
@@ -127,6 +126,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = jsonDecode(response.body);
+      print(result);
       setState(() {
         _userCount = result['count'];
         _userList = [];

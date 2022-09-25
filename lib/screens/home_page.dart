@@ -87,7 +87,9 @@ class HomePage extends StatelessWidget {
                   const Padding(padding: EdgeInsets.all(10)),
                   const DailyRecord(),
                   const Padding(padding: EdgeInsets.all(10)),
-                  const RunningListView(),
+                  const RunningListView(
+                    userId: 1,
+                  ),
                 ],
               ),
             ]),

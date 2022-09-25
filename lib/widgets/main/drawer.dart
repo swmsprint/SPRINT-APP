@@ -12,9 +12,9 @@ class CustomDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          Padding(padding: EdgeInsets.all(20)),
-          Profile(isDrawer: true),
-          Padding(padding: EdgeInsets.all(10)),
+          const Padding(padding: EdgeInsets.all(20)),
+          Profile(userId: 1, isDrawer: true),
+          const Padding(padding: EdgeInsets.all(10)),
           ListTile(
             title: Row(
               children: [

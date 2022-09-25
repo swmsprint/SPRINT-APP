@@ -42,6 +42,7 @@ dependencies:
   flutter_neumorphic: ^3.2.0
   infinite_scroll_pagination: ^3.2.0
   path_provider: ^2.0.11
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +99,12 @@ flutter:
     - assets/images/4.png
     - assets/images/5.png
     - assets/images/6.png
+    - assets/images/login/apple.png
+    - assets/images/login/google.png
+    - assets/images/login/kakao.png
+    - assets/images/login/1.png
+    - assets/images/login/2.png
+    - assets/images/login/3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

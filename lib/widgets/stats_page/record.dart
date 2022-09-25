@@ -8,7 +8,8 @@ import 'package:flutter_config/flutter_config.dart';
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class Record extends StatefulWidget {
-  const Record({Key? key}) : super(key: key);
+  final int userId;
+  const Record({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<Record> createState() => _RecordState();
@@ -24,7 +25,7 @@ class _RecordState extends State<Record> {
 
   _getStatistics() async {
     final response = await http.get(
-      Uri.parse('$serverurl:8080/api/statistics/1'),
+      Uri.parse('$serverurl:8080/api/statistics/${widget.userId}'),
       headers: {
         'Content-Type': 'application/json',
       },

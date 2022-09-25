@@ -4,12 +4,16 @@ import 'package:sprint/models/frienddata.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class FriendInfo extends StatelessWidget {
   final FriendData friend;
-  const FriendInfo({Key? key, required this.friend}) : super(key: key);
+  final Function() reduceFriendsCount;
+  const FriendInfo(
+      {Key? key, required this.friend, required this.reduceFriendsCount})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,34 +24,47 @@ class FriendInfo extends StatelessWidget {
           const Padding(padding: EdgeInsets.all(5)),
           Row(
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(
-                  "assets/images/${friend.userId}.png",
-                ),
-              ),
-              const Padding(padding: EdgeInsets.all(10)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    friend.nickname,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FriendsStatsPage(userId: friend.userId),
+                        fullscreenDialog: false),
+                  );
+                },
+                child: Row(children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage(
+                      "assets/images/${friend.userId}.png",
                     ),
                   ),
-                  const Padding(padding: EdgeInsets.all(5)),
-                  Text(
-                    friend.email,
-                    style: const TextStyle(
-                      color: Color(0xff5563de),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        friend.nickname,
+                        style: const TextStyle(
+                          color: Color(0xff5563de),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Padding(padding: EdgeInsets.all(5)),
+                      Text(
+                        friend.email,
+                        style: const TextStyle(
+                          color: Color(0xff5563de),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ]),
               ),
               const Spacer(),
               IconButton(
@@ -56,7 +73,7 @@ class FriendInfo extends StatelessWidget {
                   color: Color(0xff5563de),
                 ),
                 onPressed: () {
-                  _deleteFriendRequest(friend.userId);
+                  _deleteFriend(friend.userId, reduceFriendsCount);
                 },
               ),
             ],
@@ -66,19 +83,20 @@ class FriendInfo extends StatelessWidget {
     );
   }
 
-  _deleteFriendRequest(targetUserId) async {
+  _deleteFriend(targetUserId, reduceFriendCount) async {
     final response =
         await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
             headers: {
               'Content-Type': 'application/json',
             },
             body: jsonEncode({
-              "friendState": "DELETED",
+              "friendState": "DELETE",
               "sourceUserId": 1,
               'targetUserId': targetUserId,
             }));
     if (response.statusCode == 200) {
       print("Success");
+      reduceFriendsCount();
     } else {
       print("Failed : ${response.statusCode}");
     }
