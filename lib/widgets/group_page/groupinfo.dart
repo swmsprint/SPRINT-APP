@@ -67,8 +67,8 @@ class _GroupInfoState extends State<GroupInfo> {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage(
-                        "assets/images/${widget.group.groupId}.png",
+                      backgroundImage: NetworkImage(
+                        widget.group.groupPicture,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(10)),
@@ -99,6 +99,15 @@ class _GroupInfoState extends State<GroupInfo> {
                 ),
               ),
               const Spacer(),
+              Text(
+                "${widget.group.groupPersonnel} / ${widget.group.groupMaxPersonnel}",
+                style: const TextStyle(
+                  color: Color(0xff5563de),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
               actionButtons[_actionButtonindex],
             ],
           ),

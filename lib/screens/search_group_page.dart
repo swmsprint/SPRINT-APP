@@ -106,8 +106,9 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
               ],
             ),
             Column(
-                children:
-                    _groupList.map((group) => GroupInfo(group:group)).toList()),
+                children: _groupList
+                    .map((group) => GroupInfo(group: group))
+                    .toList()),
           ],
         ),
       ),
@@ -122,7 +123,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
       },
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
       print(result);
       setState(() {
         _groupCount = result['count'];

@@ -1,11 +1,16 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sprint/widgets/group_page/grouppageappbar.dart';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
+String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
+String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
 
 class CreateGroupPage extends StatefulWidget {
   const CreateGroupPage({super.key});
@@ -18,6 +23,9 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   late TextEditingController _groupNameController;
   late TextEditingController _groupDescriptionController;
   late double _groupMembers;
+  late String? _image;
+
+  final ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
@@ -25,6 +33,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     _groupNameController = TextEditingController();
     _groupDescriptionController = TextEditingController();
     _groupMembers = 5;
+    _image = null;
   }
 
   @override
@@ -45,13 +54,19 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
             Center(
               child: Stack(
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     child: CircleAvatar(
                       radius: 70,
-                      backgroundColor: Color(0x70707070),
+                      backgroundColor: const Color(0x70707070),
                       child: CircleAvatar(
                         radius: 68,
-                        backgroundColor: Colors.white,
+                        backgroundImage: _image != null
+                            ? FileImage(
+                                File(_image!),
+                              )
+                            : null,
+                        backgroundColor:
+                            _image != null ? Colors.transparent : Colors.white,
                       ),
                     ),
                   ),
@@ -63,9 +78,9 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                       height: 40,
                       child: FloatingActionButton(
                         backgroundColor: const Color(0xff5563de),
-                        onPressed: () {},
+                        onPressed: _getImage,
                         child: const Icon(
-                          Icons.add,
+                          Icons.add_a_photo,
                           color: Colors.white,
                         ),
                       ),
@@ -199,7 +214,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
             SizedBox(
               width: 200,
               child: NeumorphicButton(
-                onPressed: _createGroup,
+                onPressed: _uploadImage,
                 style: NeumorphicStyle(
                   shape: NeumorphicShape.concave,
                   boxShape:
@@ -237,11 +252,40 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               "groupLeaderId": 1,
               "groupName": _groupNameController.text,
               "groupDescription": _groupDescriptionController.text,
-              "groupPicture": null
+              "groupPicture": _image == null
+                  ? null
+                  : "$imageurl/${_groupNameController.text}.jpeg",
             }));
     if (response.statusCode == 200) {
       print("groupId: ${jsonDecode(response.body)['groupId']}");
       Navigator.pop(context);
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  Future<void> _getImage() async {
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        cropStyle: CropStyle.circle,
+      );
+      setState(() {
+        _image = croppedImage!.path;
+      });
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    final response = await http.put(
+        Uri.parse("$bucketurl/${_groupNameController.text}.jpeg"),
+        headers: {
+          'Content-Type': 'image/jpeg',
+        },
+        body: File(_image!).readAsBytesSync());
+    if (response.statusCode == 200) {
+      _createGroup();
     } else {
       print("Failed : ${response.statusCode}");
     }
