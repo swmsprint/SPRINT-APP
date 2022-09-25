@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/widgets/login_page/carousel.dart';
+import 'package:sprint/main.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -20,7 +21,13 @@ class LoginPage extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: IconButton(
                   icon: Image.asset('assets/images/login/apple.png'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RootPage()),
+                        (_) => false);
+                  },
                 ),
               ),
               SizedBox(
@@ -28,7 +35,13 @@ class LoginPage extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: IconButton(
                   icon: Image.asset('assets/images/login/google.png'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RootPage()),
+                        (_) => false);
+                  },
                 ),
               ),
               SizedBox(
@@ -36,7 +49,13 @@ class LoginPage extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: IconButton(
                   icon: Image.asset('assets/images/login/kakao.png'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RootPage()),
+                        (_) => false);
+                  },
                 ),
               ),
             ]),

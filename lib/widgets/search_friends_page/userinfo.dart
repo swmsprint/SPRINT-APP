@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/userdata.dart';
+import 'package:sprint/screens/friends_stats_page.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:sprint/screens/friends_stats_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/widgets/add_friends_page/userinfo.dart';
+import 'package:sprint/widgets/search_friends_page/userinfo.dart';
 import 'package:sprint/widgets/friends_page/friendspageappbar.dart';
 
 import 'package:sprint/models/userdata.dart';
