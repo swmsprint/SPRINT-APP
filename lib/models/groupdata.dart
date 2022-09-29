@@ -24,5 +24,5 @@ class GroupData {
         groupPicture = json['groupPicture'] ?? '',
         groupPersonnel = json['groupPersonnel'] ?? 0,
         groupMaxPersonnel = json['groupMaxPersonnel'] ?? 0,
-        isMember = json['isMember'] ?? 'NOT_MEMBER';
+        isMember = json['state'] ?? 'NOT_MEMBER';
 }

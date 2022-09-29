@@ -249,7 +249,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               'Content-Type': 'application/json',
             },
             body: jsonEncode({
-              "groupLeaderId": 1,
+              "groupLeaderId": 2,
               "groupName": _groupNameController.text,
               "groupDescription": _groupDescriptionController.text,
               "groupPicture": _image == null

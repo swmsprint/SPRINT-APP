@@ -19,7 +19,14 @@ class _GroupInfoState extends State<GroupInfo> {
   late int _actionButtonindex;
   @override
   void initState() {
-    _actionButtonindex = 0;
+    if (widget.group.isMember == "NOT_MEMBER") {
+      _actionButtonindex = 0;
+    } else if (widget.group.isMember == "REQUEST") {
+      _actionButtonindex = 1;
+    } else {
+      _actionButtonindex = 2;
+    }
+
     super.initState();
   }
 
@@ -50,6 +57,7 @@ class _GroupInfoState extends State<GroupInfo> {
           setState(() {
             _actionButtonindex = 0;
           });
+          _cancelJoinRequest(widget.group.groupId);
         },
       ),
       const SizedBox()
@@ -123,6 +131,21 @@ class _GroupInfoState extends State<GroupInfo> {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({"groupId": groupId, "userId": 1}));
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _cancelJoinRequest(groupId) async {
+    final response = await http.put(
+        Uri.parse('$serverurl:8080/api/user-management/groups/group-member'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+            {"groupId": groupId, "groupMemberState": "CANCEL", "userId": 1}));
     if (response.statusCode == 200) {
       print("Success");
     } else {
