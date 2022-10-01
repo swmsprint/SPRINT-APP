@@ -244,7 +244,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
 
   _createGroup() async {
     final response =
-        await http.post(Uri.parse('$serverurl:8080/api/user-management/groups'),
+        await http.post(Uri.parse('$serverurl:8080/api/user-management/group'),
             headers: {
               'Content-Type': 'application/json',
             },

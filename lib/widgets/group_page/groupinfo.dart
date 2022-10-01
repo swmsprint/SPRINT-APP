@@ -126,7 +126,7 @@ class _GroupInfoState extends State<GroupInfo> {
 
   _postJoinRequest(groupId) async {
     final response = await http.post(
-        Uri.parse('$serverurl:8080/api/user-management/groups/group-member'),
+        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -140,7 +140,7 @@ class _GroupInfoState extends State<GroupInfo> {
 
   _cancelJoinRequest(groupId) async {
     final response = await http.put(
-        Uri.parse('$serverurl:8080/api/user-management/groups/group-member'),
+        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
         headers: {
           'Content-Type': 'application/json',
         },

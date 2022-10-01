@@ -118,7 +118,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
   _getGroups(keyword) async {
     final response = await http.get(
       Uri.parse(
-          '$serverurl:8080/api/user-management/groups/list/?target=$keyword&userId=1'),
+          '$serverurl:8080/api/user-management/group/list/?target=$keyword&userId=1'),
       headers: {
         'Content-Type': 'application/json',
       },

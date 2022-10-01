@@ -147,7 +147,7 @@ class _GroupPageState extends State<GroupPage> {
 
   _getGroups() async {
     final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/groups/list/1'),
+      Uri.parse('$serverurl:8080/api/user-management/group/list/1'),
       headers: {
         'Content-Type': 'application/json',
       },
