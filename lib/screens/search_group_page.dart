@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/groupdata.dart';
-import 'package:sprint/widgets/group_page/groupinfo.dart';
+import 'package:sprint/widgets/group_page/groupabstract.dart';
 import 'package:sprint/widgets/group_page/grouppageappbar.dart';
 
 import 'package:http/http.dart' as http;
@@ -107,7 +107,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
             ),
             Column(
                 children: _groupList
-                    .map((group) => GroupInfo(group: group))
+                    .map((group) => GroupAbstract(group: group))
                     .toList()),
           ],
         ),

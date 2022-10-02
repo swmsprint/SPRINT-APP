@@ -6,7 +6,7 @@ import 'package:sprint/screens/search_group_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:sprint/widgets/group_page/groupinfo.dart';
+import 'package:sprint/widgets/group_page/groupabstract.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -103,7 +103,7 @@ class _GroupPageState extends State<GroupPage> {
                   children = <Widget>[
                     Column(
                         children: _groupsList
-                            .map((group) => GroupInfo(
+                            .map((group) => GroupAbstract(
                                   group: group,
                                 ))
                             .toList()),

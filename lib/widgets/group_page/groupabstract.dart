@@ -4,24 +4,25 @@ import 'package:sprint/models/groupdata.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sprint/screens/group_info_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class GroupInfo extends StatefulWidget {
+class GroupAbstract extends StatefulWidget {
   final GroupData group;
-  const GroupInfo({Key? key, required this.group}) : super(key: key);
+  const GroupAbstract({Key? key, required this.group}) : super(key: key);
 
   @override
-  State<GroupInfo> createState() => _GroupInfoState();
+  State<GroupAbstract> createState() => _GroupAbstractState();
 }
 
-class _GroupInfoState extends State<GroupInfo> {
+class _GroupAbstractState extends State<GroupAbstract> {
   late int _actionButtonindex;
   @override
   void initState() {
-    if (widget.group.isMember == "NOT_MEMBER") {
+    if (widget.group.state == "NOT_MEMBER") {
       _actionButtonindex = 0;
-    } else if (widget.group.isMember == "REQUEST") {
+    } else if (widget.group.state == "REQUEST") {
       _actionButtonindex = 1;
     } else {
       _actionButtonindex = 2;
@@ -71,7 +72,20 @@ class _GroupInfoState extends State<GroupInfo> {
           Row(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GroupInfoPage(
+                              groupId: widget.group.groupId,
+                              isLeader: (widget.group.state == "LEADER"),
+                              groupName: widget.group.groupName,
+                              groupDescription: widget.group.groupDescription,
+                              groupImage: widget.group.groupPicture,
+                            ),
+                        fullscreenDialog: false),
+                  );
+                },
                 child: Row(
                   children: [
                     CircleAvatar(

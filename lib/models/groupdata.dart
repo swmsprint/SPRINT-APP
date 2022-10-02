@@ -5,7 +5,7 @@ class GroupData {
   final String groupPicture;
   final int groupPersonnel;
   final int groupMaxPersonnel;
-  final String isMember;
+  final String state;
 
   const GroupData({
     required this.groupId,
@@ -14,7 +14,7 @@ class GroupData {
     required this.groupPicture,
     required this.groupPersonnel,
     required this.groupMaxPersonnel,
-    required this.isMember,
+    required this.state,
   });
 
   GroupData.fromJson(Map<String, dynamic> json)
@@ -24,5 +24,5 @@ class GroupData {
         groupPicture = json['groupPicture'] ?? '',
         groupPersonnel = json['groupPersonnel'] ?? 0,
         groupMaxPersonnel = json['groupMaxPersonnel'] ?? 0,
-        isMember = json['state'] ?? 'NOT_MEMBER';
+        state = json['state'] ?? 'NOT_MEMBER';
 }
