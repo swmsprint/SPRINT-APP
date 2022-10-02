@@ -232,8 +232,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
 
   _getRecievedRequests() async {
     final response = await http.get(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/friend/list/received?userId=1'),
+      Uri.parse('$serverurl:8080/api/user-management/friend/1/received'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -248,8 +247,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
 
   _getSentRequests() async {
     final response = await http.get(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/friend/list/requested?userId=1'),
+      Uri.parse('$serverurl:8080/api/user-management/friend/1/requested'),
       headers: {
         'Content-Type': 'application/json',
       },

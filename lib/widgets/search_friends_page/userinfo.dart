@@ -154,15 +154,15 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   _postFriendRequest(targetUserId) async {
-    final response = await http.post(
-        Uri.parse('$serverurl:8080/api/user-management/friends'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          "sourceUserId": 1,
-          'targetUserId': targetUserId, //Demo user
-        }));
+    final response =
+        await http.post(Uri.parse('$serverurl:8080/api/user-management/friend'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              "sourceUserId": 1,
+              'targetUserId': targetUserId, //Demo user
+            }));
     if (response.statusCode == 200) {
       print("Success");
     } else {
