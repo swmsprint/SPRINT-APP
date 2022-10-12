@@ -4,9 +4,11 @@ import 'package:sprint/widgets/main/appbar.dart';
 import 'package:sprint/widgets/main/bottomnavbar.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/widgets/main/drawer.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+  await Firebase.initializeApp();
   await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());
 }
