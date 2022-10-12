@@ -137,7 +137,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                                       ),
                                     ),
                                     Text(
-                                      "인원 : ${snapshot.data['groupPersonnel']} 명",
+                                      "인원 : ${snapshot.data['groupPersonnel']} / 50 명",
                                       style: const TextStyle(
                                         fontFamily: 'Segoe UI',
                                         fontSize: 15,
