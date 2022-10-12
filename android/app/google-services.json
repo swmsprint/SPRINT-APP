@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "709346106475",
+    "project_id": "sprint-b8ba1",
+    "storage_bucket": "sprint-b8ba1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709346106475:android:0102fc698ace2080d7a52e",
+        "android_client_info": {
+          "package_name": "com.example.sprint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709346106475-omc4qommb1hs9i56p9ptl4vsjch75h66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8yeb0-OpTdOkFumOl_1ByPbvrey_yQ9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709346106475-omc4qommb1hs9i56p9ptl4vsjch75h66.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "709346106475-89sg3ikoadt2mmt6ghdbku0v3a4a1vit.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sprint"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
