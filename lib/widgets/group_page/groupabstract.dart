@@ -4,22 +4,30 @@ import 'package:sprint/models/groupdata.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:sprint/screens/group_info_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class GroupInfo extends StatefulWidget {
+class GroupAbstract extends StatefulWidget {
   final GroupData group;
-  const GroupInfo({Key? key, required this.group}) : super(key: key);
+  const GroupAbstract({Key? key, required this.group}) : super(key: key);
 
   @override
-  State<GroupInfo> createState() => _GroupInfoState();
+  State<GroupAbstract> createState() => _GroupAbstractState();
 }
 
-class _GroupInfoState extends State<GroupInfo> {
+class _GroupAbstractState extends State<GroupAbstract> {
   late int _actionButtonindex;
   @override
   void initState() {
-    _actionButtonindex = 0;
+    if (widget.group.state == "NOT_MEMBER") {
+      _actionButtonindex = 0;
+    } else if (widget.group.state == "REQUEST") {
+      _actionButtonindex = 1;
+    } else {
+      _actionButtonindex = 2;
+    }
+
     super.initState();
   }
 
@@ -50,6 +58,7 @@ class _GroupInfoState extends State<GroupInfo> {
           setState(() {
             _actionButtonindex = 0;
           });
+          _cancelJoinRequest(widget.group.groupId);
         },
       ),
       const SizedBox()
@@ -63,12 +72,25 @@ class _GroupInfoState extends State<GroupInfo> {
           Row(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GroupInfoPage(
+                              groupId: widget.group.groupId,
+                              isLeader: (widget.group.state == "LEADER"),
+                              groupName: widget.group.groupName,
+                              groupDescription: widget.group.groupDescription,
+                              groupImage: widget.group.groupPicture,
+                            ),
+                        fullscreenDialog: false),
+                  );
+                },
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage(
-                        "assets/images/${widget.group.groupId}.png",
+                      backgroundImage: NetworkImage(
+                        widget.group.groupPicture,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(10)),
@@ -99,6 +121,15 @@ class _GroupInfoState extends State<GroupInfo> {
                 ),
               ),
               const Spacer(),
+              Text(
+                "${widget.group.groupPersonnel} / ${widget.group.groupMaxPersonnel}",
+                style: const TextStyle(
+                  color: Color(0xff5563de),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.all(10)),
               actionButtons[_actionButtonindex],
             ],
           ),
@@ -109,11 +140,26 @@ class _GroupInfoState extends State<GroupInfo> {
 
   _postJoinRequest(groupId) async {
     final response = await http.post(
-        Uri.parse('$serverurl:8080/api/user-management/groups/group-member'),
+        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
         headers: {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({"groupId": groupId, "userId": 1}));
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _cancelJoinRequest(groupId) async {
+    final response = await http.put(
+        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+            {"groupId": groupId, "groupMemberState": "CANCEL", "userId": 1}));
     if (response.statusCode == 200) {
       print("Success");
     } else {

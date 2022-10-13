@@ -102,7 +102,7 @@ class RecievedRequestInfo extends StatelessWidget {
 
   _respondFriendRequest(targetUserId, acceptance) async {
     final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
+        await http.put(Uri.parse('$serverurl:8080/api/user-management/friend'),
             headers: {
               'Content-Type': 'application/json',
             },

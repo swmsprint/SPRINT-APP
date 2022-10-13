@@ -43,6 +43,14 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   path_provider: ^2.0.11
   carousel_slider: ^4.1.1
+  image_picker: ^0.8.5+3
+  image_cropper: ^3.0.0
+  sign_in_with_apple: ^4.1.0
+  firebase_auth: ^3.11.2
+  firebase_core: ^1.24.0
+  google_sign_in: ^5.4.2
+  webview_flutter: ^3.0.4
+  html: ^0.15.0
 
 dev_dependencies:
   flutter_test:

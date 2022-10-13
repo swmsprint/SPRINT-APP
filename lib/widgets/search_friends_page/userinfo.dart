@@ -154,15 +154,15 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   _postFriendRequest(targetUserId) async {
-    final response = await http.post(
-        Uri.parse('$serverurl:8080/api/user-management/friends'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          "sourceUserId": 1,
-          'targetUserId': targetUserId, //Demo user
-        }));
+    final response =
+        await http.post(Uri.parse('$serverurl:8080/api/user-management/friend'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              "sourceUserId": 1,
+              'targetUserId': targetUserId, //Demo user
+            }));
     if (response.statusCode == 200) {
       print("Success");
     } else {
@@ -172,7 +172,7 @@ class _UserInfoState extends State<UserInfo> {
 
   _deleteFriendRequest(targetUserId) async {
     final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
+        await http.put(Uri.parse('$serverurl:8080/api/user-management/friend'),
             headers: {
               'Content-Type': 'application/json',
             },
@@ -188,27 +188,9 @@ class _UserInfoState extends State<UserInfo> {
     }
   }
 
-  _deleteFriend(targetUserId) async {
-    final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "friendState": "DELETE",
-              "sourceUserId": 1,
-              'targetUserId': targetUserId,
-            }));
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
-  }
-
   _respondFriendRequest(targetUserId, acceptance) async {
     final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friends'),
+        await http.put(Uri.parse('$serverurl:8080/api/user-management/friend'),
             headers: {
               'Content-Type': 'application/json',
             },

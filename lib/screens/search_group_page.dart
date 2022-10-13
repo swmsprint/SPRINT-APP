@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/groupdata.dart';
-import 'package:sprint/widgets/group_page/groupinfo.dart';
+import 'package:sprint/widgets/group_page/groupabstract.dart';
 import 'package:sprint/widgets/group_page/grouppageappbar.dart';
 
 import 'package:http/http.dart' as http;
@@ -106,8 +106,9 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
               ],
             ),
             Column(
-                children:
-                    _groupList.map((group) => GroupInfo(group:group)).toList()),
+                children: _groupList
+                    .map((group) => GroupAbstract(group: group))
+                    .toList()),
           ],
         ),
       ),
@@ -116,13 +117,14 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
 
   _getGroups(keyword) async {
     final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/groups/?target=$keyword'),
+      Uri.parse(
+          '$serverurl:8080/api/user-management/group/list/?target=$keyword&userId=1'),
       headers: {
         'Content-Type': 'application/json',
       },
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
       print(result);
       setState(() {
         _groupCount = result['count'];

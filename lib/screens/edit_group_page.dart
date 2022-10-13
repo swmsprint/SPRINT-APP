@@ -1,5 +1,4 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:sprint/widgets/group_page/grouppageappbar.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -12,17 +11,26 @@ String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
 String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
 
-class CreateGroupPage extends StatefulWidget {
-  const CreateGroupPage({super.key});
+class EditGroupPage extends StatefulWidget {
+  final int groupId;
+  final String groupName;
+  final String groupDescription;
+  final String groupImage;
+
+  const EditGroupPage(
+      {Key? key,
+      required this.groupId,
+      required this.groupName,
+      required this.groupDescription,
+      required this.groupImage})
+      : super(key: key);
 
   @override
-  State<CreateGroupPage> createState() => _CreateGroupPageState();
+  State<EditGroupPage> createState() => _EditGroupPageState();
 }
 
-class _CreateGroupPageState extends State<CreateGroupPage> {
-  late TextEditingController _groupNameController;
+class _EditGroupPageState extends State<EditGroupPage> {
   late TextEditingController _groupDescriptionController;
-  late double _groupMembers;
   late String? _image;
 
   final ImagePicker picker = ImagePicker();
@@ -30,15 +38,13 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   @override
   void initState() {
     super.initState();
-    _groupNameController = TextEditingController();
-    _groupDescriptionController = TextEditingController();
-    _groupMembers = 5;
+    _groupDescriptionController =
+        TextEditingController(text: widget.groupDescription);
     _image = null;
   }
 
   @override
   void dispose() {
-    _groupNameController.dispose();
     _groupDescriptionController.dispose();
     super.dispose();
   }
@@ -46,7 +52,27 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupPageAppBar(),
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff3f5fc),
+        elevation: 0.0,
+        iconTheme: const IconThemeData(
+          color: Color(0xff5563de),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+        ),
+        title: const Text(
+          "그룹 수정하기",
+          style: TextStyle(
+              color: Color(0xff5563de),
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              letterSpacing: 1),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -64,7 +90,9 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                             ? FileImage(
                                 File(_image!),
                               )
-                            : null,
+                            : NetworkImage(
+                                widget.groupImage,
+                              ) as ImageProvider,
                         backgroundColor:
                             _image != null ? Colors.transparent : Colors.white,
                       ),
@@ -90,48 +118,6 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.all(30)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                const Text(
-                  "그룹명",
-                  style: TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            Neumorphic(
-              style: NeumorphicStyle(
-                shape: NeumorphicShape.concave,
-                boxShape:
-                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                depth: 8,
-                lightSource: LightSource.topLeft,
-                color: const Color(0xffffffff),
-              ),
-              child: SizedBox(
-                width: 0.85 * MediaQuery.of(context).size.width,
-                child: TextField(
-                    maxLines: 1,
-                    controller: _groupNameController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "그룹명을 입력하세요",
-                    ),
-                    onSubmitted: (e) {}),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(20)),
             Row(
               children: [
                 Padding(
@@ -174,43 +160,6 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.all(20)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                Text(
-                  "제한 인원: ${_groupMembers.toInt()}명",
-                  style: const TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            SizedBox(
-              width: 0.85 * MediaQuery.of(context).size.width,
-              child: NeumorphicSlider(
-                value: _groupMembers,
-                min: 5,
-                max: 50,
-                height: 10,
-                style: const SliderStyle(
-                  accent: Color(0xff5563de),
-                  variant: Color(0x405563de),
-                ),
-                onChanged: (double value) {
-                  setState(() {
-                    _groupMembers = value;
-                  });
-                },
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(30)),
             SizedBox(
               width: 200,
               child: NeumorphicButton(
@@ -225,7 +174,33 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                 ),
                 child: const Center(
                   child: Text(
-                    "그룹 생성",
+                    "그룹 정보 수정",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(20)),
+            SizedBox(
+              width: 200,
+              child: NeumorphicButton(
+                onPressed: _deleteGroup,
+                style: NeumorphicStyle(
+                  shape: NeumorphicShape.concave,
+                  boxShape:
+                      NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                  depth: 8,
+                  lightSource: LightSource.topLeft,
+                  color: const Color.fromARGB(255, 255, 0, 0),
+                ),
+                child: const Center(
+                  child: Text(
+                    "그룹 삭제",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -242,23 +217,36 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     );
   }
 
-  _createGroup() async {
-    final response =
-        await http.post(Uri.parse('$serverurl:8080/api/user-management/group'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "groupLeaderId": 2,
-              "groupName": _groupNameController.text,
-              "groupDescription": _groupDescriptionController.text,
-              "groupPicture": _image == null
-                  ? null
-                  : "$imageurl/${_groupNameController.text}.jpeg",
-            }));
+  _deleteGroup() async {
+    final response = await http.delete(
+      Uri.parse(
+          '$serverurl:8080/api/user-management/group/${widget.groupId}?userId=1'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
     if (response.statusCode == 200) {
-      print("groupId: ${jsonDecode(response.body)['groupId']}");
-      Navigator.pop(context);
+      print(jsonDecode(response.body));
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else {
+      print("Failed : ${response.statusCode}");
+    }
+  }
+
+  _editGroup() async {
+    final response = await http.put(
+        Uri.parse(
+            '$serverurl:8080/api/user-management/group/${widget.groupId}'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "groupDescription": _groupDescriptionController.text,
+          "groupPicture": "$imageurl/${widget.groupName}.jpeg",
+        }));
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } else {
       print("Failed : ${response.statusCode}");
     }
@@ -278,16 +266,20 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   }
 
   Future<void> _uploadImage() async {
-    final response = await http.put(
-        Uri.parse("$bucketurl/${_groupNameController.text}.jpeg"),
-        headers: {
-          'Content-Type': 'image/jpeg',
-        },
-        body: File(_image!).readAsBytesSync());
-    if (response.statusCode == 200) {
-      _createGroup();
+    if (_image != null) {
+      final response =
+          await http.put(Uri.parse("$bucketurl/${widget.groupName}.jpeg"),
+              headers: {
+                'Content-Type': 'image/jpeg',
+              },
+              body: File(_image!).readAsBytesSync());
+      if (response.statusCode == 200) {
+        _editGroup();
+      } else {
+        print("Failed : ${response.statusCode}");
+      }
     } else {
-      print("Failed : ${response.statusCode}");
+      _editGroup();
     }
   }
 }
