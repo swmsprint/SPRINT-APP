@@ -6,6 +6,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:developer';
 
+import 'package:sprint/widgets/login_page/kakao_login.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -55,12 +57,20 @@ class LoginPage extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: IconButton(
                   icon: Image.asset('assets/images/login/kakao.png'),
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RootPage()),
-                        (_) => false);
+                  onPressed: () async {
+                    String result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const KakaoLogin()),
+                    );
+                    if (result != "") {
+                      print("Result");
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const RootPage()),
+                          (_) => false);
+                    }
                   },
                 ),
               ),
