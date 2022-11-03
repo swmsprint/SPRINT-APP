@@ -17,8 +17,7 @@ String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
 String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class SignUpPage extends StatefulWidget {
-  int userId;
-  SignUpPage({super.key, required this.userId});
+  const SignUpPage({super.key});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -70,10 +69,6 @@ class _SignUpPageState extends State<SignUpPage> {
       );
       possibleWeights.add(newItem);
     }
-    () async {
-      String? token = await storage.read(key: 'accessToken');
-      print(token);
-    };
 
     return Scaffold(
       appBar: SignupPageAppBar(),
@@ -433,8 +428,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
   _signUp() async {
     String? token = await storage.read(key: 'accessToken');
+    String? userID = await storage.read(key: 'userID');
     final response = await http.put(
-        Uri.parse('$serverurl:8081/api/user-management/user/${widget.userId}'),
+        Uri.parse('$serverurl:8081/api/user-management/user/$userID'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -452,6 +448,16 @@ class _SignUpPageState extends State<SignUpPage> {
     if (response.statusCode == 200) {
       Navigator.pop(context);
     } else {
+      print(jsonEncode({
+        "birthday": _selectedDate.toString().substring(0, 10),
+        "gender": _gender,
+        "height": _height,
+        "nickname": _userNameController.text,
+        "picture": _image == null
+            ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+            : "$imageurl/users/${_userNameController.text}.jpeg",
+        "weight": _weight,
+      }));
       print("Failed : ${response.statusCode}");
     }
   }

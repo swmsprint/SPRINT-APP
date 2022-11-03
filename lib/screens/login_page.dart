@@ -40,32 +40,7 @@ class LoginPage extends StatelessWidget {
                     UserCredential result = await signInWithApple();
                     final userInfo = await _signUp(
                         "APPLE", FirebaseAuth.instance.currentUser!.uid);
-                    final AccessToken = userInfo['accessToken'];
-                    final RefreshToken = userInfo['refreshToken'];
-                    await storage.write(
-                        key: 'accessToken', value: AccessToken.toString());
-                    await storage.write(
-                        key: 'refreshToken', value: RefreshToken.toString());
-                    if (!userInfo["alreadySignIn"]) {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SignUpPage(
-                                  userId: userInfo["memberId"],
-                                )),
-                      );
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    }
+                    _checkAlreadyUser(userInfo, context);
                   },
                 ),
               ),
@@ -78,32 +53,7 @@ class LoginPage extends StatelessWidget {
                     UserCredential result = await signInWithGoogle();
                     final userInfo = await _signUp(
                         "GOOGLE", FirebaseAuth.instance.currentUser!.uid);
-                    final AccessToken = userInfo['accessToken'];
-                    final RefreshToken = userInfo['refreshToken'];
-                    await storage.write(
-                        key: 'accessToken', value: AccessToken.toString());
-                    await storage.write(
-                        key: 'refreshToken', value: RefreshToken.toString());
-                    if (!userInfo["alreadySignIn"]) {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SignUpPage(
-                                  userId: userInfo["memberId"],
-                                )),
-                      );
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    }
+                    _checkAlreadyUser(userInfo, context);
                   },
                 ),
               ),
@@ -132,15 +82,16 @@ class LoginPage extends StatelessWidget {
   _checkAlreadyUser(userInfo, context) async {
     final accessToken = userInfo['accessToken'];
     final refreshToken = userInfo['refreshToken'];
+    final userID = userInfo['memberId'];
     await storage.write(key: 'accessToken', value: accessToken.toString());
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
+    await storage.write(key: 'userID', value: userID.toString());
+    print(
+        "accessToken: $accessToken refreshToken: $refreshToken userID: $userID");
     if (!userInfo["alreadySignIn"]) {
       await Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => SignUpPage(
-                  userId: userInfo["memberId"],
-                )),
+        MaterialPageRoute(builder: (context) => SignUpPage()),
       );
       Navigator.pushAndRemoveUntil(
           context,
