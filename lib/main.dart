@@ -70,7 +70,6 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    testToken();
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(_scaffoldKey),
@@ -79,9 +78,4 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-  testToken() async {
-    var dio = await authDio(context);
-    var response = await dio.get('$serverurl:8081/api/test');
-    print(response);
-  }
 }

@@ -34,6 +34,7 @@ Future<Dio> authDio(BuildContext context) async {
               context,
               MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
               (route) => false);
+          return;
         }
         return handler.next(error);
       }));
