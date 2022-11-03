@@ -13,8 +13,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
-String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
-String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
+String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
+String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class SignUpPage extends StatefulWidget {
   int userId;
@@ -446,7 +446,7 @@ class _SignUpPageState extends State<SignUpPage> {
           "nickname": _userNameController.text,
           "picture": _image == null
               ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-              : "$imageurl/${_userNameController.text}.jpeg",
+              : "$imageurl/users/${_userNameController.text}.jpeg",
           "weight": _weight,
         }));
     if (response.statusCode == 200) {
