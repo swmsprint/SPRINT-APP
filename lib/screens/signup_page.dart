@@ -536,31 +536,22 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _signUp() async {
-    String? token = await storage.read(key: 'accessToken');
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
 
-    String? userID = await storage.read(key: 'userID');
-    final response = await http.put(
-        Uri.parse('$serverurl:8081/api/user-management/user/$userID'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          "birthday": _selectedDate.toString().substring(0, 10),
-          "gender": _gender,
-          "height": _height,
-          "nickname": _userNameController.text,
-          "picture": _image ==
-                  "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-              ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-              : "$imageurl/users/${_userNameController.text}.jpeg",
-          "weight": _weight,
-        }));
-    if (response.statusCode == 200) {
-      Navigator.pop(context);
-    } else {
-      print("Failed : ${response.body}");
-    }
+    var response = await dio
+        .put('$serverurl:8081/api/user-management/user/$userID', data: {
+      "birthday": _selectedDate.toString().substring(0, 10),
+      "gender": _gender,
+      "height": _height,
+      "nickname": _userNameController.text,
+      "picture": _image ==
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+          : "$imageurl/users/${_userNameController.text}.jpeg",
+      "weight": _weight,
+    });
+    Navigator.pop(context);
   }
 
   Future<void> _getImage() async {
