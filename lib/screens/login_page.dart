@@ -91,7 +91,7 @@ class LoginPage extends StatelessWidget {
     if (!userInfo["alreadySignIn"]) {
       await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SignUpPage()),
+        MaterialPageRoute(builder: (context) => SignUpPage(isNewUser:true)),
       );
       Navigator.pushAndRemoveUntil(
           context,
