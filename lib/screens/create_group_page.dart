@@ -254,7 +254,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               "groupDescription": _groupDescriptionController.text,
               "groupPicture": _image == null
                   ? null
-                  : "$imageurl/${_groupNameController.text}.jpeg",
+                  : "$imageurl/groups/${_groupNameController.text}.jpeg",
             }));
     if (response.statusCode == 200) {
       print("groupId: ${jsonDecode(response.body)['groupId']}");
@@ -279,7 +279,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
 
   Future<void> _uploadImage() async {
     final response = await http.put(
-        Uri.parse("$bucketurl/${_groupNameController.text}.jpeg"),
+        Uri.parse("$bucketurl/groups/${_groupNameController.text}.jpeg"),
         headers: {
           'Content-Type': 'image/jpeg',
         },

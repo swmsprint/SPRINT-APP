@@ -268,8 +268,8 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
       _positionDataList.add(PositionData(
-        latitude: position.latitude,
-        longitude: position.longitude,
+        latitude: double.parse(position.latitude.toStringAsFixed(5)),
+        longitude: double.parse(position.longitude.toStringAsFixed(5)),
         altitude: position.altitude,
         speed: position.speed,
         timestamp: position.timestamp.toString().substring(0, 23),
@@ -286,22 +286,19 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     });
   }
 
-  void run() {
+  void run() async {
     if (_timer == 0) {
-      _getRunningID().then((_) {
-        setState(() {
-          _getCurrentLocation().then((_) {
-            _runningStatus = RunningStatus.running;
-            runTimer();
-          });
-        });
+      await _getRunningID();
+      await _getCurrentLocation();
+      setState(() {
+        _runningStatus = RunningStatus.running;
+        runTimer();
       });
     } else {
+      await _getCurrentLocation();
       setState(() {
-        _getCurrentLocation().then((_) {
-          _runningStatus = RunningStatus.running;
-          runTimer();
-        });
+        _runningStatus = RunningStatus.running;
+        runTimer();
       });
     }
   }

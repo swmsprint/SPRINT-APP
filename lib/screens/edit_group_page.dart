@@ -242,7 +242,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
         },
         body: jsonEncode({
           "groupDescription": _groupDescriptionController.text,
-          "groupPicture": "$imageurl/${widget.groupName}.jpeg",
+          "groupPicture": "$imageurl/groups/${widget.groupName}.jpeg",
         }));
     if (response.statusCode == 200) {
       print(jsonDecode(response.body));
@@ -267,12 +267,12 @@ class _EditGroupPageState extends State<EditGroupPage> {
 
   Future<void> _uploadImage() async {
     if (_image != null) {
-      final response =
-          await http.put(Uri.parse("$bucketurl/${widget.groupName}.jpeg"),
-              headers: {
-                'Content-Type': 'image/jpeg',
-              },
-              body: File(_image!).readAsBytesSync());
+      final response = await http.put(
+          Uri.parse("$bucketurl/groups/${widget.groupName}.jpeg"),
+          headers: {
+            'Content-Type': 'image/jpeg',
+          },
+          body: File(_image!).readAsBytesSync());
       if (response.statusCode == 200) {
         _editGroup();
       } else {

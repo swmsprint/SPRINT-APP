@@ -51,6 +51,7 @@ dependencies:
   google_sign_in: ^5.4.2
   webview_flutter: ^3.0.4
   html: ^0.15.0
+  flutter_secure_storage: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +108,7 @@ flutter:
     - assets/images/4.png
     - assets/images/5.png
     - assets/images/6.png
+    - assets/images/default.jpeg
     - assets/images/login/apple.png
     - assets/images/login/google.png
     - assets/images/login/kakao.png
