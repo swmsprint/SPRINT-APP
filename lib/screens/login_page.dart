@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
   _checkAlreadyUser(userInfo, context) async {
     final accessToken = userInfo['accessToken'];
     final refreshToken = userInfo['refreshToken'];
-    final userID = userInfo['memberId'];
+    final userID = userInfo['userId'];
     await storage.write(key: 'accessToken', value: accessToken.toString());
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
     await storage.write(key: 'userID', value: userID.toString());
