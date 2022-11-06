@@ -18,27 +18,6 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             letterSpacing: 1),
       ),
       actions: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(5),
-          child: IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Color(0xfffa7531),
-            ),
-            onPressed: () {},
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: InkWell(
-            onTap: () {},
-            child: const CircleAvatar(
-              backgroundImage: AssetImage(
-                "assets/images/1.png",
-              ),
-            ),
-          ),
-        ),
         IconButton(
           icon: const Icon(Icons.menu, color: Colors.black),
           onPressed: () {
