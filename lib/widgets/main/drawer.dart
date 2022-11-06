@@ -17,7 +17,7 @@ class CustomDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const Padding(padding: EdgeInsets.all(20)),
+          const Padding(padding: EdgeInsets.all(30)),
           Profile(userId: 1, isDrawer: true),
           const Padding(padding: EdgeInsets.all(10)),
           ListTile(

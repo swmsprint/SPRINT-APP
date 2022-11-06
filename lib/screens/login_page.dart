@@ -86,8 +86,6 @@ class LoginPage extends StatelessWidget {
     await storage.write(key: 'accessToken', value: accessToken.toString());
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
     await storage.write(key: 'userID', value: userID.toString());
-    print(
-        "accessToken: $accessToken refreshToken: $refreshToken userID: $userID");
     if (!userInfo["alreadySignIn"]) {
       await Navigator.push(
         context,

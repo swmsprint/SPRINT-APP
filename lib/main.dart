@@ -70,6 +70,7 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
+    _getUserData();
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(_scaffoldKey),
@@ -78,4 +79,18 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
+  _getUserData() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    var response =
+        await dio.get('$serverurl:8081/api/user-management/user/$userID');
+    final data = response.data;
+    await storage.write(key: 'nickname', value: data['nickname']);
+    await storage.write(key: 'profile', value: data['picture']);
+    await storage.write(
+        key: 'birthday', value: DateTime.parse(data['birthday']).toString());
+    await storage.write(key: 'height', value: '${data['height'].round()}');
+    await storage.write(key: 'weight', value: '${data['weight'].round()}');
+    await storage.write(key: 'gender', value: data['gender']);
+  }
 }

@@ -551,6 +551,19 @@ class _SignUpPageState extends State<SignUpPage> {
       "weight": _weight,
     });
     if (response.statusCode == 200) {
+      await storage.write(key: 'nickname', value: _userNameController.text);
+      await storage.write(
+        key: 'profile',
+        value: _image ==
+                "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+            ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+            : "$imageurl/users/${_userNameController.text}.jpeg",
+      );
+      await storage.write(
+          key: 'birthday', value: _selectedDate.toString().substring(0, 10));
+      await storage.write(key: 'height', value: '${_height.round()}');
+      await storage.write(key: 'weight', value: '${_weight.round()}');
+      await storage.write(key: 'gender', value: _gender);
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
