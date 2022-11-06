@@ -1,55 +1,18 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:infinite_scroll_pagination/src/ui/default_indicators/first_page_exception_indicator.dart';
 import 'package:sprint/models/positiondata.dart';
 import 'package:sprint/models/runningdata.dart';
 import 'package:sprint/screens/running_result_page.dart';
 import 'package:sprint/utils/secondstostring.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
-
-_getRunningDatas(pageKey, userId) async {
-  final response = await http.get(
-    Uri.parse(
-        '$serverurl:8080/api/running/personal/?pageNumber=$pageKey&userId=$userId'),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  );
-  if (response.statusCode == 200) {
-    List<dynamic> result = jsonDecode(response.body);
-    List<RunningData> runningDatas = [];
-    for (int i = 0; i < result.length; i++) {
-      runningDatas.add(RunningData(
-          runningId: result[i]['runningId'],
-          duration: result[i]['duration'].round(),
-          distance: result[i]['distance'],
-          startTime: result[i]['startTime'],
-          calories: result[i]['energy']));
-    }
-    return runningDatas;
-  } else {
-    print("Failed : ${response.statusCode}");
-  }
-}
-
-_getRunningDetail(runningId, userId) async {
-  final response = await http.get(
-    Uri.parse(
-        '$serverurl:8080/api/running/detail/?runningId=$runningId&userId=$userId'),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  );
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    print("Failed : ${response.statusCode}");
-  }
-}
 
 class RunningItem extends StatelessWidget {
   final RunningData data;
@@ -62,11 +25,22 @@ class RunningItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _getRunningDetail(runningId) async {
+      var dio = await authDio(context);
+      final userID = await storage.read(key: 'userID');
+
+      var response = await dio.get(
+          '$serverurl:8081/api/running/detail/?runningId=$runningId&userId=$userId');
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+    }
+
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            _getRunningDetail(data.runningId, userId).then(
+            _getRunningDetail(data.runningId).then(
               (value) {
                 List<PositionData> rawdata = [];
                 for (int i = 0; i < value["runningData"].length; i++) {
@@ -201,9 +175,30 @@ class _RunningListViewState extends State<RunningListView> {
     super.initState();
   }
 
+  _getRunningDatas(pageKey) async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.get(
+        '$serverurl:8081/api/running/personal/?pageNumber=$pageKey&userId=$userID');
+    if (response.statusCode == 200) {
+      List<dynamic> result = response.data;
+      List<RunningData> runningDatas = [];
+      for (int i = 0; i < result.length; i++) {
+        runningDatas.add(RunningData(
+            runningId: result[i]['runningId'],
+            duration: result[i]['duration'].round(),
+            distance: result[i]['distance'],
+            startTime: result[i]['startTime'],
+            calories: result[i]['energy']));
+      }
+      return runningDatas;
+    }
+  }
+
   Future<void> _fetchPage(int pageKey, int userId) async {
     try {
-      final newItems = await _getRunningDatas(pageKey, userId);
+      final newItems = await _getRunningDatas(pageKey);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -229,6 +224,11 @@ class _RunningListViewState extends State<RunningListView> {
           itemBuilder: (context, item, index) => RunningItem(
             data: item,
             userId: widget.userId,
+          ),
+          noItemsFoundIndicatorBuilder: (_) =>
+              const FirstPageExceptionIndicator(
+            title: '러닝 기록이 없습니다!',
+            message: '신나게 뛰어보세요!',
           ),
         ),
       );
