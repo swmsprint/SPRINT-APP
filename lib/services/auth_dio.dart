@@ -57,6 +57,11 @@ Future<Dio> authDio(BuildContext context) async {
           data: error.requestOptions.data,
           queryParameters: error.requestOptions.queryParameters);
       return handler.resolve(clonedRequest);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content:
+            Text('에러가 발생했습니다 (${error.response?.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
     return handler.next(error);
   }));
