@@ -4,7 +4,6 @@ import 'package:sprint/widgets/signup_page/signuppageappbar.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -551,7 +550,13 @@ class _SignUpPageState extends State<SignUpPage> {
           : "$imageurl/users/${_userNameController.text}.jpeg",
       "weight": _weight,
     });
-    Navigator.pop(context);
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
+    }
   }
 
   Future<void> _getImage() async {
@@ -577,7 +582,9 @@ class _SignUpPageState extends State<SignUpPage> {
     if (response.statusCode == 200) {
       _signUp();
     } else {
-      print("Failed : ${response.statusCode}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 }

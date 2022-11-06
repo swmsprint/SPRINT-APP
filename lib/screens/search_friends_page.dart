@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'package:sprint/widgets/search_friends_page/userinfo.dart';
 import 'package:sprint/widgets/friends_page/friendspageappbar.dart';
 
 import 'package:sprint/models/userdata.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class SearchFriendsPage extends StatefulWidget {
@@ -117,15 +118,16 @@ class _SearchFriendsPageState extends State<SearchFriendsPage> {
   }
 
   _getUsers(keyword) async {
-    final response = await http.get(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/users/?target=$keyword&userId=1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    print(userID);
+    final token = await storage.read(key: 'accessToken');
+    print(token);
+
+    var response = await dio.get('$serverurl:8081/api/user-management/user/',
+        queryParameters: {"target": keyword, "userId": userID});
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       print(result);
       setState(() {
         _userCount = result['count'];
@@ -134,8 +136,6 @@ class _SearchFriendsPageState extends State<SearchFriendsPage> {
           _userList.add(UserData.fromJson(result['userList'][i]));
         }
       });
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }

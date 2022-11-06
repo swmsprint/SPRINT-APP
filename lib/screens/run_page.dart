@@ -1,6 +1,5 @@
 //ToDo: GPS 측정 주기 설정, 러닝 버튼 누르면 카운트다운 후 자동 시작
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_config/flutter_config.dart';
 
@@ -10,6 +9,7 @@ import 'package:sprint/utils/secondstostring.dart';
 import 'package:sprint/widgets/run_page/currentmap.dart';
 import 'package:sprint/widgets/run_page/pacemaker.dart';
 import 'package:sprint/models/positiondata.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -17,6 +17,11 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sprint/widgets/run_page/runningsummary.dart';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
+String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class RunningDataStorage {
   Future<String> get _localPath async {
@@ -26,7 +31,6 @@ class RunningDataStorage {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    print('$path');
     return File('$path/runningData.json');
   }
 
@@ -38,8 +42,6 @@ class RunningDataStorage {
 }
 
 enum RunningStatus { running, paused, stopped }
-
-String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class RunPage extends StatefulWidget {
   const RunPage({Key? key}) : super(key: key);
@@ -222,24 +224,24 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
   }
 
   _getRunningID() async {
-    final response =
-        await http.post(Uri.parse('$serverurl:8080/api/running/start'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "startTime": DateTime.now().toUtc().toString(),
-              'userId': 1, //Demo user
-            }));
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.post('$serverurl:8081/api/running/start', data: {
+      'startTime': DateTime.now().toUtc().toString(),
+      'userId': userID
+    });
+
     if (response.statusCode == 200) {
-      _runningID = jsonDecode(response.body)['runningId'];
+      _runningID = response.data['runningId'];
       print(_runningID);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   _postResult() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
     var body = jsonEncode({
       'userId': 1, //Demo user
       'runningId': _runningID,
@@ -247,19 +249,13 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
       "duration": _timer,
       "runningData": _positionDataList,
     });
-    final RunningDataStorage storage = RunningDataStorage();
-    await storage.writeRunningData(body);
+    final RunningDataStorage runstorage = RunningDataStorage();
+    await runstorage.writeRunningData(body);
 
     final response =
-        await http.post(Uri.parse('$serverurl:8080/api/running/finish'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: body);
+        await dio.post('$serverurl:8081/api/running/finish', data: body);
     if (response.statusCode == 200) {
       print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
