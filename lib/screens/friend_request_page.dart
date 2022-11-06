@@ -196,6 +196,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
+                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -255,7 +256,6 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
-      print(result);
       return result;
     }
   }

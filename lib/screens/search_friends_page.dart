@@ -120,9 +120,6 @@ class _SearchFriendsPageState extends State<SearchFriendsPage> {
   _getUsers(keyword) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    print(userID);
-    final token = await storage.read(key: 'accessToken');
-    print(token);
 
     var response = await dio.get('$serverurl:8081/api/user-management/user/',
         queryParameters: {"target": keyword, "userId": userID});

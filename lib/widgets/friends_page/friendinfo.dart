@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/frienddata.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/friends_stats_page.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -17,6 +19,21 @@ class FriendInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    deleteFriend(targetUserId, reduceFriendCount) async {
+      var dio = await authDio(context);
+      final userID = await storage.read(key: 'userID');
+      var accessToken = await storage.read(key: 'accessToken');
+      final response =
+          await dio.delete('$serverurl:8081/api/user-management/friend', data: {
+        "friendState": "DELETE",
+        "sourceUserId": userID,
+        "targetUserId": targetUserId,
+      });
+      if (response.statusCode == 200) {
+        reduceFriendsCount();
+      }
+    }
+
     return SizedBox(
       width: 0.85 * MediaQuery.of(context).size.width,
       child: Column(
@@ -36,8 +53,8 @@ class FriendInfo extends StatelessWidget {
                 },
                 child: Row(children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage(
-                      "assets/images/${friend.userId}.png",
+                    backgroundImage: NetworkImage(
+                      friend.profile,
                     ),
                   ),
                   const Padding(padding: EdgeInsets.all(10)),
@@ -54,14 +71,6 @@ class FriendInfo extends StatelessWidget {
                         ),
                       ),
                       const Padding(padding: EdgeInsets.all(5)),
-                      Text(
-                        friend.email,
-                        style: const TextStyle(
-                          color: Color(0xff5563de),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
                     ],
                   ),
                 ]),
@@ -73,7 +82,7 @@ class FriendInfo extends StatelessWidget {
                   color: Color(0xff5563de),
                 ),
                 onPressed: () {
-                  _deleteFriend(friend.userId, reduceFriendsCount);
+                  deleteFriend(friend.userId, reduceFriendsCount);
                 },
               ),
             ],
@@ -81,24 +90,5 @@ class FriendInfo extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  _deleteFriend(targetUserId, reduceFriendCount) async {
-    final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friend'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "friendState": "DELETE",
-              "sourceUserId": 1,
-              'targetUserId': targetUserId,
-            }));
-    if (response.statusCode == 200) {
-      print("Success");
-      reduceFriendsCount();
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
   }
 }

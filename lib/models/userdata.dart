@@ -1,7 +1,7 @@
 class UserData {
   final int userId;
   final String nickname;
-  final String email;
+  final String profile;
   final double height;
   final double weight;
   final int tierId;
@@ -10,7 +10,7 @@ class UserData {
   const UserData({
     required this.userId,
     required this.nickname,
-    required this.email,
+    required this.profile,
     required this.height,
     required this.weight,
     required this.tierId,
@@ -20,7 +20,7 @@ class UserData {
   UserData.fromJson(Map<String, dynamic> json)
       : userId = json['userId'] ?? 0,
         nickname = json['nickname'] ?? '',
-        email = json['email'] ?? '',
+        profile = json['picture'] ?? '',
         height = json['height'] ?? 175,
         weight = json['weight'] ?? 70,
         tierId = json['tierId'] ?? 1,
