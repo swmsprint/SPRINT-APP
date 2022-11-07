@@ -236,7 +236,6 @@ class _FriendsPageState extends State<FriendsPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
-      print(result);
       return result;
     }
   }

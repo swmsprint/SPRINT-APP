@@ -106,8 +106,10 @@ class _UserInfoState extends State<UserInfo> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            FriendsStatsPage(userId: widget.user.userId),
+                        builder: (context) => FriendsStatsPage(
+                              userId: widget.user.userId,
+                              userNickName: widget.user.nickname,
+                            ),
                         fullscreenDialog: false),
                   );
                 },
