@@ -243,7 +243,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     final userID = await storage.read(key: 'userID');
 
     var body = jsonEncode({
-      'userId': 1, //Demo user
+      'userId': userID,
       'runningId': _runningID,
       "distance": _distance,
       "duration": _timer,
