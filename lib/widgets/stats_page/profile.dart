@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sprint/services/auth_dio.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 final storage = new FlutterSecureStorage();
+String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class Profile extends StatelessWidget {
   bool isDrawer = false;
   final int userId;
   Profile({Key? key, this.isDrawer = false, required this.userId})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    setUserData() async {
+      var dio = await authDio(context);
+      var response =
+          await dio.get('$serverurl:8081/api/user-management/user/$userId');
+      String profileImage = response.data['picture'];
+      String? nickName = response.data['nickname'];
+      return [profileImage, nickName];
+    }
+
     return FutureBuilder(
         future: setUserData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -58,11 +71,5 @@ class Profile extends StatelessWidget {
             );
           }
         });
-  }
-
-  setUserData() async {
-    String? profileImage = await storage.read(key: 'profile');
-    String? nickName = await storage.read(key: 'nickname');
-    return [profileImage, nickName];
   }
 }

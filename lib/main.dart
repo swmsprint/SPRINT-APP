@@ -29,12 +29,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xfff3f5fc),
       ),
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder<bool>(
+      home: FutureBuilder<List>(
         future: isLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data!) {
-              return const RootPage();
+            if (snapshot.data![0]) {
+              return RootPage(userId: int.parse(snapshot.data![1]));
             } else {
               return const LoginPage();
             }
@@ -46,20 +46,21 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Future<bool> isLoggedIn() async {
+  Future<List> isLoggedIn() async {
     String? accessToken = await storage.read(key: 'accessToken');
     String? refreshToken = await storage.read(key: 'refreshToken');
     String? userID = await storage.read(key: 'userID');
     if (userID != null && accessToken != null && refreshToken != null) {
-      return true;
+      return [true, userID];
     } else {
-      return false;
+      return [false, 0];
     }
   }
 }
 
 class RootPage extends StatefulWidget {
-  const RootPage({Key? key}) : super(key: key);
+  int userId;
+  RootPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<RootPage> createState() => _RootPageState();
@@ -67,6 +68,10 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +79,8 @@ class _RootPageState extends State<RootPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(_scaffoldKey),
-      body: TabPage(),
-      endDrawer: const CustomDrawer(),
+      body: TabPage(userId: widget.userId),
+      endDrawer: CustomDrawer(userId: widget.userId),
     );
   }
 

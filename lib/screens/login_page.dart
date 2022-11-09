@@ -93,12 +93,18 @@ class LoginPage extends StatelessWidget {
       );
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const RootPage()),
+          MaterialPageRoute(
+              builder: (context) => RootPage(
+                    userId: int.parse(userID),
+                  )),
           (_) => false);
     } else {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const RootPage()),
+          MaterialPageRoute(
+              builder: (context) => RootPage(
+                    userId: int.parse(userID),
+                  )),
           (_) => false);
     }
   }

@@ -8,7 +8,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final storage = new FlutterSecureStorage();
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({Key? key}) : super(key: key);
+  int userId;
+  CustomDrawer({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           const Padding(padding: EdgeInsets.all(30)),
-          Profile(userId: 1, isDrawer: true),
+          Profile(userId: userId, isDrawer: true),
           const Padding(padding: EdgeInsets.all(10)),
           ListTile(
             title: Row(
@@ -31,7 +32,7 @@ class CustomDrawer extends StatelessWidget {
                   Icons.feed,
                   color: Colors.white,
                 ),
-                Padding(padding: EdgeInsets.all(10)),
+                const Padding(padding: EdgeInsets.all(10)),
                 const Text(
                   "운동 피드",
                   style: TextStyle(
@@ -57,7 +58,7 @@ class CustomDrawer extends StatelessWidget {
                   Icons.group,
                   color: Colors.white,
                 ),
-                Padding(padding: EdgeInsets.all(10)),
+                const Padding(padding: EdgeInsets.all(10)),
                 const Text(
                   "친구 관리",
                   style: TextStyle(
@@ -88,7 +89,7 @@ class CustomDrawer extends StatelessWidget {
                   Icons.settings,
                   color: Colors.white,
                 ),
-                Padding(padding: EdgeInsets.all(10)),
+                const Padding(padding: EdgeInsets.all(10)),
                 const Text(
                   "회원 정보 수정",
                   style: TextStyle(
@@ -119,7 +120,7 @@ class CustomDrawer extends StatelessWidget {
                   Icons.exit_to_app,
                   color: Colors.white,
                 ),
-                Padding(padding: EdgeInsets.all(10)),
+                const Padding(padding: EdgeInsets.all(10)),
                 const Text(
                   "로그아웃",
                   style: TextStyle(
