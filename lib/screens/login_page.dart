@@ -95,7 +95,7 @@ class LoginPage extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => RootPage(
-                    userId: int.parse(userID),
+                    userId: userID,
                   )),
           (_) => false);
     } else {
