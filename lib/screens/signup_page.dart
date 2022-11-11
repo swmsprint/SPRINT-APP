@@ -46,7 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _height = 165;
     _weight = 50;
     _image =
-        "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg";
+        "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg";
     if (!widget.isNewUser) {
       _getUserData();
     }
@@ -545,8 +545,8 @@ class _SignUpPageState extends State<SignUpPage> {
       "height": _height,
       "nickname": _userNameController.text,
       "picture": _image ==
-              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
           : "$imageurl/users/${_userNameController.text}.jpeg",
       "weight": _weight,
     });
@@ -555,8 +555,8 @@ class _SignUpPageState extends State<SignUpPage> {
       await storage.write(
         key: 'profile',
         value: _image ==
-                "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-            ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
+                "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+            ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
             : "$imageurl/users/${_userNameController.text}.jpeg",
       );
       await storage.write(
