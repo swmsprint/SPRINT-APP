@@ -25,6 +25,7 @@ class FriendRecord extends StatelessWidget {
                   builder: (context) => FriendsStatsPage(
                         userId: friendId,
                         userNickName: name,
+                        showActions: true,
                       ),
                   fullscreenDialog: false),
             );

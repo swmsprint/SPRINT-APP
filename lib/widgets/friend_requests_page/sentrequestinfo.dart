@@ -43,7 +43,8 @@ class SentRequestInfo extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => FriendsStatsPage(
                             userId: friend.userId,
-                            userNickName: friend.nickname),
+                            userNickName: friend.nickname,
+                            showActions: true),
                         fullscreenDialog: false),
                   );
                 },

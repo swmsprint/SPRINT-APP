@@ -109,6 +109,7 @@ class _UserInfoState extends State<UserInfo> {
                         builder: (context) => FriendsStatsPage(
                               userId: widget.user.userId,
                               userNickName: widget.user.nickname,
+                              showActions: true,
                             ),
                         fullscreenDialog: false),
                   );

@@ -27,6 +27,7 @@ class _TabPageState extends State<TabPage> {
       const BattlePage(),
       StatsPage(
         userId: widget.userId,
+        showActions: false,
       ),
     ];
   }

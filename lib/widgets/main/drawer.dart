@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/widgets/stats_page/profile.dart';
 import 'package:sprint/screens/login_page.dart';
 import 'package:sprint/screens/signup_page.dart';
-import 'package:sprint/widgets/stats_page/profile.dart';
 import 'package:sprint/screens/friends_page.dart';
+import 'package:sprint/screens/block_users_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = new FlutterSecureStorage();
@@ -74,6 +75,37 @@ class CustomDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const FriendsPage(),
+                    fullscreenDialog: true),
+              );
+            },
+          ),
+          ListTile(
+            title: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 0.075 * MediaQuery.of(context).size.width),
+                ),
+                const Icon(
+                  Icons.block,
+                  color: Colors.white,
+                ),
+                const Padding(padding: EdgeInsets.all(10)),
+                const Text(
+                  "차단 관리",
+                  style: TextStyle(
+                    fontFamily: 'YDIYGO',
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BlockUsersPage(),
                     fullscreenDialog: true),
               );
             },

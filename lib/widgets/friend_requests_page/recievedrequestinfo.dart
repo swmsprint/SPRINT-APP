@@ -48,8 +48,10 @@ class RecievedRequestInfo extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => FriendsStatsPage(
-                              userId: friend.userId,
-                              userNickName: friend.nickname),
+                                userId: friend.userId,
+                                userNickName: friend.nickname,
+                                showActions: true,
+                              ),
                           fullscreenDialog: false),
                     );
                   },
