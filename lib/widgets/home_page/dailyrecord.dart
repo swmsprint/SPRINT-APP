@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/utils/secondstostring.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class DailyRecord extends StatefulWidget {
@@ -20,29 +21,24 @@ class _DailyRecordState extends State<DailyRecord> {
   late double _calories;
 
   _getDailyStatistics() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/statistics/1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    final response = await dio.get('$serverurl:8081/api/statistics/$userID');
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       int duration = result["dailyStatistics"]["totalSeconds"].round();
       double distance = result["dailyStatistics"]["distance"];
-
       double calories = result["dailyStatistics"]["energy"];
-
       return ([duration, distance, calories]);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   @override
   void initState() {
     super.initState();
-
+    _duration = 0;
+    _distance = 0;
+    _calories = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var result = await _getDailyStatistics();
       setState(() {
@@ -108,53 +104,3 @@ class _DailyRecordState extends State<DailyRecord> {
     );
   }
 }
-
-/*
-class DailyRecord extends StatelessWidget {
-  const DailyRecord({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "${(rn.distance / 1000).toStringAsFixed(2)}KM\n거리",
-            style: const TextStyle(
-              fontFamily: 'Anton',
-              fontSize: 14,
-              color: Color(0xff5563de),
-            ),
-          ),
-          Text(
-            "${secondsToString(rn.duration)}\n시간",
-            style: const TextStyle(
-              fontFamily: 'Anton',
-              fontSize: 14,
-              color: Color(0xff5563de),
-            ),
-          ),
-          Text(
-            "${secondsToString((1000 * rn.duration / rn.distance).round())}\n페이스",
-            style: const TextStyle(
-              fontFamily: 'Anton',
-              fontSize: 14,
-              color: Color(0xff5563de),
-            ),
-          ),
-          Text(
-            "${rn.calories.toStringAsFixed(2)}\n칼로리",
-            style: const TextStyle(
-              fontFamily: 'Anton',
-              fontSize: 14,
-              color: Color(0xff5563de),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-*/

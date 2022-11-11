@@ -1,9 +1,9 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'package:sprint/widgets/signup_page/signuppageappbar.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -13,12 +13,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
-String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
-String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
+String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
+String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class SignUpPage extends StatefulWidget {
-  int userId;
-  SignUpPage({super.key, required this.userId});
+  bool isNewUser;
+  SignUpPage({Key? key, required this.isNewUser}) : super(key: key);
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -26,23 +26,30 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   late TextEditingController _userNameController;
+  late bool _didUserNameCheck;
+  late bool _isUserNameValid;
   late String _gender;
   late DateTime _selectedDate;
-  late String? _image;
+  late String _image;
   late int _height;
   late int _weight;
-
   final ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     _userNameController = TextEditingController();
+    _didUserNameCheck = false;
+    _isUserNameValid = false;
     _gender = "X";
     _selectedDate = DateTime(1980, 1, 1);
     _height = 165;
     _weight = 50;
-    _image = null;
+    _image =
+        "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg";
+    if (!widget.isNewUser) {
+      _getUserData();
+    }
   }
 
   @override
@@ -70,10 +77,6 @@ class _SignUpPageState extends State<SignUpPage> {
       );
       possibleWeights.add(newItem);
     }
-    () async {
-      String? token = await storage.read(key: 'accessToken');
-      print(token);
-    };
 
     return Scaffold(
       appBar: SignupPageAppBar(),
@@ -89,17 +92,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       radius: 70,
                       backgroundColor: const Color(0x70707070),
                       child: CircleAvatar(
-                        radius: 68,
-                        backgroundImage: _image != null
-                            ? FileImage(
-                                File(_image!),
-                              )
-                            : const AssetImage(
-                                "assets/images/default.jpeg",
-                              ) as ImageProvider,
-                        backgroundColor:
-                            _image != null ? Colors.transparent : Colors.white,
-                      ),
+                          radius: 68,
+                          backgroundImage: _image[0] == 'h'
+                              ? NetworkImage(
+                                  _image,
+                                )
+                              : FileImage(
+                                  File(_image),
+                                ) as ImageProvider,
+                          backgroundColor: Colors.transparent),
                     ),
                   ),
                   Positioned(
@@ -140,30 +141,86 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
             ),
             const Padding(padding: EdgeInsets.all(5)),
-            Neumorphic(
-              style: NeumorphicStyle(
-                shape: NeumorphicShape.concave,
-                boxShape:
-                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                depth: 8,
-                lightSource: LightSource.topLeft,
-                color: const Color(0xffffffff),
-              ),
-              child: SizedBox(
-                width: 0.85 * MediaQuery.of(context).size.width,
-                child: TextField(
-                    maxLines: 1,
-                    controller: _userNameController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "닉네임을 입력하세요",
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Neumorphic(
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.concave,
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                    depth: 8,
+                    lightSource: LightSource.topLeft,
+                    color: const Color(0xffffffff),
+                  ),
+                  child: SizedBox(
+                    width: 0.6 * MediaQuery.of(context).size.width,
+                    child: TextField(
+                      maxLines: 1,
+                      controller: _userNameController,
+                      onChanged: (value) => {
+                        setState(() {
+                          _didUserNameCheck = false;
+                          _isUserNameValid = false;
+                        })
+                      },
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: "닉네임을 입력하세요",
+                      ),
                     ),
-                    onSubmitted: (e) {}),
-              ),
+                  ),
+                ),
+                SizedBox(
+                  width: 0.2 * MediaQuery.of(context).size.width,
+                  height: 45,
+                  child: NeumorphicButton(
+                    onPressed: () {
+                      if (_userNameController.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('닉네임을 입력해주세요'),
+                          ),
+                        );
+                      } else {
+                        _checkUserName();
+                      }
+                    },
+                    style: NeumorphicStyle(
+                      shape: NeumorphicShape.concave,
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12)),
+                      depth: 8,
+                      lightSource: LightSource.topLeft,
+                      color: const Color(0xff5563de),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "중복검사",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10.5,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const Padding(padding: EdgeInsets.all(15)),
+            const Padding(padding: EdgeInsets.all(10)),
+            (_didUserNameCheck == false)
+                ? const Text("닉네임 중복검사를 진행해주세요",
+                    style: TextStyle(color: Colors.red))
+                : _isUserNameValid == false
+                    ? const Text("이미 사용중인 닉네임입니다!",
+                        style: TextStyle(color: Colors.red))
+                    : const Text("사용 가능한 닉네임입니다!",
+                        style: TextStyle(color: Colors.green)),
+            const Padding(padding: EdgeInsets.all(5)),
             Row(
               children: [
                 Padding(
@@ -396,8 +453,16 @@ class _SignUpPageState extends State<SignUpPage> {
                         content: Text('닉네임을 입력해주세요'),
                       ),
                     );
+                  } else if (_didUserNameCheck == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('닉네임 중복검사를 진행해주세요.'),
+                    ));
+                  } else if (_isUserNameValid == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('다른 닉네임을 사용해주세요.'),
+                    ));
                   } else {
-                    if (_image == null) {
+                    if (_image[0] == 'h') {
                       _signUp();
                     } else {
                       _uploadImage();
@@ -412,10 +477,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   lightSource: LightSource.topLeft,
                   color: const Color(0xff5563de),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "가입하기",
-                    style: TextStyle(
+                    widget.isNewUser ? "가입하기" : "수정하기",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -431,28 +496,79 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  _checkUserName() async {
+    var dio = await authDio(context);
+    var response = await dio.get(
+        '$serverurl:8081/api/user-management/user/validation-duplicate-name',
+        queryParameters: {
+          'target': _userNameController.text,
+        });
+    final isNotDuplicate = response.data['result'];
+    setState(() {
+      _didUserNameCheck = true;
+    });
+    if (isNotDuplicate) {
+      setState(() {
+        _isUserNameValid = true;
+      });
+    } else {
+      _isUserNameValid = false;
+    }
+  }
+
+  _getUserData() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    var response =
+        await dio.get('$serverurl:8081/api/user-management/user/$userID');
+    final data = response.data;
+    setState(() {
+      _userNameController.text = data['nickname'];
+      _didUserNameCheck = true;
+      _isUserNameValid = true;
+      _selectedDate = DateTime.parse(data['birthday']);
+      _height = data['height'].round();
+      _weight = data['weight'].round();
+      _image = data['picture'];
+      _gender = data['gender'];
+    });
+  }
+
   _signUp() async {
-    String? token = await storage.read(key: 'accessToken');
-    final response = await http.put(
-        Uri.parse('$serverurl:8081/api/user-management/user/${widget.userId}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          "birthday": _selectedDate.toString().substring(0, 10),
-          "gender": _gender,
-          "height": _height,
-          "nickname": _userNameController.text,
-          "picture": _image == null
-              ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/default.jpeg"
-              : "$imageurl/${_userNameController.text}.jpeg",
-          "weight": _weight,
-        }));
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio
+        .put('$serverurl:8081/api/user-management/user/$userID', data: {
+      "birthday": _selectedDate.toString().substring(0, 10),
+      "gender": _gender,
+      "height": _height,
+      "nickname": _userNameController.text,
+      "picture": _image ==
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+          : "$imageurl/users/${_userNameController.text}.jpeg",
+      "weight": _weight,
+    });
     if (response.statusCode == 200) {
+      await storage.write(key: 'nickname', value: _userNameController.text);
+      await storage.write(
+        key: 'profile',
+        value: _image ==
+                "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+            ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/users/default.jpeg"
+            : "$imageurl/users/${_userNameController.text}.jpeg",
+      );
+      await storage.write(
+          key: 'birthday', value: _selectedDate.toString().substring(0, 10));
+      await storage.write(key: 'height', value: '${_height.round()}');
+      await storage.write(key: 'weight', value: '${_weight.round()}');
+      await storage.write(key: 'gender', value: _gender);
       Navigator.pop(context);
     } else {
-      print("Failed : ${response.statusCode}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 
@@ -475,11 +591,13 @@ class _SignUpPageState extends State<SignUpPage> {
         headers: {
           'Content-Type': 'image/jpeg',
         },
-        body: File(_image!).readAsBytesSync());
+        body: File(_image).readAsBytesSync());
     if (response.statusCode == 200) {
       _signUp();
     } else {
-      print("Failed : ${response.statusCode}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 }

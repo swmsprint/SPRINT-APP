@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:sprint/models/frienddata.dart';
 import 'package:sprint/widgets/friends_page/friendinfo.dart';
 import 'package:sprint/widgets/friends_page/friendspageappbar.dart';
+import 'package:sprint/widgets/friend_requests_page/recievedrequestinfo.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 
-import 'package:sprint/widgets/friend_requests_page/recievedrequestinfo.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class FriendsPage extends StatefulWidget {
@@ -213,32 +214,29 @@ class _FriendsPageState extends State<FriendsPage> {
   }
 
   _getRecievedRequests() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/friend/1/received'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.get(
+      '$serverurl:8081/api/user-management/friend/$userID/received',
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
+      print(result);
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   _getFriends() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/friend/1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.get(
+      '$serverurl:8081/api/user-management/friend/$userID',
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }

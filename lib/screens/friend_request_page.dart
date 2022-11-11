@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 
-import '../models/frienddata.dart';
-import '../widgets/friend_requests_page/recievedrequestinfo.dart';
-import '../widgets/friend_requests_page/sentrequestinfo.dart';
+import 'package:sprint/models/frienddata.dart';
+import 'package:sprint/widgets/friend_requests_page/recievedrequestinfo.dart';
+import 'package:sprint/widgets/friend_requests_page/sentrequestinfo.dart';
+import 'package:sprint/services/auth_dio.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class FriendRequestPage extends StatefulWidget {
@@ -194,6 +196,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
+                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -231,32 +234,29 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
   }
 
   _getRecievedRequests() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/friend/1/received'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.get(
+      '$serverurl:8081/api/user-management/friend/$userID/received',
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
+      print(result);
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   _getSentRequests() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/friend/1/requested'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    final response = await dio.get(
+      '$serverurl:8081/api/user-management/friend/$userID/requested',
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }

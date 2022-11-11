@@ -38,34 +38,9 @@ class LoginPage extends StatelessWidget {
                   icon: Image.asset('assets/images/login/apple.png'),
                   onPressed: () async {
                     UserCredential result = await signInWithApple();
-                    final userInfo = await _signUp(
-                        "APPLE", FirebaseAuth.instance.currentUser!.uid);
-                    final AccessToken = userInfo['accessToken'];
-                    final RefreshToken = userInfo['refreshToken'];
-                    await storage.write(
-                        key: 'accessToken', value: AccessToken.toString());
-                    await storage.write(
-                        key: 'refreshToken', value: RefreshToken.toString());
-                    if (!userInfo["alreadySignIn"]) {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SignUpPage(
-                                  userId: userInfo["memberId"],
-                                )),
-                      );
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    }
+                    final userInfo = await _signUp("APPLE",
+                        FirebaseAuth.instance.currentUser!.uid, context);
+                    _checkAlreadyUser(userInfo, context);
                   },
                 ),
               ),
@@ -76,34 +51,9 @@ class LoginPage extends StatelessWidget {
                   icon: Image.asset('assets/images/login/google.png'),
                   onPressed: () async {
                     UserCredential result = await signInWithGoogle();
-                    final userInfo = await _signUp(
-                        "GOOGLE", FirebaseAuth.instance.currentUser!.uid);
-                    final AccessToken = userInfo['accessToken'];
-                    final RefreshToken = userInfo['refreshToken'];
-                    await storage.write(
-                        key: 'accessToken', value: AccessToken.toString());
-                    await storage.write(
-                        key: 'refreshToken', value: RefreshToken.toString());
-                    if (!userInfo["alreadySignIn"]) {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SignUpPage(
-                                  userId: userInfo["memberId"],
-                                )),
-                      );
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RootPage()),
-                          (_) => false);
-                    }
+                    final userInfo = await _signUp("GOOGLE",
+                        FirebaseAuth.instance.currentUser!.uid, context);
+                    _checkAlreadyUser(userInfo, context);
                   },
                 ),
               ),
@@ -132,39 +82,46 @@ class LoginPage extends StatelessWidget {
   _checkAlreadyUser(userInfo, context) async {
     final accessToken = userInfo['accessToken'];
     final refreshToken = userInfo['refreshToken'];
+    final userID = userInfo['userId'];
     await storage.write(key: 'accessToken', value: accessToken.toString());
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
+    await storage.write(key: 'userID', value: userID.toString());
     if (!userInfo["alreadySignIn"]) {
       await Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => SignUpPage(
-                  userId: userInfo["memberId"],
-                )),
+        MaterialPageRoute(builder: (context) => SignUpPage(isNewUser: true)),
       );
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const RootPage()),
+          MaterialPageRoute(
+              builder: (context) => RootPage(
+                    userId: userID,
+                  )),
           (_) => false);
     } else {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const RootPage()),
+          MaterialPageRoute(
+              builder: (context) => RootPage(
+                    userId: userID,
+                  )),
           (_) => false);
     }
   }
 
-  _signUp(String provider, String uid) async {
+  _signUp(String provider, String uid, context) async {
     final response = await http.get(
         Uri.parse(
-            '$serverurl:8081/oauth2/firebase?provider=${provider}&uid=${uid}'),
+            '$serverurl:8081/oauth2/firebase?provider=$provider&uid=$uid'),
         headers: {
           'Content-Type': 'application/json',
         });
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      print("Failed : ${response.statusCode}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 

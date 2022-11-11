@@ -1,9 +1,12 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sprint/utils/secondstostring.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -24,14 +27,12 @@ class _RecordState extends State<Record> {
   late List<double> _distanceList;
 
   _getStatistics() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/statistics/${widget.userId}'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+
+    var response =
+        await dio.get('$serverurl:8081/api/statistics/${widget.userId}');
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       List<int> duration = [
         result["dailyStatistics"]["totalSeconds"].round(),
         result["weeklyStatistics"]["totalSeconds"].round(),
@@ -54,15 +55,16 @@ class _RecordState extends State<Record> {
         result["totalStatistics"]["energy"]
       ];
       return ([duration, distance, calories]);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   @override
   void initState() {
     super.initState();
-
+    _selectedIndex = 0;
+    _durationList = [];
+    _distanceList = [];
+    _caloriesList = [];
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var result = await _getStatistics();
       setState(() {

@@ -1,10 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sprint/utils/secondstostring.dart';
-
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class WeeklyRecord extends StatefulWidget {
@@ -20,29 +20,26 @@ class _WeeklyRecordState extends State<WeeklyRecord> {
   late double _calories;
 
   _getWeeklyStatistics() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/statistics/1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    var response = await dio.get('$serverurl:8081/api/statistics/$userID');
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(response.body);
+      Map<String, dynamic> result = response.data;
       int duration = result["weeklyStatistics"]["totalSeconds"].round();
       double distance = result["weeklyStatistics"]["distance"];
 
       double calories = result["weeklyStatistics"]["energy"];
 
       return ([duration, distance, calories]);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   @override
   void initState() {
     super.initState();
-
+    _duration = 0;
+    _distance = 0;
+    _calories = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var result = await _getWeeklyStatistics();
       setState(() {

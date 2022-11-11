@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
-String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
-String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
+String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
+String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class EditGroupPage extends StatefulWidget {
   final int groupId;

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'package:sprint/models/groupdata.dart';
 import 'package:sprint/widgets/group_page/groupabstract.dart';
 import 'package:sprint/widgets/group_page/grouppageappbar.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class SearchGroupPage extends StatefulWidget {
@@ -116,16 +117,14 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
   }
 
   _getGroups(keyword) async {
-    final response = await http.get(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/group/list/?target=$keyword&userId=1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    var response = await dio.get(
+        '$serverurl:8081/api/user-management/group/list/',
+        queryParameters: {"target": keyword, "userId": userID});
+
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
-      print(result);
+      Map<String, dynamic> result = response.data;
       setState(() {
         _groupCount = result['count'];
       });
@@ -133,8 +132,6 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
       for (int i = 0; i < _groupCount; i++) {
         _groupList.add(GroupData.fromJson(result['groupList'][i]));
       }
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }

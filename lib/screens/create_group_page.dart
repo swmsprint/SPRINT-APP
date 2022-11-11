@@ -1,16 +1,19 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sprint/widgets/group_page/grouppageappbar.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
-String bucketurl = FlutterConfig.get('AWS_S3_PUT_GROUP_ADDRESS');
-String imageurl = FlutterConfig.get('AWS_S3_GET_GROUP_ADDRESS');
+String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
+String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class CreateGroupPage extends StatefulWidget {
   const CreateGroupPage({super.key});
@@ -22,8 +25,7 @@ class CreateGroupPage extends StatefulWidget {
 class _CreateGroupPageState extends State<CreateGroupPage> {
   late TextEditingController _groupNameController;
   late TextEditingController _groupDescriptionController;
-  late double _groupMembers;
-  late String? _image;
+  late String _image;
 
   final ImagePicker picker = ImagePicker();
 
@@ -32,8 +34,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     super.initState();
     _groupNameController = TextEditingController();
     _groupDescriptionController = TextEditingController();
-    _groupMembers = 5;
-    _image = null;
+    _image =
+        "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg";
   }
 
   @override
@@ -59,15 +61,15 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                       radius: 70,
                       backgroundColor: const Color(0x70707070),
                       child: CircleAvatar(
-                        radius: 68,
-                        backgroundImage: _image != null
-                            ? FileImage(
-                                File(_image!),
-                              )
-                            : null,
-                        backgroundColor:
-                            _image != null ? Colors.transparent : Colors.white,
-                      ),
+                          radius: 68,
+                          backgroundImage: _image[0] == 'h'
+                              ? NetworkImage(
+                                  _image,
+                                )
+                              : FileImage(
+                                  File(_image),
+                                ) as ImageProvider,
+                          backgroundColor: Colors.transparent),
                     ),
                   ),
                   Positioned(
@@ -173,48 +175,17 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                     onSubmitted: (e) {}),
               ),
             ),
-            const Padding(padding: EdgeInsets.all(20)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                Text(
-                  "제한 인원: ${_groupMembers.toInt()}명",
-                  style: const TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            SizedBox(
-              width: 0.85 * MediaQuery.of(context).size.width,
-              child: NeumorphicSlider(
-                value: _groupMembers,
-                min: 5,
-                max: 50,
-                height: 10,
-                style: const SliderStyle(
-                  accent: Color(0xff5563de),
-                  variant: Color(0x405563de),
-                ),
-                onChanged: (double value) {
-                  setState(() {
-                    _groupMembers = value;
-                  });
-                },
-              ),
-            ),
             const Padding(padding: EdgeInsets.all(30)),
             SizedBox(
               width: 200,
               child: NeumorphicButton(
-                onPressed: _uploadImage,
+                onPressed: () {
+                  if (_image[0] == 'h') {
+                    _createGroup();
+                  } else {
+                    _uploadImage();
+                  }
+                },
                 style: NeumorphicStyle(
                   shape: NeumorphicShape.concave,
                   boxShape:
@@ -243,24 +214,20 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   }
 
   _createGroup() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
     final response =
-        await http.post(Uri.parse('$serverurl:8080/api/user-management/group'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "groupLeaderId": 2,
-              "groupName": _groupNameController.text,
-              "groupDescription": _groupDescriptionController.text,
-              "groupPicture": _image == null
-                  ? null
-                  : "$imageurl/groups/${_groupNameController.text}.jpeg",
-            }));
+        await dio.post('$serverurl:8081/api/user-management/group', data: {
+      "groupLeaderId": userID,
+      "groupName": _groupNameController.text,
+      "groupDescription": _groupDescriptionController.text,
+      "groupPicture": _image ==
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          : "$imageurl/groups/${_groupNameController.text}.jpeg",
+    });
     if (response.statusCode == 200) {
-      print("groupId: ${jsonDecode(response.body)['groupId']}");
       Navigator.pop(context);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
@@ -283,11 +250,14 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
         headers: {
           'Content-Type': 'image/jpeg',
         },
-        body: File(_image!).readAsBytesSync());
+        body: File(_image).readAsBytesSync());
+
     if (response.statusCode == 200) {
       _createGroup();
     } else {
-      print("Failed : ${response.statusCode}");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 }

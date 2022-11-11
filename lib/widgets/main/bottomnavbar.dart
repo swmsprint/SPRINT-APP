@@ -6,7 +6,8 @@ import 'package:sprint/screens/group_page.dart';
 import 'package:sprint/screens/home_page.dart';
 
 class TabPage extends StatefulWidget {
-  TabPage({Key? key}) : super(key: key);
+  final int userId;
+  const TabPage({Key? key, required this.userId}) : super(key: key);
 
   final Color selectedColor = const Color(0xff5563de);
   @override
@@ -24,8 +25,8 @@ class _TabPageState extends State<TabPage> {
       const HomePage(),
       const GroupPage(),
       const BattlePage(),
-      const StatsPage(
-        userId: 1,
+      StatsPage(
+        userId: widget.userId,
       ),
     ];
   }
@@ -80,8 +81,9 @@ class _TabPageState extends State<TabPage> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
-                          primary: Colors.transparent,
-                          onSurface: Colors.transparent,
+                          backgroundColor: Colors.transparent,
+                          disabledForegroundColor: Colors.transparent,
+                          disabledBackgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           padding: EdgeInsets.zero,
                           fixedSize: const Size(70, 70),

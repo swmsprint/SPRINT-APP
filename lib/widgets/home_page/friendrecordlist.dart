@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/models/frienddata.dart';
+import 'package:sprint/widgets/home_page/addfriend.dart';
 import 'package:sprint/widgets/home_page/friendrecord.dart';
+import 'package:sprint/services/auth_dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class FriendRecordList extends StatelessWidget {
-  const FriendRecordList({Key? key}) : super(key: key);
+final storage = new FlutterSecureStorage();
+
+class FriendRecordList extends StatefulWidget {
+  const FriendRecordList({super.key});
+
+  @override
+  State<FriendRecordList> createState() => _FriendRecordListState();
+}
+
+class _FriendRecordListState extends State<FriendRecordList> {
+  late List<Widget> _friendsData;
+
+  @override
+  void initState() {
+    super.initState();
+    _friendsData = [];
+    _getFriends();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +39,39 @@ class FriendRecordList extends StatelessWidget {
                     padding: EdgeInsets.only(
                         left:
                             (0.075 * MediaQuery.of(context).size.width) - 20)),
-                const FriendRecord(name: '신종인', image: "assets/images/2.png"),
-                const FriendRecord(name: '예나윤', image: "assets/images/3.png"),
-                const FriendRecord(name: '이병창', image: "assets/images/4.png"),
-                const FriendRecord(name: '최창현', image: "assets/images/5.png"),
-                const FriendRecord(name: '김시은', image: "assets/images/6.png"),
+                ..._friendsData,
+                const AddFriend(),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  _getFriends() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response = await dio.get(
+      '$serverurl:8081/api/user-management/friend/$userID',
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> result = response.data;
+      int friendsCount = result['count'];
+      List<FriendData> friendsList = [];
+      for (int i = 0; i < friendsCount; i++) {
+        friendsList.add(FriendData.fromJson(response.data['userList'][i]));
+      }
+      setState(() {
+        _friendsData = friendsList
+            .map((friend) => FriendRecord(
+                  name: friend.nickname,
+                  image: friend.profile,
+                  friendId: friend.userId,
+                ))
+            .toList();
+      });
+    }
   }
 }

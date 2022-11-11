@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/frienddata.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/friends_stats_page.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -17,6 +19,16 @@ class SentRequestInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    deleteFriendRequest(targetUserId) async {
+      var dio = await authDio(context);
+      final userID = await storage.read(key: 'userID');
+      await dio.put('$serverurl:8081/api/user-management/friend', data: {
+        "friendState": "CANCEL",
+        "sourceUserId": userID,
+        'targetUserId': targetUserId,
+      });
+    }
+
     return SizedBox(
       width: 0.85 * MediaQuery.of(context).size.width,
       child: Column(
@@ -29,16 +41,17 @@ class SentRequestInfo extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            FriendsStatsPage(userId: friend.userId),
+                        builder: (context) => FriendsStatsPage(
+                            userId: friend.userId,
+                            userNickName: friend.nickname),
                         fullscreenDialog: false),
                   );
                 },
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage(
-                        "assets/images/${friend.userId}.png",
+                      backgroundImage: NetworkImage(
+                        friend.profile,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(10)),
@@ -55,14 +68,6 @@ class SentRequestInfo extends StatelessWidget {
                           ),
                         ),
                         const Padding(padding: EdgeInsets.all(5)),
-                        Text(
-                          friend.email,
-                          style: const TextStyle(
-                            color: Color(0xff5563de),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -75,7 +80,7 @@ class SentRequestInfo extends StatelessWidget {
                   color: Color(0xff5563de),
                 ),
                 onPressed: () {
-                  _deleteFriendRequest(friend.userId);
+                  deleteFriendRequest(friend.userId);
                   cancelRequest();
                 },
               )
@@ -84,40 +89,5 @@ class SentRequestInfo extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  _postFriendRequest(targetUserId) async {
-    final response =
-        await http.post(Uri.parse('$serverurl:8080/api/user-management/friend'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "sourceUserId": 1,
-              'targetUserId': targetUserId, //Demo user
-            }));
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
-  }
-
-  _deleteFriendRequest(targetUserId) async {
-    final response =
-        await http.put(Uri.parse('$serverurl:8080/api/user-management/friend'),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              "friendState": "CANCEL",
-              "sourceUserId": 1,
-              'targetUserId': targetUserId,
-            }));
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
   }
 }
