@@ -1,11 +1,14 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
@@ -31,7 +34,7 @@ class EditGroupPage extends StatefulWidget {
 
 class _EditGroupPageState extends State<EditGroupPage> {
   late TextEditingController _groupDescriptionController;
-  late String? _image;
+  late String _image;
 
   final ImagePicker picker = ImagePicker();
 
@@ -40,7 +43,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
     super.initState();
     _groupDescriptionController =
         TextEditingController(text: widget.groupDescription);
-    _image = null;
+    _image = widget.groupImage;
   }
 
   @override
@@ -85,17 +88,15 @@ class _EditGroupPageState extends State<EditGroupPage> {
                       radius: 70,
                       backgroundColor: const Color(0x70707070),
                       child: CircleAvatar(
-                        radius: 68,
-                        backgroundImage: _image != null
-                            ? FileImage(
-                                File(_image!),
-                              )
-                            : NetworkImage(
-                                widget.groupImage,
-                              ) as ImageProvider,
-                        backgroundColor:
-                            _image != null ? Colors.transparent : Colors.white,
-                      ),
+                          radius: 68,
+                          backgroundImage: _image[0] == 'h'
+                              ? NetworkImage(
+                                  _image,
+                                )
+                              : FileImage(
+                                  File(_image),
+                                ) as ImageProvider,
+                          backgroundColor: Colors.transparent),
                     ),
                   ),
                   Positioned(
@@ -163,7 +164,13 @@ class _EditGroupPageState extends State<EditGroupPage> {
             SizedBox(
               width: 200,
               child: NeumorphicButton(
-                onPressed: _uploadImage,
+                onPressed: () {
+                  if (_image[0] == 'h') {
+                    _editGroup();
+                  } else {
+                    _uploadImage();
+                  }
+                },
                 style: NeumorphicStyle(
                   shape: NeumorphicShape.concave,
                   boxShape:
@@ -218,37 +225,29 @@ class _EditGroupPageState extends State<EditGroupPage> {
   }
 
   _deleteGroup() async {
-    final response = await http.delete(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/group/${widget.groupId}?userId=1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    final response = await dio.delete(
+        '$serverurl:8081/api/user-management/group/${widget.groupId}?userId=$userID');
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   _editGroup() async {
-    final response = await http.put(
-        Uri.parse(
-            '$serverurl:8080/api/user-management/group/${widget.groupId}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    final response = await dio.put(
+        '$serverurl:8081/api/user-management/group/${widget.groupId}',
+        data: {
           "groupDescription": _groupDescriptionController.text,
-          "groupPicture": "$imageurl/groups/${widget.groupName}.jpeg",
-        }));
+          "groupPicture": _image ==
+                  "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+              ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+              : "$imageurl/groups/${widget.groupName}.jpeg",
+        });
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
@@ -266,20 +265,18 @@ class _EditGroupPageState extends State<EditGroupPage> {
   }
 
   Future<void> _uploadImage() async {
-    if (_image != null) {
-      final response = await http.put(
-          Uri.parse("$bucketurl/groups/${widget.groupName}.jpeg"),
-          headers: {
-            'Content-Type': 'image/jpeg',
-          },
-          body: File(_image!).readAsBytesSync());
-      if (response.statusCode == 200) {
-        _editGroup();
-      } else {
-        print("Failed : ${response.statusCode}");
-      }
-    } else {
+    final response =
+        await http.put(Uri.parse("$bucketurl/groups/${widget.groupName}.jpeg"),
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+            body: File(_image).readAsBytesSync());
+    if (response.statusCode == 200) {
       _editGroup();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 }
