@@ -196,7 +196,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
             SizedBox(
               width: 200,
               child: NeumorphicButton(
-                onPressed: _deleteGroup,
+                onPressed: _showDialog,
                 style: NeumorphicStyle(
                   shape: NeumorphicShape.concave,
                   boxShape:
@@ -221,6 +221,32 @@ class _EditGroupPageState extends State<EditGroupPage> {
           ],
         ),
       ),
+    );
+  }
+
+  _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("정말로 그룹을 삭제하시겠습니까?"),
+          content: const Text("삭제한 그룹은 복구할 수 없습니다!"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("취소", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("삭제", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                _deleteGroup();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
