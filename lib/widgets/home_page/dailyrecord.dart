@@ -23,7 +23,7 @@ class _DailyRecordState extends State<DailyRecord> {
   _getDailyStatistics() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    final response = await dio.get('$serverurl:8080/api/statistics/$userID');
+    final response = await dio.get('$serverurl:8081/api/statistics/$userID');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       int duration = result["dailyStatistics"]["totalSeconds"].round();

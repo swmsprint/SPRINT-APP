@@ -19,15 +19,12 @@ class HMCalendar extends StatefulWidget {
 class _HMCalendarState extends State<HMCalendar> {
   late int _year;
   late int _month;
-  late Map<DateTime, int> _dataset;
 
-  @override
   @override
   void initState() {
     final today = DateTime.now();
     _year = today.year;
     _month = today.month;
-    _dataset = {};
     super.initState();
   }
 
@@ -40,14 +37,10 @@ class _HMCalendarState extends State<HMCalendar> {
           "month": month,
         });
     var cal = response.data;
-    print(cal);
     Map<DateTime, int> dataset = {};
     for (int i = 0; i < cal.length; i++) {
       dataset[DateTime(year, month, i + 1)] = (cal[i] / 1000).round();
     }
-    setState(() {
-      _dataset = dataset;
-    });
     return dataset;
   }
 
