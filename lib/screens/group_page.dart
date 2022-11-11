@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:sprint/models/groupdata.dart';
 import 'package:sprint/screens/create_group_page.dart';
 import 'package:sprint/screens/search_group_page.dart';
+import 'package:sprint/services/auth_dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/widgets/group_page/groupabstract.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class GroupPage extends StatefulWidget {
@@ -146,17 +148,14 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   _getGroups() async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/group/list/1'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+
+    var response =
+        await dio.get('$serverurl:8081/api/user-management/group/list/$userID');
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
+      Map<String, dynamic> result = response.data;
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }
