@@ -42,7 +42,9 @@ class StatsPage extends StatelessWidget {
                         ],
                       ),
                       const Padding(padding: EdgeInsets.all(5)),
-                      const Record(),
+                      Record(
+                        userId: userId,
+                      ),
                       const Padding(padding: EdgeInsets.all(10)),
                       HMCalendar(
                         userId: userId,

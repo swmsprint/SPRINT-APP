@@ -27,7 +27,6 @@ class RunningItem extends StatelessWidget {
   Widget build(BuildContext context) {
     _getRunningDetail(runningId) async {
       var dio = await authDio(context);
-      final userID = await storage.read(key: 'userID');
 
       var response = await dio.get(
           '$serverurl:8081/api/running/detail/?runningId=$runningId&userId=$userId');
@@ -177,10 +176,9 @@ class _RunningListViewState extends State<RunningListView> {
 
   _getRunningDatas(pageKey) async {
     var dio = await authDio(context);
-    final userID = await storage.read(key: 'userID');
 
     var response = await dio.get(
-        '$serverurl:8081/api/running/personal/?pageNumber=$pageKey&userId=$userID');
+        '$serverurl:8081/api/running/personal/?pageNumber=$pageKey&userId=${widget.userId}');
     if (response.statusCode == 200) {
       List<dynamic> result = response.data;
       List<RunningData> runningDatas = [];

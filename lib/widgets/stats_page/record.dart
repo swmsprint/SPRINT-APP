@@ -11,7 +11,8 @@ final storage = new FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class Record extends StatefulWidget {
-  const Record({super.key});
+  final int userId;
+  const Record({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<Record> createState() => _RecordState();
@@ -27,10 +28,9 @@ class _RecordState extends State<Record> {
 
   _getStatistics() async {
     var dio = await authDio(context);
-    final userID = await storage.read(key: 'userID');
 
-    var response = await dio.get('$serverurl:8081/api/statistics/$userID');
-    print(response);
+    var response =
+        await dio.get('$serverurl:8081/api/statistics/${widget.userId}');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       List<int> duration = [
@@ -61,7 +61,10 @@ class _RecordState extends State<Record> {
   @override
   void initState() {
     super.initState();
-
+    _selectedIndex = 0;
+    _durationList = [];
+    _distanceList = [];
+    _caloriesList = [];
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var result = await _getStatistics();
       setState(() {
