@@ -39,8 +39,7 @@ Future<Dio> authDio(BuildContext context) async {
         return handler.next(error);
       }));
 
-      final refreshResponse = await refreshDio.get(
-          '$serverurl:8081/oauth2/re-issue',
+      final refreshResponse = await refreshDio.get('$serverurl/oauth2/re-issue',
           queryParameters: {'refreshToken': refreshToken, 'userId': userID});
       final newAccessToken = refreshResponse.data['accessToken'];
       final newRefreshToken = refreshResponse.data['refreshToken'];

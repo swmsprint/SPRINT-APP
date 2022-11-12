@@ -152,7 +152,7 @@ class _GroupPageState extends State<GroupPage> {
     final userID = await storage.read(key: 'userID');
 
     var response =
-        await dio.get('$serverurl:8081/api/user-management/group/list/$userID');
+        await dio.get('$serverurl/api/user-management/group/list/$userID');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       return result;

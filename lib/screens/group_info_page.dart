@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/models/groupweeklystat.dart';
 import 'package:sprint/screens/edit_group_page.dart';
+import 'package:sprint/screens/group_request_page.dart';
 import 'package:sprint/utils/secondstostring.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
@@ -64,7 +65,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.notifications_rounded),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const GroupRequestPage(),
+                          fullscreenDialog: false),
+                    );
+                  },
                 ),
               ],
             )

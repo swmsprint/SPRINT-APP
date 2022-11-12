@@ -120,7 +120,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     var response = await dio.get(
-        '$serverurl:8081/api/user-management/group/list/',
+        '$serverurl/api/user-management/group/list/',
         queryParameters: {"target": keyword, "userId": userID});
 
     if (response.statusCode == 200) {

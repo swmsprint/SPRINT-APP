@@ -22,7 +22,7 @@ class _WeeklyRecordState extends State<WeeklyRecord> {
   _getWeeklyStatistics() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    var response = await dio.get('$serverurl:8081/api/statistics/$userID');
+    var response = await dio.get('$serverurl/api/statistics/$userID');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       int duration = result["weeklyStatistics"]["totalSeconds"].round();

@@ -17,7 +17,7 @@ class Profile extends StatelessWidget {
     setUserData() async {
       var dio = await authDio(context);
       var response =
-          await dio.get('$serverurl:8081/api/user-management/user/$userId');
+          await dio.get('$serverurl/api/user-management/user/$userId');
       String profileImage = response.data['picture'];
       String? nickName = response.data['nickname'];
       return [profileImage, nickName];

@@ -286,7 +286,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   _checkGroupName() async {
     var dio = await authDio(context);
     var response = await dio.get(
-        '$serverurl:8081/api/user-management/group/validation-duplicate-name',
+        '$serverurl/api/user-management/group/validation-duplicate-name',
         queryParameters: {
           'target': _groupNameController.text,
         });
@@ -307,7 +307,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     final response =
-        await dio.post('$serverurl:8081/api/user-management/group', data: {
+        await dio.post('$serverurl/api/user-management/group', data: {
       "groupLeaderId": userID,
       "groupName": _groupNameController.text,
       "groupDescription": _groupDescriptionController.text,

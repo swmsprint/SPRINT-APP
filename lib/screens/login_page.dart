@@ -112,7 +112,7 @@ class LoginPage extends StatelessWidget {
   _signUp(String provider, String uid, context) async {
     final response = await http.get(
         Uri.parse(
-            '$serverurl:8081/oauth2/firebase?provider=$provider&uid=$uid'),
+            '$serverurl/oauth2/firebase?provider=$provider&uid=$uid'),
         headers: {
           'Content-Type': 'application/json',
         });

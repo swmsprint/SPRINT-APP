@@ -254,7 +254,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     final response = await dio.delete(
-        '$serverurl:8081/api/user-management/group/${widget.groupId}?userId=$userID');
+        '$serverurl/api/user-management/group/${widget.groupId}?userId=$userID');
     if (response.statusCode == 200) {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
@@ -264,7 +264,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     final response = await dio.put(
-        '$serverurl:8081/api/user-management/group/${widget.groupId}',
+        '$serverurl/api/user-management/group/${widget.groupId}',
         data: {
           "groupDescription": _groupDescriptionController.text,
           "groupPicture": _image ==

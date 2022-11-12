@@ -499,7 +499,7 @@ class _SignUpPageState extends State<SignUpPage> {
   _checkUserName() async {
     var dio = await authDio(context);
     var response = await dio.get(
-        '$serverurl:8081/api/user-management/user/validation-duplicate-name',
+        '$serverurl/api/user-management/user/validation-duplicate-name',
         queryParameters: {
           'target': _userNameController.text,
         });
@@ -520,7 +520,7 @@ class _SignUpPageState extends State<SignUpPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     var response =
-        await dio.get('$serverurl:8081/api/user-management/user/$userID');
+        await dio.get('$serverurl/api/user-management/user/$userID');
     final data = response.data;
     setState(() {
       _userNameController.text = data['nickname'];
@@ -539,7 +539,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final userID = await storage.read(key: 'userID');
 
     var response = await dio
-        .put('$serverurl:8081/api/user-management/user/$userID', data: {
+        .put('$serverurl/api/user-management/user/$userID', data: {
       "birthday": _selectedDate.toString().substring(0, 10),
       "gender": _gender,
       "height": _height,

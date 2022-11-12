@@ -29,7 +29,7 @@ class RunningItem extends StatelessWidget {
       var dio = await authDio(context);
 
       var response = await dio.get(
-          '$serverurl:8081/api/running/detail/?runningId=$runningId&userId=$userId');
+          '$serverurl/api/running/detail/?runningId=$runningId&userId=$userId');
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -178,7 +178,7 @@ class _RunningListViewState extends State<RunningListView> {
     var dio = await authDio(context);
 
     var response = await dio.get(
-        '$serverurl:8081/api/running/personal/?pageNumber=$pageKey&userId=${widget.userId}');
+        '$serverurl/api/running/personal/?pageNumber=$pageKey&userId=${widget.userId}');
     if (response.statusCode == 200) {
       List<dynamic> result = response.data;
       List<RunningData> runningDatas = [];

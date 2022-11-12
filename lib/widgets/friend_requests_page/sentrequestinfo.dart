@@ -22,7 +22,7 @@ class SentRequestInfo extends StatelessWidget {
     deleteFriendRequest(targetUserId) async {
       var dio = await authDio(context);
       final userID = await storage.read(key: 'userID');
-      await dio.put('$serverurl:8081/api/user-management/friend', data: {
+      await dio.put('$serverurl/api/user-management/friend', data: {
         "friendState": "CANCEL",
         "sourceUserId": userID,
         'targetUserId': targetUserId,

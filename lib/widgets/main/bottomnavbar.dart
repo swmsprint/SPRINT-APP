@@ -22,7 +22,7 @@ class _TabPageState extends State<TabPage> {
   void initState() {
     super.initState();
     _pages = [
-      const HomePage(),
+      HomePage(userId: widget.userId),
       const GroupPage(),
       const BattlePage(),
       StatsPage(

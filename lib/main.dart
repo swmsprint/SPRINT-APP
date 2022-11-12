@@ -88,7 +88,7 @@ class _RootPageState extends State<RootPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     var response =
-        await dio.get('$serverurl:8081/api/user-management/user/$userID');
+        await dio.get('$serverurl/api/user-management/user/$userID');
     final data = response.data;
     await storage.write(key: 'nickname', value: data['nickname']);
     await storage.write(key: 'profile', value: data['picture']);

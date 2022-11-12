@@ -127,7 +127,7 @@ class _BlockUsersPageState extends State<BlockUsersPage> {
     final userID = await storage.read(key: 'userID');
 
     var response = await dio.get(
-      '$serverurl:8081/api/user-management/block/$userID/',
+      '$serverurl/api/user-management/block/$userID/',
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;

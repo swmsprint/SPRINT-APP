@@ -31,7 +31,7 @@ class _HMCalendarState extends State<HMCalendar> {
   setCalendar(int year, int month) async {
     var dio = await authDio(context);
     var response = await dio.get(
-        '$serverurl:8081/api/statistics/streak/${widget.userId}',
+        '$serverurl/api/statistics/streak/${widget.userId}',
         queryParameters: {
           "year": year,
           "month": month,

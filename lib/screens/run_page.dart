@@ -227,7 +227,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
 
-    var response = await dio.post('$serverurl:8081/api/running/start', data: {
+    var response = await dio.post('$serverurl/api/running/start', data: {
       'startTime': DateTime.now().toUtc().toString(),
       'userId': userID
     });
@@ -253,7 +253,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     await runstorage.writeRunningData(body);
 
     final response =
-        await dio.post('$serverurl:8081/api/running/finish', data: body);
+        await dio.post('$serverurl/api/running/finish', data: body);
     if (response.statusCode == 200) {
       print("Success");
     }

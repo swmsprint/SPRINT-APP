@@ -5,7 +5,8 @@ import 'package:sprint/widgets/home_page/weeklyrecord.dart';
 import 'package:sprint/widgets/stats_page/getrunningdatas.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  int userId;
+  HomePage({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +88,8 @@ class HomePage extends StatelessWidget {
                   const Padding(padding: EdgeInsets.all(10)),
                   const DailyRecord(),
                   const Padding(padding: EdgeInsets.all(10)),
-                  const RunningListView(
-                    userId: 1,
+                  RunningListView(
+                    userId: userId,
                   ),
                 ],
               ),

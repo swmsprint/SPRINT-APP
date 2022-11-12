@@ -203,7 +203,7 @@ class _StatsPageState extends State<StatsPage> {
   report(String reportReason) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    var response = await dio.post('$serverurl:8081/api/user-management/report',
+    var response = await dio.post('$serverurl/api/user-management/report',
         data: {
           "message": reportReason,
           "sourceUserId": userID,
@@ -241,7 +241,7 @@ class _StatsPageState extends State<StatsPage> {
   block() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    var response = await dio.post('$serverurl:8081/api/user-management/block',
+    var response = await dio.post('$serverurl/api/user-management/block',
         data: {"sourceUserId": userID, "targetUserId": widget.userId});
     if (response.statusCode == 200) {
       Navigator.of(context).popUntil((route) => route.isFirst);

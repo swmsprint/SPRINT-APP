@@ -121,7 +121,7 @@ class _SearchFriendsPageState extends State<SearchFriendsPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
 
-    var response = await dio.get('$serverurl:8081/api/user-management/user/',
+    var response = await dio.get('$serverurl/api/user-management/user/',
         queryParameters: {"target": keyword, "userId": userID});
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;

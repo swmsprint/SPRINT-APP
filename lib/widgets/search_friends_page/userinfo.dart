@@ -152,7 +152,7 @@ class _UserInfoState extends State<UserInfo> {
   _postFriendRequest(targetUserId) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.post('$serverurl:8081/api/user-management/friend', data: {
+    await dio.post('$serverurl/api/user-management/friend', data: {
       "sourceUserId": userID,
       'targetUserId': targetUserId, //Demo user
     });
@@ -161,7 +161,7 @@ class _UserInfoState extends State<UserInfo> {
   _deleteFriendRequest(targetUserId) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.put('$serverurl:8081/api/user-management/friend', data: {
+    await dio.put('$serverurl/api/user-management/friend', data: {
       "friendState": "CANCEL",
       "sourceUserId": userID,
       'targetUserId': targetUserId,
@@ -171,7 +171,7 @@ class _UserInfoState extends State<UserInfo> {
   _respondFriendRequest(targetUserId, acceptance) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.put('$serverurl:8081/api/user-management/friend', data: {
+    await dio.put('$serverurl/api/user-management/friend', data: {
       "friendState": acceptance,
       "sourceUserId": userID,
       'targetUserId': targetUserId,

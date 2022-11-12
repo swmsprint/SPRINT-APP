@@ -22,7 +22,7 @@ class BlockedUserInfo extends StatelessWidget {
       var dio = await authDio(context);
       final userID = await storage.read(key: 'userID');
       final response =
-          await dio.delete('$serverurl:8081/api/user-management/block', data: {
+          await dio.delete('$serverurl/api/user-management/block', data: {
         "sourceUserId": userID,
         "targetUserId": targetUserId,
       });

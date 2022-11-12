@@ -218,7 +218,7 @@ class _FriendsPageState extends State<FriendsPage> {
     final userID = await storage.read(key: 'userID');
 
     var response = await dio.get(
-      '$serverurl:8081/api/user-management/friend/$userID/received',
+      '$serverurl/api/user-management/friend/$userID/received',
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
@@ -232,7 +232,7 @@ class _FriendsPageState extends State<FriendsPage> {
     final userID = await storage.read(key: 'userID');
 
     var response = await dio.get(
-      '$serverurl:8081/api/user-management/friend/$userID',
+      '$serverurl/api/user-management/friend/$userID',
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
