@@ -188,23 +188,26 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
                             borderRadius: BorderRadius.all(Radius.circular(
                                 MediaQuery.of(context).size.width * 0.4))),
                       ),
-                      RotationTransition(
-                        turns: controller,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            margin: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.05 + 10),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              color: Color(0xff5563de),
-                            ),
-                            height: 20.0,
-                            width: 20.0,
-                          ),
-                        ),
-                      ),
+                      _runningStatus == RunningStatus.running
+                          ? RotationTransition(
+                              turns: controller,
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  margin: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05 +
+                                          10),
+                                  decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    color: Color(0xff5563de),
+                                  ),
+                                  height: 20.0,
+                                  width: 20.0,
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
