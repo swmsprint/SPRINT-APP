@@ -39,7 +39,11 @@ class _HMCalendarState extends State<HMCalendar> {
     var cal = response.data;
     Map<DateTime, int> dataset = {};
     for (int i = 0; i < cal.length; i++) {
-      dataset[DateTime(year, month, i + 1)] = (cal[i] / 1000).round();
+      if (cal[i] > 0 && cal[i] < 1000) {
+        dataset[DateTime(year, month, i + 1)] = 1; // 1키로 미만으로 뛴 날은 1로 처리
+      } else {
+        dataset[DateTime(year, month, i + 1)] = (cal[i] / 1000).round();
+      }
     }
     return dataset;
   }
