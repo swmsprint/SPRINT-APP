@@ -6,7 +6,7 @@ import 'package:sprint/screens/group_info_page.dart';
 import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-  const storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -80,6 +80,7 @@ class _GroupAbstractState extends State<GroupAbstract> {
                     MaterialPageRoute(
                         builder: (context) => GroupInfoPage(
                               groupId: widget.group.groupId,
+                              groupMemberCount: widget.group.groupPersonnel,
                               isLeader: (widget.group.state == "LEADER"),
                               groupName: widget.group.groupName,
                               groupDescription: widget.group.groupDescription,

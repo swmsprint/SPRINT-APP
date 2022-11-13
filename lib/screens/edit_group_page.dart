@@ -16,6 +16,7 @@ String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class EditGroupPage extends StatefulWidget {
   final int groupId;
+  final int groupMemberCount;
   final String groupName;
   final String groupDescription;
   final String groupImage;
@@ -23,6 +24,7 @@ class EditGroupPage extends StatefulWidget {
   const EditGroupPage(
       {Key? key,
       required this.groupId,
+      required this.groupMemberCount,
       required this.groupName,
       required this.groupDescription,
       required this.groupImage})
@@ -193,31 +195,33 @@ class _EditGroupPageState extends State<EditGroupPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.all(20)),
-            SizedBox(
-              width: 200,
-              child: NeumorphicButton(
-                onPressed: _showDialog,
-                style: NeumorphicStyle(
-                  shape: NeumorphicShape.concave,
-                  boxShape:
-                      NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                  depth: 8,
-                  lightSource: LightSource.topLeft,
-                  color: const Color.fromARGB(255, 255, 0, 0),
-                ),
-                child: const Center(
-                  child: Text(
-                    "그룹 삭제",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      letterSpacing: 1,
+            widget.groupMemberCount == 1
+                ? SizedBox(
+                    width: 200,
+                    child: NeumorphicButton(
+                      onPressed: _showDialog,
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color.fromARGB(255, 255, 0, 0),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "그룹 삭제",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
