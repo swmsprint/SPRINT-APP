@@ -69,7 +69,9 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const GroupRequestPage(),
+                          builder: (context) => GroupRequestPage(
+                                groupId: widget.groupId,
+                              ),
                           fullscreenDialog: false),
                     );
                   },
@@ -271,8 +273,6 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
         _groupWeeklyStat = GroupWeeklyStat.fromJson(result['groupWeeklyStat']);
       });
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 }
