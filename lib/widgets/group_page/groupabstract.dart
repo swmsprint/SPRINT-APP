@@ -5,6 +5,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/group_info_page.dart';
+import 'package:sprint/services/auth_dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = new FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -139,31 +143,19 @@ class _GroupAbstractState extends State<GroupAbstract> {
   }
 
   _postJoinRequest(groupId) async {
-    final response = await http.post(
-        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"groupId": groupId, "userId": 1}));
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
+    var dio = await authDio(context);
+    final userId = await storage.read(key: 'userID');
+    await dio.post('$serverurl/api/user-management/group/group-member',
+        data: {"groupId": groupId, "userId": userId});
   }
 
   _cancelJoinRequest(groupId) async {
-    final response = await http.put(
-        Uri.parse('$serverurl:8080/api/user-management/group/group-member'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(
-            {"groupId": groupId, "groupMemberState": "CANCEL", "userId": 1}));
-    if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Failed : ${response.statusCode}");
-    }
+    var dio = await authDio(context);
+    final userId = await storage.read(key: 'userID');
+    await dio.put('$serverurl/api/user-management/group/group-member', data: {
+      "groupId": groupId,
+      "groupMemberState": "CANCEL",
+      "userId": userId
+    });
   }
 }
