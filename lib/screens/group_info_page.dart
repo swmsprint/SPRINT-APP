@@ -42,11 +42,11 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.isLeader
-          ? AppBar(
-              backgroundColor: const Color(0xfff3f5fc),
-              foregroundColor: const Color(0xff5563de),
-              actions: [
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff3f5fc),
+        foregroundColor: const Color(0xff5563de),
+        actions: widget.isLeader
+            ? [
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
@@ -74,18 +74,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                     );
                   },
                 ),
-              ],
-            )
-          : AppBar(
-              backgroundColor: const Color(0xfff3f5fc),
-              foregroundColor: const Color(0xff5563de),
-              actions: [
+              ]
+            : [
                 IconButton(
                   icon: const Icon(Icons.exit_to_app),
                   onPressed: () {},
                 ),
               ],
-            ),
+      ),
       body: FutureBuilder<dynamic>(
         future: _groupInfo, // a previously-obtained Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
