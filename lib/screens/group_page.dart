@@ -9,7 +9,7 @@ import 'package:sprint/widgets/group_page/groupabstract.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class GroupPage extends StatefulWidget {

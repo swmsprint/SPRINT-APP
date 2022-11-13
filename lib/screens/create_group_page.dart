@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
@@ -52,7 +52,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupPageAppBar(),
+      appBar: const GroupPageAppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -317,6 +317,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
           : "$imageurl/groups/${_groupNameController.text}.jpeg",
     });
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
@@ -345,6 +346,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     if (response.statusCode == 200) {
       _createGroup();
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
       ));

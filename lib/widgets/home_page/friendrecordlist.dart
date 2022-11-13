@@ -5,7 +5,7 @@ import 'package:sprint/widgets/home_page/friendrecord.dart';
 import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class FriendRecordList extends StatefulWidget {
   const FriendRecordList({super.key});

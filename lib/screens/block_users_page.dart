@@ -8,7 +8,7 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sprint/widgets/blocked_users_page/blockeduserspageappbar.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class BlockUsersPage extends StatefulWidget {
@@ -85,7 +85,6 @@ class _BlockUsersPageState extends State<BlockUsersPage> {
                             .toList())
                   ];
                 } else if (snapshot.hasError) {
-                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -131,7 +130,6 @@ class _BlockUsersPageState extends State<BlockUsersPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
-      print(result);
       return result;
     }
   }

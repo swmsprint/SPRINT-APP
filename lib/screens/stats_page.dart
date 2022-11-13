@@ -8,7 +8,7 @@ import 'package:sprint/widgets/stats_page/getrunningdatas.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_config/flutter_config.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -210,6 +210,7 @@ class _StatsPageState extends State<StatsPage> {
           "targetUserId": widget.userId
         });
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
@@ -244,6 +245,7 @@ class _StatsPageState extends State<StatsPage> {
     var response = await dio.post('$serverurl/api/user-management/block',
         data: {"sourceUserId": userID, "targetUserId": widget.userId});
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }

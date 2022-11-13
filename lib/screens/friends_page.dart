@@ -9,7 +9,7 @@ import 'package:flutter_config/flutter_config.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class FriendsPage extends StatefulWidget {
@@ -55,7 +55,7 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: FriendsPageAppBar(),
+      appBar: const FriendsPageAppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -222,7 +222,6 @@ class _FriendsPageState extends State<FriendsPage> {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
-      print(result);
       return result;
     }
   }

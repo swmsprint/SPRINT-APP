@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
@@ -256,23 +256,23 @@ class _EditGroupPageState extends State<EditGroupPage> {
     final response = await dio.delete(
         '$serverurl/api/user-management/group/${widget.groupId}?userId=$userID');
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
 
   _editGroup() async {
     var dio = await authDio(context);
-    final userID = await storage.read(key: 'userID');
-    final response = await dio.put(
-        '$serverurl/api/user-management/group/${widget.groupId}',
-        data: {
-          "groupDescription": _groupDescriptionController.text,
-          "groupPicture": _image ==
-                  "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
-              ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
-              : "$imageurl/groups/${widget.groupName}.jpeg",
-        });
+    final response = await dio
+        .put('$serverurl/api/user-management/group/${widget.groupId}', data: {
+      "groupDescription": _groupDescriptionController.text,
+      "groupPicture": _image ==
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          : "$imageurl/groups/${widget.groupName}.jpeg",
+    });
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
@@ -300,6 +300,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
     if (response.statusCode == 200) {
       _editGroup();
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
       ));

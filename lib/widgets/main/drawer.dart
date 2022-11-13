@@ -8,16 +8,16 @@ import 'package:sprint/screens/block_users_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_config/flutter_config.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class CustomDrawer extends StatelessWidget {
-  int userId;
-  CustomDrawer({Key? key, required this.userId}) : super(key: key);
+  final int userId;
+  const CustomDrawer({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _resign() async {
+    resign() async {
       var dio = await authDio(context);
       final userID = await storage.read(key: 'userID');
 
@@ -28,19 +28,19 @@ class CustomDrawer extends StatelessWidget {
         await storage.deleteAll();
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+            MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
             (route) => false);
       }
     }
 
-    _resignAlert() {
+    resignAlert() {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('정말로 탈퇴하시겠습니까?'),
             content:
-                const Text('계정은 60일 뒤에 완전히 삭제되며 그 전에 다시 로그인 시 복구할 수 있습니다!'),
+                const Text('계정은 60일 뒤에 완전히 삭제되며\n그 전에 다시 로그인할 경우 복구할 수 있습니다!'),
             actions: <Widget>[
               TextButton(
                 child: const Text('취소', style: TextStyle(color: Colors.black)),
@@ -49,8 +49,8 @@ class CustomDrawer extends StatelessWidget {
                 },
               ),
               TextButton(
+                onPressed: resign,
                 child: const Text('탈퇴하기', style: TextStyle(color: Colors.red)),
-                onPressed: _resign,
               ),
             ],
           );
@@ -183,7 +183,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SignUpPage(isNewUser: false),
+                          builder: (context) => const SignUpPage(isNewUser: false),
                           fullscreenDialog: true),
                     );
                   },
@@ -243,7 +243,7 @@ class CustomDrawer extends StatelessWidget {
                         Padding(padding: EdgeInsets.all(10)),
                       ],
                     ),
-                    onTap: _resignAlert,
+                    onTap: resignAlert,
                   ),
                 ],
               )),

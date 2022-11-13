@@ -20,7 +20,7 @@ import 'package:sprint/widgets/run_page/runningsummary.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class RunningDataStorage {
@@ -237,7 +237,6 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
 
     if (response.statusCode == 200) {
       _runningID = response.data['runningId'];
-      print(_runningID);
     }
   }
 
@@ -255,11 +254,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     final RunningDataStorage runstorage = RunningDataStorage();
     await runstorage.writeRunningData(body);
 
-    final response =
-        await dio.post('$serverurl/api/running/finish', data: body);
-    if (response.statusCode == 200) {
-      print("Success");
-    }
+    await dio.post('$serverurl/api/running/finish', data: body);
   }
 
   _getCurrentLocation() async {

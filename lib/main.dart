@@ -8,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sprint/services/auth_dio.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
@@ -59,8 +59,8 @@ class MyApp extends StatelessWidget {
 }
 
 class RootPage extends StatefulWidget {
-  int userId;
-  RootPage({Key? key, required this.userId}) : super(key: key);
+  final int userId;
+  const RootPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<RootPage> createState() => _RootPageState();

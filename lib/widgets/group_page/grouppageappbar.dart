@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GroupPageAppBar extends StatelessWidget with PreferredSizeWidget {
-  bool isSearchGroup = false;
-  GroupPageAppBar({Key? key, this.isSearchGroup = false}) : super(key: key);
+  final bool isSearchGroup;
+  const GroupPageAppBar({Key? key, this.isSearchGroup = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

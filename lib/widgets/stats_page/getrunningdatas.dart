@@ -10,7 +10,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -25,7 +25,7 @@ class RunningItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _getRunningDetail(runningId) async {
+    getRunningDetail(runningId) async {
       var dio = await authDio(context);
 
       var response = await dio.get(
@@ -39,7 +39,7 @@ class RunningItem extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            _getRunningDetail(data.runningId).then(
+            getRunningDetail(data.runningId).then(
               (value) {
                 List<PositionData> rawdata = [];
                 for (int i = 0; i < value["runningData"].length; i++) {

@@ -3,8 +3,9 @@ import 'package:sprint/screens/search_friends_page.dart';
 import 'package:sprint/screens/friend_request_page.dart';
 
 class FriendsPageAppBar extends StatelessWidget with PreferredSizeWidget {
-  bool isSearchFriends = false;
-  FriendsPageAppBar({Key? key, this.isSearchFriends = false}) : super(key: key);
+  final bool isSearchFriends;
+  const FriendsPageAppBar({Key? key, this.isSearchFriends = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

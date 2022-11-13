@@ -7,7 +7,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:sprint/screens/friends_stats_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 

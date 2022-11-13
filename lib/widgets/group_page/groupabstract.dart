@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sprint/models/groupdata.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/group_info_page.dart';
 import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+  const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
