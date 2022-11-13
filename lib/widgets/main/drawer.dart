@@ -39,7 +39,8 @@ class CustomDrawer extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('정말로 탈퇴하시겠습니까?'),
-            content: const Text('한번 탈퇴한 계정은 복구할 수 없습니다.'),
+            content:
+                const Text('계정은 60일 뒤에 완전히 삭제되며 그 전에 다시 로그인 시 복구할 수 있습니다!'),
             actions: <Widget>[
               TextButton(
                 child: const Text('취소', style: TextStyle(color: Colors.black)),
