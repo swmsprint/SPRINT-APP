@@ -13,7 +13,7 @@ import 'package:flutter_config/flutter_config.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
                 child: IconButton(
                   icon: Image.asset('assets/images/login/apple.png'),
                   onPressed: () async {
-                    UserCredential result = await signInWithApple();
+                    await signInWithApple();
                     final userInfo = await _signUp("APPLE",
                         FirebaseAuth.instance.currentUser!.uid, context);
                     _checkAlreadyUser(userInfo, context);
@@ -50,7 +50,7 @@ class LoginPage extends StatelessWidget {
                 child: IconButton(
                   icon: Image.asset('assets/images/login/google.png'),
                   onPressed: () async {
-                    UserCredential result = await signInWithGoogle();
+                    await signInWithGoogle();
                     final userInfo = await _signUp("GOOGLE",
                         FirebaseAuth.instance.currentUser!.uid, context);
                     _checkAlreadyUser(userInfo, context);
@@ -89,7 +89,7 @@ class LoginPage extends StatelessWidget {
     if (!userInfo["alreadySignIn"]) {
       await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SignUpPage(isNewUser: true)),
+        MaterialPageRoute(builder: (context) => const SignUpPage(isNewUser: true)),
       );
       Navigator.pushAndRemoveUntil(
           context,
@@ -111,8 +111,7 @@ class LoginPage extends StatelessWidget {
 
   _signUp(String provider, String uid, context) async {
     final response = await http.get(
-        Uri.parse(
-            '$serverurl:8081/oauth2/firebase?provider=$provider&uid=$uid'),
+        Uri.parse('$serverurl/oauth2/firebase?provider=$provider&uid=$uid'),
         headers: {
           'Content-Type': 'application/json',
         });

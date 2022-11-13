@@ -43,7 +43,7 @@ class _KakaoLoginState extends State<KakaoLogin> {
       ),
       body: SafeArea(
         child: WebView(
-          initialUrl: 'http://43.200.144.22:8081/oauth2/kakao',
+          initialUrl: 'https://sprintapp.net/oauth2/kakao',
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {
             _controller = webViewController;

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-class GroupPageAppBar extends StatelessWidget with PreferredSizeWidget {
-  final bool isSearchGroup;
-  const GroupPageAppBar({Key? key, this.isSearchGroup = false}) : super(key: key);
+class BlockedUsersPageAppBar extends StatelessWidget with PreferredSizeWidget {
+  BlockedUsersPageAppBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +17,9 @@ class GroupPageAppBar extends StatelessWidget with PreferredSizeWidget {
           Navigator.of(context).popUntil((route) => route.isFirst);
         },
       ),
-      title: Text(
-        isSearchGroup ? "그룹 찾기" : "그룹 만들기",
-        style: const TextStyle(
+      title: const Text(
+        "차단 유저 관리",
+        style: TextStyle(
             color: Color(0xff5563de),
             fontWeight: FontWeight.bold,
             fontSize: 16,

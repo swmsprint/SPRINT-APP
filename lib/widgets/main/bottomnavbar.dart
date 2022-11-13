@@ -22,11 +22,12 @@ class _TabPageState extends State<TabPage> {
   void initState() {
     super.initState();
     _pages = [
-      const HomePage(),
+      HomePage(userId: widget.userId),
       const GroupPage(),
       const BattlePage(),
       StatsPage(
         userId: widget.userId,
+        showActions: false,
       ),
     ];
   }
@@ -145,9 +146,7 @@ class _TabPageState extends State<TabPage> {
                                   ? widget.selectedColor
                                   : Colors.grey.shade400,
                             ),
-                            onPressed: () {
-                              setBottomBarIndex(2);
-                            }),
+                            onPressed: battlePageAlert),
                         IconButton(
                             icon: Icon(
                               Icons.table_chart_outlined,
@@ -168,6 +167,33 @@ class _TabPageState extends State<TabPage> {
           )
         ],
       ),
+    );
+  }
+
+  battlePageAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('유저, 그룹간 대결 컨텐츠를\n준비중입니다!'),
+              content: const Text('조금만 기다려 주세요!'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('확인',
+                      style: TextStyle(
+                        color: Color(0xff5563de),
+                      )),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

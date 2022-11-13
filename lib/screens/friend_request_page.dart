@@ -9,7 +9,7 @@ import 'package:sprint/services/auth_dio.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class FriendRequestPage extends StatefulWidget {
@@ -126,7 +126,6 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
-                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -196,7 +195,6 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
                             .toList()),
                   ];
                 } else if (snapshot.hasError) {
-                  print(snapshot.error);
                   children = <Widget>[
                     const Icon(
                       Icons.error_outline,
@@ -238,11 +236,10 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
     final userID = await storage.read(key: 'userID');
 
     var response = await dio.get(
-      '$serverurl:8081/api/user-management/friend/$userID/received',
+      '$serverurl/api/user-management/friend/$userID/received',
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
-      print(result);
       return result;
     }
   }
@@ -252,7 +249,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
     final userID = await storage.read(key: 'userID');
 
     final response = await dio.get(
-      '$serverurl:8081/api/user-management/friend/$userID/requested',
+      '$serverurl/api/user-management/friend/$userID/requested',
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;

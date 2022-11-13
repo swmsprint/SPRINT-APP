@@ -5,10 +5,10 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/login_page.dart';
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
+const storage = FlutterSecureStorage();
 
 Future<Dio> authDio(BuildContext context) async {
   var dio = Dio();
-  final storage = new FlutterSecureStorage();
 
   dio.interceptors.clear();
   dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
@@ -18,7 +18,6 @@ Future<Dio> authDio(BuildContext context) async {
   }, onError: (error, handler) async {
     if (error.response?.statusCode == 401) {
       //401:Access Token 만료
-      print("Access Token 만료, Refresh 시도");
       final refreshToken = await storage.read(key: 'refreshToken');
       final userID = await storage.read(key: 'userID');
 
@@ -28,27 +27,23 @@ Future<Dio> authDio(BuildContext context) async {
           .add(InterceptorsWrapper(onError: (error, handler) async {
         if (error.response?.statusCode == 401) {
           // 401: Refresh Token 만료
-          print("Refresh Token 만료, 로그인 다시 실행");
           await storage.deleteAll();
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const LoginPage()),
               (route) => false);
           return;
         }
         return handler.next(error);
       }));
 
-      final refreshResponse = await refreshDio.get(
-          '$serverurl:8081/oauth2/re-issue',
+      final refreshResponse = await refreshDio.get('$serverurl/oauth2/re-issue',
           queryParameters: {'refreshToken': refreshToken, 'userId': userID});
       final newAccessToken = refreshResponse.data['accessToken'];
       final newRefreshToken = refreshResponse.data['refreshToken'];
       await storage.write(key: 'accessToken', value: newAccessToken);
       await storage.write(key: 'refreshToken', value: newRefreshToken);
-      print("Access Token Refresh 완료");
-      print("New Access Token: $newAccessToken");
-      print("New Refresh Token: $newRefreshToken");
       error.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
       final clonedRequest = await dio.request(error.requestOptions.path,
           options: Options(

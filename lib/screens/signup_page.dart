@@ -10,15 +10,15 @@ import 'package:image_cropper/image_cropper.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
 String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class SignUpPage extends StatefulWidget {
-  bool isNewUser;
-  SignUpPage({Key? key, required this.isNewUser}) : super(key: key);
+  final bool isNewUser;
+  const SignUpPage({Key? key, required this.isNewUser}) : super(key: key);
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -499,7 +499,7 @@ class _SignUpPageState extends State<SignUpPage> {
   _checkUserName() async {
     var dio = await authDio(context);
     var response = await dio.get(
-        '$serverurl:8081/api/user-management/user/validation-duplicate-name',
+        '$serverurl/api/user-management/user/validation-duplicate-name',
         queryParameters: {
           'target': _userNameController.text,
         });
@@ -519,8 +519,7 @@ class _SignUpPageState extends State<SignUpPage> {
   _getUserData() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    var response =
-        await dio.get('$serverurl:8081/api/user-management/user/$userID');
+    var response = await dio.get('$serverurl/api/user-management/user/$userID');
     final data = response.data;
     setState(() {
       _userNameController.text = data['nickname'];
@@ -538,8 +537,8 @@ class _SignUpPageState extends State<SignUpPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
 
-    var response = await dio
-        .put('$serverurl:8081/api/user-management/user/$userID', data: {
+    var response =
+        await dio.put('$serverurl/api/user-management/user/$userID', data: {
       "birthday": _selectedDate.toString().substring(0, 10),
       "gender": _gender,
       "height": _height,
@@ -564,8 +563,10 @@ class _SignUpPageState extends State<SignUpPage> {
       await storage.write(key: 'height', value: '${_height.round()}');
       await storage.write(key: 'weight', value: '${_weight.round()}');
       await storage.write(key: 'gender', value: _gender);
+      if (!mounted) return;
       Navigator.pop(context);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
       ));
@@ -595,6 +596,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (response.statusCode == 200) {
       _signUp();
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
       ));

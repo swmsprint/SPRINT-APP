@@ -6,7 +6,7 @@ import 'package:flutter_config/flutter_config.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -30,7 +30,7 @@ class _RecordState extends State<Record> {
     var dio = await authDio(context);
 
     var response =
-        await dio.get('$serverurl:8081/api/statistics/${widget.userId}');
+        await dio.get('$serverurl/api/statistics/${widget.userId}');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       List<int> duration = [

@@ -11,12 +11,14 @@ const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
-class RecievedRequestInfo extends StatelessWidget {
+class RecievedGroupRequestInfo extends StatelessWidget {
+  final int groupId;
   final FriendData friend;
   final Function() acceptRequest;
   final Function() denyRequest;
-  const RecievedRequestInfo(
+  const RecievedGroupRequestInfo(
       {Key? key,
+      required this.groupId,
       required this.friend,
       required this.acceptRequest,
       required this.denyRequest})
@@ -24,14 +26,13 @@ class RecievedRequestInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    respondFriendRequest(targetUserId, acceptance) async {
+    respondGroupRequest(targetUserId, acceptance) async {
       var dio = await authDio(context);
-      final userID = await storage.read(key: 'userID');
 
-      await dio.put('$serverurl/api/user-management/friend', data: {
-        "friendState": acceptance,
-        "sourceUserId": userID,
-        'targetUserId': targetUserId,
+      await dio.put('$serverurl/api/user-management/group/group-member', data: {
+        "groupId": groupId,
+        "groupMemberState": acceptance,
+        "userId": targetUserId,
       });
     }
 
@@ -87,7 +88,7 @@ class RecievedRequestInfo extends StatelessWidget {
                   color: Color(0xff5563de),
                 ),
                 onPressed: () {
-                  respondFriendRequest(friend.userId, "ACCEPT");
+                  respondGroupRequest(friend.userId, "ACCEPT");
                   acceptRequest();
                 },
               ),
@@ -97,7 +98,7 @@ class RecievedRequestInfo extends StatelessWidget {
                   color: Colors.red,
                 ),
                 onPressed: () {
-                  respondFriendRequest(friend.userId, "REJECT");
+                  respondGroupRequest(friend.userId, "REJECT");
                   denyRequest();
                 },
               ),

@@ -7,7 +7,7 @@ import 'package:sprint/widgets/group_page/grouppageappbar.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class SearchGroupPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupPageAppBar(isSearchGroup: true),
+      appBar: const GroupPageAppBar(isSearchGroup: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -120,7 +120,7 @@ class _SearchGroupPageState extends State<SearchGroupPage> {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     var response = await dio.get(
-        '$serverurl:8081/api/user-management/group/list/',
+        '$serverurl/api/user-management/group/list/',
         queryParameters: {"target": keyword, "userId": userID});
 
     if (response.statusCode == 200) {

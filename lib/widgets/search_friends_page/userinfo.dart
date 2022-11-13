@@ -6,7 +6,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class UserInfo extends StatefulWidget {
@@ -109,6 +109,7 @@ class _UserInfoState extends State<UserInfo> {
                         builder: (context) => FriendsStatsPage(
                               userId: widget.user.userId,
                               userNickName: widget.user.nickname,
+                              showActions: true,
                             ),
                         fullscreenDialog: false),
                   );
@@ -151,7 +152,7 @@ class _UserInfoState extends State<UserInfo> {
   _postFriendRequest(targetUserId) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.post('$serverurl:8081/api/user-management/friend', data: {
+    await dio.post('$serverurl/api/user-management/friend', data: {
       "sourceUserId": userID,
       'targetUserId': targetUserId, //Demo user
     });
@@ -160,7 +161,7 @@ class _UserInfoState extends State<UserInfo> {
   _deleteFriendRequest(targetUserId) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.put('$serverurl:8081/api/user-management/friend', data: {
+    await dio.put('$serverurl/api/user-management/friend', data: {
       "friendState": "CANCEL",
       "sourceUserId": userID,
       'targetUserId': targetUserId,
@@ -170,7 +171,7 @@ class _UserInfoState extends State<UserInfo> {
   _respondFriendRequest(targetUserId, acceptance) async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    await dio.put('$serverurl:8081/api/user-management/friend', data: {
+    await dio.put('$serverurl/api/user-management/friend', data: {
       "friendState": acceptance,
       "sourceUserId": userID,
       'targetUserId': targetUserId,

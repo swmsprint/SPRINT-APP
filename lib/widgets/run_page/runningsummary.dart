@@ -4,7 +4,7 @@ import 'package:sprint/utils/secondstostring.dart';
 class RunningSummary extends StatelessWidget {
   final double distance;
   final int duration;
-  RunningSummary(this.distance, this.duration);
+  const RunningSummary(this.distance, this.duration);
 
   @override
   Widget build(BuildContext context) {

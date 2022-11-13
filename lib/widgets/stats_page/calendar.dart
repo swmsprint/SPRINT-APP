@@ -5,7 +5,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class HMCalendar extends StatefulWidget {
@@ -31,7 +31,7 @@ class _HMCalendarState extends State<HMCalendar> {
   setCalendar(int year, int month) async {
     var dio = await authDio(context);
     var response = await dio.get(
-        '$serverurl:8081/api/statistics/streak/${widget.userId}',
+        '$serverurl/api/statistics/streak/${widget.userId}',
         queryParameters: {
           "year": year,
           "month": month,
@@ -39,7 +39,11 @@ class _HMCalendarState extends State<HMCalendar> {
     var cal = response.data;
     Map<DateTime, int> dataset = {};
     for (int i = 0; i < cal.length; i++) {
-      dataset[DateTime(year, month, i + 1)] = (cal[i] / 1000).round();
+      if (cal[i] > 0 && cal[i] < 1000) {
+        dataset[DateTime(year, month, i + 1)] = 1; // 1키로 미만으로 뛴 날은 1로 처리
+      } else {
+        dataset[DateTime(year, month, i + 1)] = (cal[i] / 1000).round();
+      }
     }
     return dataset;
   }

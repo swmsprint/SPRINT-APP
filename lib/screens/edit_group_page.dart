@@ -1,11 +1,14 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:sprint/services/auth_dio.dart';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
@@ -13,6 +16,7 @@ String imageurl = FlutterConfig.get('AWS_S3_GET_ADDRESS');
 
 class EditGroupPage extends StatefulWidget {
   final int groupId;
+  final int groupMemberCount;
   final String groupName;
   final String groupDescription;
   final String groupImage;
@@ -20,6 +24,7 @@ class EditGroupPage extends StatefulWidget {
   const EditGroupPage(
       {Key? key,
       required this.groupId,
+      required this.groupMemberCount,
       required this.groupName,
       required this.groupDescription,
       required this.groupImage})
@@ -31,7 +36,7 @@ class EditGroupPage extends StatefulWidget {
 
 class _EditGroupPageState extends State<EditGroupPage> {
   late TextEditingController _groupDescriptionController;
-  late String? _image;
+  late String _image;
 
   final ImagePicker picker = ImagePicker();
 
@@ -40,7 +45,7 @@ class _EditGroupPageState extends State<EditGroupPage> {
     super.initState();
     _groupDescriptionController =
         TextEditingController(text: widget.groupDescription);
-    _image = null;
+    _image = widget.groupImage;
   }
 
   @override
@@ -85,17 +90,15 @@ class _EditGroupPageState extends State<EditGroupPage> {
                       radius: 70,
                       backgroundColor: const Color(0x70707070),
                       child: CircleAvatar(
-                        radius: 68,
-                        backgroundImage: _image != null
-                            ? FileImage(
-                                File(_image!),
-                              )
-                            : NetworkImage(
-                                widget.groupImage,
-                              ) as ImageProvider,
-                        backgroundColor:
-                            _image != null ? Colors.transparent : Colors.white,
-                      ),
+                          radius: 68,
+                          backgroundImage: _image[0] == 'h'
+                              ? NetworkImage(
+                                  _image,
+                                )
+                              : FileImage(
+                                  File(_image),
+                                ) as ImageProvider,
+                          backgroundColor: Colors.transparent),
                     ),
                   ),
                   Positioned(
@@ -163,7 +166,13 @@ class _EditGroupPageState extends State<EditGroupPage> {
             SizedBox(
               width: 200,
               child: NeumorphicButton(
-                onPressed: _uploadImage,
+                onPressed: () {
+                  if (_image[0] == 'h') {
+                    _editGroup();
+                  } else {
+                    _uploadImage();
+                  }
+                },
                 style: NeumorphicStyle(
                   shape: NeumorphicShape.concave,
                   boxShape:
@@ -186,69 +195,89 @@ class _EditGroupPageState extends State<EditGroupPage> {
               ),
             ),
             const Padding(padding: EdgeInsets.all(20)),
-            SizedBox(
-              width: 200,
-              child: NeumorphicButton(
-                onPressed: _deleteGroup,
-                style: NeumorphicStyle(
-                  shape: NeumorphicShape.concave,
-                  boxShape:
-                      NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                  depth: 8,
-                  lightSource: LightSource.topLeft,
-                  color: const Color.fromARGB(255, 255, 0, 0),
-                ),
-                child: const Center(
-                  child: Text(
-                    "그룹 삭제",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      letterSpacing: 1,
+            widget.groupMemberCount == 1
+                ? SizedBox(
+                    width: 200,
+                    child: NeumorphicButton(
+                      onPressed: _showDialog,
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color.fromARGB(255, 255, 0, 0),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "그룹 삭제",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
     );
   }
 
-  _deleteGroup() async {
-    final response = await http.delete(
-      Uri.parse(
-          '$serverurl:8080/api/user-management/group/${widget.groupId}?userId=1'),
-      headers: {
-        'Content-Type': 'application/json',
+  _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("정말로 그룹을 삭제하시겠습니까?"),
+          content: const Text("삭제한 그룹은 복구할 수 없습니다!"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("취소", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("삭제", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                _deleteGroup();
+              },
+            ),
+          ],
+        );
       },
     );
+  }
+
+  _deleteGroup() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    final response = await dio.delete(
+        '$serverurl/api/user-management/group/${widget.groupId}?userId=$userID');
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
   _editGroup() async {
-    final response = await http.put(
-        Uri.parse(
-            '$serverurl:8080/api/user-management/group/${widget.groupId}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          "groupDescription": _groupDescriptionController.text,
-          "groupPicture": "$imageurl/groups/${widget.groupName}.jpeg",
-        }));
+    var dio = await authDio(context);
+    final response = await dio
+        .put('$serverurl/api/user-management/group/${widget.groupId}', data: {
+      "groupDescription": _groupDescriptionController.text,
+      "groupPicture": _image ==
+              "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          ? "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg"
+          : "$imageurl/groups/${widget.groupName}.jpeg",
+    });
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
+      if (!mounted) return;
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } else {
-      print("Failed : ${response.statusCode}");
     }
   }
 
@@ -266,20 +295,19 @@ class _EditGroupPageState extends State<EditGroupPage> {
   }
 
   Future<void> _uploadImage() async {
-    if (_image != null) {
-      final response = await http.put(
-          Uri.parse("$bucketurl/groups/${widget.groupName}.jpeg"),
-          headers: {
-            'Content-Type': 'image/jpeg',
-          },
-          body: File(_image!).readAsBytesSync());
-      if (response.statusCode == 200) {
-        _editGroup();
-      } else {
-        print("Failed : ${response.statusCode}");
-      }
-    } else {
+    final response =
+        await http.put(Uri.parse("$bucketurl/groups/${widget.groupName}.jpeg"),
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+            body: File(_image).readAsBytesSync());
+    if (response.statusCode == 200) {
       _editGroup();
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
+      ));
     }
   }
 }

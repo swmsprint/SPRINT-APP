@@ -20,7 +20,7 @@ import 'package:sprint/widgets/run_page/runningsummary.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class RunningDataStorage {
@@ -188,23 +188,26 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
                             borderRadius: BorderRadius.all(Radius.circular(
                                 MediaQuery.of(context).size.width * 0.4))),
                       ),
-                      RotationTransition(
-                        turns: controller,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            margin: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.05 + 10),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              color: Color(0xff5563de),
-                            ),
-                            height: 20.0,
-                            width: 20.0,
-                          ),
-                        ),
-                      ),
+                      _runningStatus == RunningStatus.running
+                          ? RotationTransition(
+                              turns: controller,
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  margin: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05 +
+                                          10),
+                                  decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    color: Color(0xff5563de),
+                                  ),
+                                  height: 20.0,
+                                  width: 20.0,
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
@@ -227,14 +230,13 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
 
-    var response = await dio.post('$serverurl:8081/api/running/start', data: {
+    var response = await dio.post('$serverurl/api/running/start', data: {
       'startTime': DateTime.now().toUtc().toString(),
       'userId': userID
     });
 
     if (response.statusCode == 200) {
       _runningID = response.data['runningId'];
-      print(_runningID);
     }
   }
 
@@ -252,11 +254,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     final RunningDataStorage runstorage = RunningDataStorage();
     await runstorage.writeRunningData(body);
 
-    final response =
-        await dio.post('$serverurl:8081/api/running/finish', data: body);
-    if (response.statusCode == 200) {
-      print("Success");
-    }
+    await dio.post('$serverurl/api/running/finish', data: body);
   }
 
   _getCurrentLocation() async {

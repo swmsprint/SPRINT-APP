@@ -1,16 +1,22 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/models/groupweeklystat.dart';
 import 'package:sprint/screens/edit_group_page.dart';
-import 'package:sprint/utils/secondstostring.dart';
+import 'package:sprint/screens/group_request_page.dart';
+import 'package:sprint/services/auth_dio.dart';
+import 'package:sprint/widgets/group_info_page/groupmemberlist.dart';
+import 'package:sprint/widgets/group_info_page/groupprofile.dart';
+import 'package:sprint/widgets/group_info_page/grouprecord.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class GroupInfoPage extends StatefulWidget {
   final int groupId;
+  final int groupMemberCount;
   final bool isLeader;
   final String groupImage;
   final String groupName;
@@ -18,6 +24,7 @@ class GroupInfoPage extends StatefulWidget {
   const GroupInfoPage(
       {Key? key,
       required this.groupId,
+      required this.groupMemberCount,
       required this.isLeader,
       required this.groupImage,
       required this.groupName,
@@ -41,11 +48,11 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.isLeader
-          ? AppBar(
-              backgroundColor: const Color(0xfff3f5fc),
-              foregroundColor: const Color(0xff5563de),
-              actions: [
+      appBar: AppBar(
+        backgroundColor: const Color(0xfff3f5fc),
+        foregroundColor: const Color(0xff5563de),
+        actions: widget.isLeader
+            ? [
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
@@ -54,6 +61,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                       MaterialPageRoute(
                           builder: (context) => EditGroupPage(
                                 groupId: widget.groupId,
+                                groupMemberCount: widget.groupMemberCount,
                                 groupName: widget.groupName,
                                 groupDescription: widget.groupDescription,
                                 groupImage: widget.groupImage,
@@ -64,22 +72,27 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.notifications_rounded),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GroupRequestPage(
+                                groupId: widget.groupId,
+                              ),
+                          fullscreenDialog: false),
+                    );
+                  },
                 ),
-              ],
-            )
-          : AppBar(
-              backgroundColor: const Color(0xfff3f5fc),
-              foregroundColor: const Color(0xff5563de),
-              actions: [
+              ]
+            : [
                 IconButton(
                   icon: const Icon(Icons.exit_to_app),
-                  onPressed: () {},
+                  onPressed: leaveGroupAlert,
                 ),
               ],
-            ),
+      ),
       body: FutureBuilder<dynamic>(
-        future: _groupInfo, // a previously-obtained Future<String> or null
+        future: _groupInfo,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -96,61 +109,11 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: Column(
-                        children: [
-                          const Padding(padding: EdgeInsets.only(top: 180)),
-                          Neumorphic(
-                            style: const NeumorphicStyle(
-                              shape: NeumorphicShape.concave,
-                              depth: 8,
-                              lightSource: LightSource.topLeft,
-                              color: Color(0xfff3f5fc),
-                            ),
-                            child: Container(
-                              height: 100,
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              decoration: BoxDecoration(
-                                color: const Color(0xff5563de),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      snapshot.data['groupName'],
-                                      style: const TextStyle(
-                                        fontFamily: 'Segoe UI',
-                                        fontSize: 30,
-                                        color: Color(0xffffffff),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      snapshot.data['groupDescription'],
-                                      style: const TextStyle(
-                                        fontFamily: 'Segoe UI',
-                                        fontSize: 13,
-                                        color: Color(0xffffffff),
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    Text(
-                                      "인원 : ${snapshot.data['groupPersonnel']} / 50 명",
-                                      style: const TextStyle(
-                                        fontFamily: 'Segoe UI',
-                                        fontSize: 15,
-                                        color: Color(0xffffffff),
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    GroupProfile(
+                      groupName: snapshot.data['groupName'],
+                      groupDescription: snapshot.data['groupDescription'],
+                      groupPersonnel: snapshot.data['groupPersonnel'],
+                    )
                   ]),
                   const Padding(padding: EdgeInsets.all(10)),
                   Row(
@@ -170,52 +133,38 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                     ],
                   ),
                   const Padding(padding: EdgeInsets.all(10)),
-                  Neumorphic(
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xffffffff),
-                    ),
-                    child: Container(
-                      height: 70,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Colors.transparent,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            "${(_groupWeeklyStat.distance / 1000).toStringAsFixed(2)}KM",
-                            style: const TextStyle(
-                              fontFamily: 'Anton',
-                              fontSize: 37,
-                              color: Color(0xfffa7531),
-                            ),
-                          ),
-                          Text(
-                            secondsToString(_groupWeeklyStat.time.round()),
-                            style: const TextStyle(
-                              fontFamily: 'Anton',
-                              fontSize: 37,
-                              color: Color(0xfffa7531),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  GroupRecord(
+                      distance: _groupWeeklyStat.distance,
+                      time: _groupWeeklyStat.time),
                   const Padding(padding: EdgeInsets.all(10)),
                   Divider(
                     indent: (0.075 * MediaQuery.of(context).size.width),
                     endIndent: (0.075 * MediaQuery.of(context).size.width),
                     thickness: 2,
                     color: const Color(0xff5563de),
+                  ),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  Row(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.075)),
+                      Text(
+                        "그룹원 목록 (${snapshot.data['groupPersonnel']}명)",
+                        style: const TextStyle(
+                          fontFamily: 'Segoe UI',
+                          fontSize: 15,
+                          color: Color(0xff5563de),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  GroupMemberList(
+                    groupId: widget.groupId,
+                    isLeader: widget.isLeader,
+                    leaderId: snapshot.data['groupLeaderId'],
                   ),
                 ],
               )
@@ -255,20 +204,56 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
   }
 
   _getGroupInfo(groupId) async {
-    final response = await http.get(
-      Uri.parse('$serverurl:8080/api/user-management/group/$groupId'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    var dio = await authDio(context);
+    final response = await dio.get(
+      '$serverurl/api/user-management/group/$groupId',
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
+      Map<String, dynamic> result = response.data;
       setState(() {
         _groupWeeklyStat = GroupWeeklyStat.fromJson(result['groupWeeklyStat']);
       });
       return result;
-    } else {
-      print("Failed : ${response.statusCode}");
     }
+  }
+
+  leaveGroup() async {
+    var dio = await authDio(context);
+    final userID = await storage.read(key: 'userID');
+    var response = await dio.delete(
+        '$serverurl/api/user-management/group/group-member',
+        data: {"groupId": widget.groupId, "userId": userID});
+    if (response.statusCode == 200) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
+
+  leaveGroupAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('정말로 그룹을 탈퇴하시겠습니까?'),
+              content: const Text('그룹을 탈퇴하면 다시 가입해야 합니다.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child:
+                      const Text('취소', style: TextStyle(color: Colors.black)),
+                ),
+                TextButton(
+                  onPressed: leaveGroup,
+                  child: const Text('확인', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

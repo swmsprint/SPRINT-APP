@@ -3,13 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class Profile extends StatelessWidget {
-  bool isDrawer = false;
+  final bool isDrawer;
   final int userId;
-  Profile({Key? key, this.isDrawer = false, required this.userId})
+  const Profile({Key? key, this.isDrawer = false, required this.userId})
       : super(key: key);
 
   @override
@@ -17,7 +17,7 @@ class Profile extends StatelessWidget {
     setUserData() async {
       var dio = await authDio(context);
       var response =
-          await dio.get('$serverurl:8081/api/user-management/user/$userId');
+          await dio.get('$serverurl/api/user-management/user/$userId');
       String profileImage = response.data['picture'];
       String? nickName = response.data['nickname'];
       return [profileImage, nickName];
@@ -27,13 +27,13 @@ class Profile extends StatelessWidget {
         future: setUserData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
             );
           } else {

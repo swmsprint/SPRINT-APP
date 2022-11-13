@@ -6,7 +6,7 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:sprint/screens/friends_stats_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+  const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -22,7 +22,7 @@ class SentRequestInfo extends StatelessWidget {
     deleteFriendRequest(targetUserId) async {
       var dio = await authDio(context);
       final userID = await storage.read(key: 'userID');
-      await dio.put('$serverurl:8081/api/user-management/friend', data: {
+      await dio.put('$serverurl/api/user-management/friend', data: {
         "friendState": "CANCEL",
         "sourceUserId": userID,
         'targetUserId': targetUserId,
@@ -43,7 +43,8 @@ class SentRequestInfo extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => FriendsStatsPage(
                             userId: friend.userId,
-                            userNickName: friend.nickname),
+                            userNickName: friend.nickname,
+                            showActions: true),
                         fullscreenDialog: false),
                   );
                 },

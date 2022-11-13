@@ -5,7 +5,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+  const storage = FlutterSecureStorage();
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
 class DailyRecord extends StatefulWidget {
@@ -23,7 +23,7 @@ class _DailyRecordState extends State<DailyRecord> {
   _getDailyStatistics() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    final response = await dio.get('$serverurl:8081/api/statistics/$userID');
+    final response = await dio.get('$serverurl/api/statistics/$userID');
     if (response.statusCode == 200) {
       Map<String, dynamic> result = response.data;
       int duration = result["dailyStatistics"]["totalSeconds"].round();

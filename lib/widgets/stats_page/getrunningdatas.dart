@@ -10,7 +10,7 @@ import 'package:sprint/services/auth_dio.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 
@@ -25,11 +25,11 @@ class RunningItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _getRunningDetail(runningId) async {
+    getRunningDetail(runningId) async {
       var dio = await authDio(context);
 
       var response = await dio.get(
-          '$serverurl:8081/api/running/detail/?runningId=$runningId&userId=$userId');
+          '$serverurl/api/running/detail/?runningId=$runningId&userId=$userId');
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -39,7 +39,7 @@ class RunningItem extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            _getRunningDetail(data.runningId).then(
+            getRunningDetail(data.runningId).then(
               (value) {
                 List<PositionData> rawdata = [];
                 for (int i = 0; i < value["runningData"].length; i++) {
@@ -178,7 +178,7 @@ class _RunningListViewState extends State<RunningListView> {
     var dio = await authDio(context);
 
     var response = await dio.get(
-        '$serverurl:8081/api/running/personal/?pageNumber=$pageKey&userId=${widget.userId}');
+        '$serverurl/api/running/personal/?pageNumber=$pageKey&userId=${widget.userId}');
     if (response.statusCode == 200) {
       List<dynamic> result = response.data;
       List<RunningData> runningDatas = [];

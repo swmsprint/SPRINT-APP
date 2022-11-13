@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = new FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 String serverurl = FlutterConfig.get('SERVER_ADDRESS');
 String bucketurl = FlutterConfig.get('AWS_S3_PUT_ADDRESS');
@@ -24,6 +24,8 @@ class CreateGroupPage extends StatefulWidget {
 
 class _CreateGroupPageState extends State<CreateGroupPage> {
   late TextEditingController _groupNameController;
+  late bool _didUserNameCheck;
+  late bool _isUserNameValid;
   late TextEditingController _groupDescriptionController;
   late String _image;
 
@@ -33,6 +35,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   void initState() {
     super.initState();
     _groupNameController = TextEditingController();
+    _didUserNameCheck = false;
+    _isUserNameValid = false;
     _groupDescriptionController = TextEditingController();
     _image =
         "https://sprint-images.s3.ap-northeast-2.amazonaws.com/groups/default.jpeg";
@@ -48,7 +52,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GroupPageAppBar(),
+      appBar: const GroupPageAppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -110,30 +114,80 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               ],
             ),
             const Padding(padding: EdgeInsets.all(5)),
-            Neumorphic(
-              style: NeumorphicStyle(
-                shape: NeumorphicShape.concave,
-                boxShape:
-                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                depth: 8,
-                lightSource: LightSource.topLeft,
-                color: const Color(0xffffffff),
-              ),
-              child: SizedBox(
-                width: 0.85 * MediaQuery.of(context).size.width,
-                child: TextField(
-                    maxLines: 1,
-                    controller: _groupNameController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "그룹명을 입력하세요",
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Neumorphic(
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.concave,
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                    depth: 8,
+                    lightSource: LightSource.topLeft,
+                    color: const Color(0xffffffff),
+                  ),
+                  child: SizedBox(
+                    width: 0.6 * MediaQuery.of(context).size.width,
+                    child: TextField(
+                        maxLines: 1,
+                        controller: _groupNameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "그룹명을 입력하세요",
+                        ),
+                        onSubmitted: (e) {}),
+                  ),
+                ),
+                SizedBox(
+                  width: 0.2 * MediaQuery.of(context).size.width,
+                  height: 45,
+                  child: NeumorphicButton(
+                    onPressed: () {
+                      if (_groupNameController.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('닉네임을 입력해주세요'),
+                          ),
+                        );
+                      } else {
+                        _checkGroupName();
+                      }
+                    },
+                    style: NeumorphicStyle(
+                      shape: NeumorphicShape.concave,
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12)),
+                      depth: 8,
+                      lightSource: LightSource.topLeft,
+                      color: const Color(0xff5563de),
                     ),
-                    onSubmitted: (e) {}),
-              ),
+                    child: const Center(
+                      child: Text(
+                        "중복검사",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10.5,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const Padding(padding: EdgeInsets.all(20)),
+            const Padding(padding: EdgeInsets.all(10)),
+            (_didUserNameCheck == false)
+                ? const Text("그룹명 중복검사를 진행해주세요",
+                    style: TextStyle(color: Colors.red))
+                : _isUserNameValid == false
+                    ? const Text("이미 사용중인 그룹명입니다!",
+                        style: TextStyle(color: Colors.red))
+                    : const Text("사용 가능한 그룹명입니다!",
+                        style: TextStyle(color: Colors.green)),
+            const Padding(padding: EdgeInsets.all(5)),
             Row(
               children: [
                 Padding(
@@ -180,10 +234,26 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               width: 200,
               child: NeumorphicButton(
                 onPressed: () {
-                  if (_image[0] == 'h') {
-                    _createGroup();
+                  if (_groupNameController.text == "") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('그룹명을 입력해주세요'),
+                      ),
+                    );
+                  } else if (_didUserNameCheck == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('그룹명 중복검사를 진행해주세요.'),
+                    ));
+                  } else if (_isUserNameValid == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('다른 그룹명을 사용해주세요.'),
+                    ));
                   } else {
-                    _uploadImage();
+                    if (_image[0] == 'h') {
+                      _createGroup();
+                    } else {
+                      _uploadImage();
+                    }
                   }
                 },
                 style: NeumorphicStyle(
@@ -213,11 +283,31 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     );
   }
 
+  _checkGroupName() async {
+    var dio = await authDio(context);
+    var response = await dio.get(
+        '$serverurl/api/user-management/group/validation-duplicate-name',
+        queryParameters: {
+          'target': _groupNameController.text,
+        });
+    final isNotDuplicate = response.data['result'];
+    setState(() {
+      _didUserNameCheck = true;
+    });
+    if (isNotDuplicate) {
+      setState(() {
+        _isUserNameValid = true;
+      });
+    } else {
+      _isUserNameValid = false;
+    }
+  }
+
   _createGroup() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
     final response =
-        await dio.post('$serverurl:8081/api/user-management/group', data: {
+        await dio.post('$serverurl/api/user-management/group', data: {
       "groupLeaderId": userID,
       "groupName": _groupNameController.text,
       "groupDescription": _groupDescriptionController.text,
@@ -227,6 +317,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
           : "$imageurl/groups/${_groupNameController.text}.jpeg",
     });
     if (response.statusCode == 200) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
@@ -255,6 +346,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
     if (response.statusCode == 200) {
       _createGroup();
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('에러가 발생했습니다 (${response.statusCode}). 다시 시도해 주세요.'),
       ));

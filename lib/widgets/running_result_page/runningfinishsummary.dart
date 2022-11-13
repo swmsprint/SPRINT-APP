@@ -5,7 +5,7 @@ class RunningFinishSummary extends StatelessWidget {
   final double distance;
   final int duration;
   final double calories;
-  RunningFinishSummary(this.distance, this.duration, this.calories);
+  const RunningFinishSummary(this.distance, this.duration, this.calories);
 
   @override
   Widget build(BuildContext context) {

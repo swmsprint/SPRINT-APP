@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sprint/main.dart';
-
 class RunningResultAppBar extends StatelessWidget with PreferredSizeWidget {
   const RunningResultAppBar({Key? key}) : super(key: key);
 

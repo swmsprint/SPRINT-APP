@@ -4,8 +4,9 @@ import 'package:sprint/screens/stats_page.dart';
 class FriendsStatsPage extends StatelessWidget {
   final int userId;
   final String userNickName;
+  final bool showActions;
   const FriendsStatsPage(
-      {Key? key, required this.userId, required this.userNickName})
+      {Key? key, required this.userId, required this.userNickName, required this.showActions})
       : super(key: key);
 
   @override
@@ -16,7 +17,7 @@ class FriendsStatsPage extends StatelessWidget {
         backgroundColor: const Color(0xfff3f5fc),
         foregroundColor: const Color(0xff5563de),
       ),
-      body: StatsPage(userId: userId),
+      body: StatsPage(userId: userId, showActions: showActions),
     );
   }
 }
