@@ -78,419 +78,422 @@ class _SignUpPageState extends State<SignUpPage> {
       possibleWeights.add(newItem);
     }
 
-    return Scaffold(
-      appBar: SignupPageAppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(padding: EdgeInsets.all(10)),
-            Center(
-              child: Stack(
-                children: [
-                  SizedBox(
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: const Color(0x70707070),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: SignupPageAppBar(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Padding(padding: EdgeInsets.all(10)),
+              Center(
+                child: Stack(
+                  children: [
+                    SizedBox(
                       child: CircleAvatar(
-                          radius: 68,
-                          backgroundImage: _image[0] == 'h'
-                              ? NetworkImage(
-                                  _image,
-                                )
-                              : FileImage(
-                                  File(_image),
-                                ) as ImageProvider,
-                          backgroundColor: Colors.transparent),
+                        radius: 70,
+                        backgroundColor: const Color(0x70707070),
+                        child: CircleAvatar(
+                            radius: 68,
+                            backgroundImage: _image[0] == 'h'
+                                ? NetworkImage(
+                                    _image,
+                                  )
+                                : FileImage(
+                                    File(_image),
+                                  ) as ImageProvider,
+                            backgroundColor: Colors.transparent),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: FloatingActionButton(
+                          backgroundColor: const Color(0xff5563de),
+                          onPressed: _getImage,
+                          child: const Icon(
+                            Icons.add_a_photo,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(padding: EdgeInsets.all(30)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  const Text(
+                    "닉네임",
+                    style: TextStyle(
+                      color: Color(0xff5563de),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      letterSpacing: 1,
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(5)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Neumorphic(
+                    style: NeumorphicStyle(
+                      shape: NeumorphicShape.concave,
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12)),
+                      depth: 8,
+                      lightSource: LightSource.topLeft,
+                      color: const Color(0xffffffff),
+                    ),
                     child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: FloatingActionButton(
-                        backgroundColor: const Color(0xff5563de),
-                        onPressed: _getImage,
-                        child: const Icon(
-                          Icons.add_a_photo,
-                          color: Colors.white,
+                      width: 0.6 * MediaQuery.of(context).size.width,
+                      child: TextField(
+                        maxLines: 1,
+                        controller: _userNameController,
+                        onChanged: (value) => {
+                          setState(() {
+                            _didUserNameCheck = false;
+                            _isUserNameValid = false;
+                          })
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: "닉네임을 입력하세요",
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 0.2 * MediaQuery.of(context).size.width,
+                    height: 45,
+                    child: NeumorphicButton(
+                      onPressed: () {
+                        if (_userNameController.text == "") {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('닉네임을 입력해주세요'),
+                            ),
+                          );
+                        } else {
+                          _checkUserName();
+                        }
+                      },
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color(0xff5563de),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "중복검사",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.5,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-            const Padding(padding: EdgeInsets.all(30)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                const Text(
-                  "닉네임",
-                  style: TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
+              const Padding(padding: EdgeInsets.all(10)),
+              (_didUserNameCheck == false)
+                  ? const Text("닉네임 중복검사를 진행해주세요",
+                      style: TextStyle(color: Colors.red))
+                  : _isUserNameValid == false
+                      ? const Text("이미 사용중인 닉네임입니다!",
+                          style: TextStyle(color: Colors.red))
+                      : const Text("사용 가능한 닉네임입니다!",
+                          style: TextStyle(color: Colors.green)),
+              const Padding(padding: EdgeInsets.all(5)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
                   ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Neumorphic(
+                  const Text(
+                    "성별",
+                    style: TextStyle(
+                      color: Color(0xff5563de),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(5)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  SizedBox(
+                    width: 0.2 * MediaQuery.of(context).size.width,
+                    child: Neumorphic(
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color(0xffffffff),
+                      ),
+                      child: DropdownButton<String>(
+                        value: _gender,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        isExpanded: true,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _gender = value!;
+                          });
+                        },
+                        items: const [
+                          DropdownMenuItem(
+                            value: "X",
+                            child: Center(child: Text("기타")),
+                          ),
+                          DropdownMenuItem(
+                            value: "MALE",
+                            child: Center(child: Text("남성")),
+                          ),
+                          DropdownMenuItem(
+                            value: "FEMALE",
+                            child: Center(child: Text("여성")),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(15)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  const Text(
+                    "생년월일",
+                    style: TextStyle(
+                      color: Color(0xff5563de),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(5)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  SizedBox(
+                    width: 0.3 * MediaQuery.of(context).size.width,
+                    child: Neumorphic(
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color(0xffffffff),
+                      ),
+                      child: TextButton(
+                        child: Text(
+                          _selectedDate.toString().substring(0, 10),
+                          style: const TextStyle(color: Color(0xff5563de)),
+                        ),
+                        onPressed: () {
+                          Future<DateTime?> future = showDatePicker(
+                            context: context,
+                            initialDate: _selectedDate,
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  primaryColor: const Color(0xff5563de),
+                                  colorScheme: const ColorScheme.light(
+                                      primary: Color(0xff5563de)),
+                                  buttonTheme: const ButtonThemeData(
+                                      textTheme: ButtonTextTheme.primary),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          future.then((date) {
+                            setState(() {
+                              if (date != null) {
+                                _selectedDate = date;
+                              }
+                            });
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(15)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  const Text(
+                    "신체정보",
+                    style: TextStyle(
+                      color: Color(0xff5563de),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(5)),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 0.075 * MediaQuery.of(context).size.width),
+                  ),
+                  //키
+                  SizedBox(
+                    width: 0.35 * MediaQuery.of(context).size.width,
+                    child: Neumorphic(
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color(0xffffffff),
+                      ),
+                      child: DropdownButton<int>(
+                        value: _height,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        isExpanded: true,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _height = value!;
+                          });
+                        },
+                        items: possibleHeights,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0.15 * MediaQuery.of(context).size.width, 0, 0, 0)),
+                  SizedBox(
+                    width: 0.35 * MediaQuery.of(context).size.width,
+                    child: Neumorphic(
+                      style: NeumorphicStyle(
+                        shape: NeumorphicShape.concave,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12)),
+                        depth: 8,
+                        lightSource: LightSource.topLeft,
+                        color: const Color(0xffffffff),
+                      ),
+                      child: DropdownButton<int>(
+                        value: _weight,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        isExpanded: true,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _weight = value!;
+                          });
+                        },
+                        items: possibleWeights,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(padding: EdgeInsets.all(25)),
+              SizedBox(
+                width: 200,
+                child: NeumorphicButton(
+                  onPressed: () {
+                    if (_userNameController.text == "") {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('닉네임을 입력해주세요'),
+                        ),
+                      );
+                    } else if (_didUserNameCheck == false) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('닉네임 중복검사를 진행해주세요.'),
+                      ));
+                    } else if (_isUserNameValid == false) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('다른 닉네임을 사용해주세요.'),
+                      ));
+                    } else {
+                      if (_image[0] == 'h') {
+                        _signUp();
+                      } else {
+                        _uploadImage();
+                      }
+                    }
+                  },
                   style: NeumorphicStyle(
                     shape: NeumorphicShape.concave,
                     boxShape:
                         NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
                     depth: 8,
                     lightSource: LightSource.topLeft,
-                    color: const Color(0xffffffff),
+                    color: const Color(0xff5563de),
                   ),
-                  child: SizedBox(
-                    width: 0.6 * MediaQuery.of(context).size.width,
-                    child: TextField(
-                      maxLines: 1,
-                      controller: _userNameController,
-                      onChanged: (value) => {
-                        setState(() {
-                          _didUserNameCheck = false;
-                          _isUserNameValid = false;
-                        })
-                      },
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: "닉네임을 입력하세요",
+                  child: Center(
+                    child: Text(
+                      widget.isNewUser ? "가입하기" : "수정하기",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        letterSpacing: 1,
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 0.2 * MediaQuery.of(context).size.width,
-                  height: 45,
-                  child: NeumorphicButton(
-                    onPressed: () {
-                      if (_userNameController.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('닉네임을 입력해주세요'),
-                          ),
-                        );
-                      } else {
-                        _checkUserName();
-                      }
-                    },
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xff5563de),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "중복검사",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10.5,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(10)),
-            (_didUserNameCheck == false)
-                ? const Text("닉네임 중복검사를 진행해주세요",
-                    style: TextStyle(color: Colors.red))
-                : _isUserNameValid == false
-                    ? const Text("이미 사용중인 닉네임입니다!",
-                        style: TextStyle(color: Colors.red))
-                    : const Text("사용 가능한 닉네임입니다!",
-                        style: TextStyle(color: Colors.green)),
-            const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                const Text(
-                  "성별",
-                  style: TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                SizedBox(
-                  width: 0.2 * MediaQuery.of(context).size.width,
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xffffffff),
-                    ),
-                    child: DropdownButton<String>(
-                      value: _gender,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      isExpanded: true,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _gender = value!;
-                        });
-                      },
-                      items: const [
-                        DropdownMenuItem(
-                          value: "X",
-                          child: Center(child: Text("기타")),
-                        ),
-                        DropdownMenuItem(
-                          value: "MALE",
-                          child: Center(child: Text("남성")),
-                        ),
-                        DropdownMenuItem(
-                          value: "FEMALE",
-                          child: Center(child: Text("여성")),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(15)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                const Text(
-                  "생년월일",
-                  style: TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                SizedBox(
-                  width: 0.3 * MediaQuery.of(context).size.width,
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xffffffff),
-                    ),
-                    child: TextButton(
-                      child: Text(
-                        _selectedDate.toString().substring(0, 10),
-                        style: const TextStyle(color: Color(0xff5563de)),
-                      ),
-                      onPressed: () {
-                        Future<DateTime?> future = showDatePicker(
-                          context: context,
-                          initialDate: _selectedDate,
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                          builder: (context, child) {
-                            return Theme(
-                              data: ThemeData.light().copyWith(
-                                primaryColor: const Color(0xff5563de),
-                                colorScheme: const ColorScheme.light(
-                                    primary: Color(0xff5563de)),
-                                buttonTheme: const ButtonThemeData(
-                                    textTheme: ButtonTextTheme.primary),
-                              ),
-                              child: child!,
-                            );
-                          },
-                        );
-                        future.then((date) {
-                          setState(() {
-                            if (date != null) {
-                              _selectedDate = date;
-                            }
-                          });
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(15)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                const Text(
-                  "신체정보",
-                  style: TextStyle(
-                    color: Color(0xff5563de),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 0.075 * MediaQuery.of(context).size.width),
-                ),
-                //키
-                SizedBox(
-                  width: 0.35 * MediaQuery.of(context).size.width,
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xffffffff),
-                    ),
-                    child: DropdownButton<int>(
-                      value: _height,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      isExpanded: true,
-                      onChanged: (int? value) {
-                        setState(() {
-                          _height = value!;
-                        });
-                      },
-                      items: possibleHeights,
-                    ),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        0.15 * MediaQuery.of(context).size.width, 0, 0, 0)),
-                SizedBox(
-                  width: 0.35 * MediaQuery.of(context).size.width,
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      shape: NeumorphicShape.concave,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12)),
-                      depth: 8,
-                      lightSource: LightSource.topLeft,
-                      color: const Color(0xffffffff),
-                    ),
-                    child: DropdownButton<int>(
-                      value: _weight,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      isExpanded: true,
-                      onChanged: (int? value) {
-                        setState(() {
-                          _weight = value!;
-                        });
-                      },
-                      items: possibleWeights,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Padding(padding: EdgeInsets.all(25)),
-            SizedBox(
-              width: 200,
-              child: NeumorphicButton(
-                onPressed: () {
-                  if (_userNameController.text == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('닉네임을 입력해주세요'),
-                      ),
-                    );
-                  } else if (_didUserNameCheck == false) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('닉네임 중복검사를 진행해주세요.'),
-                    ));
-                  } else if (_isUserNameValid == false) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('다른 닉네임을 사용해주세요.'),
-                    ));
-                  } else {
-                    if (_image[0] == 'h') {
-                      _signUp();
-                    } else {
-                      _uploadImage();
-                    }
-                  }
-                },
-                style: NeumorphicStyle(
-                  shape: NeumorphicShape.concave,
-                  boxShape:
-                      NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                  depth: 8,
-                  lightSource: LightSource.topLeft,
-                  color: const Color(0xff5563de),
-                ),
-                child: Center(
-                  child: Text(
-                    widget.isNewUser ? "가입하기" : "수정하기",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      letterSpacing: 1,
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
