@@ -52,7 +52,9 @@ class RunningFinishSummary extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    secondsToString((1000 * duration / distance).round()),
+                    distance == 0
+                        ? "00:00"
+                        : secondsToString((1000 * duration / distance).round()),
                     style: const TextStyle(
                       fontFamily: 'Anton',
                       fontSize: 24,

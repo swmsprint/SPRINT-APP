@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         future: isLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data![0]) {
+            if (snapshot.data![0] && snapshot.data![2] != null) {
               return RootPage(userId: int.parse(snapshot.data![1]));
             } else {
               return const LoginPage();
@@ -50,10 +50,11 @@ class MyApp extends StatelessWidget {
     String? accessToken = await storage.read(key: 'accessToken');
     String? refreshToken = await storage.read(key: 'refreshToken');
     String? userID = await storage.read(key: 'userID');
+    String? nickname = await storage.read(key: 'nickname');
     if (userID != null && accessToken != null && refreshToken != null) {
-      return [true, userID];
+      return [true, userID, nickname];
     } else {
-      return [false, 0];
+      return [false, 0, ''];
     }
   }
 }
@@ -87,8 +88,7 @@ class _RootPageState extends State<RootPage> {
   _getUserData() async {
     var dio = await authDio(context);
     final userID = await storage.read(key: 'userID');
-    var response =
-        await dio.get('$serverurl/api/user-management/user/$userID');
+    var response = await dio.get('$serverurl/api/user-management/user/$userID');
     final data = response.data;
     await storage.write(key: 'nickname', value: data['nickname']);
     await storage.write(key: 'profile', value: data['picture']);

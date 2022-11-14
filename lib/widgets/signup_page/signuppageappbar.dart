@@ -11,12 +11,7 @@ class SignupPageAppBar extends StatelessWidget with PreferredSizeWidget {
       iconTheme: const IconThemeData(
         color: Color(0xff5563de),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        },
-      ),
+      leading: const SizedBox(),
       title: const Text(
         "추가 정보 입력",
         style: TextStyle(
