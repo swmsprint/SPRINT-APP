@@ -40,11 +40,11 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background to track your running path and measure stats.</string>
+	<string>백그라운드에서도 러닝 경로와 기록을 측정하기 위해 백그라운드 위치 권한을 필요로 합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open to track your running path and measure stats.</string>
+	<string>러닝 경로와 기록 측정을 위해 위치 권한을 필요로 합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library to upload your profile picture.</string>
+	<string>프로필 사진 업로드를 위해 사진 접근 권한을 필요로 합니다.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
