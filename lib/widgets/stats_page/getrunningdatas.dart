@@ -123,7 +123,9 @@ class RunningItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${secondsToString((1000 * data.duration / data.distance).round())}\n페이스",
+                        data.distance == 0
+                            ? "00:00\n페이스"
+                            : "${secondsToString((1000 * data.duration / data.distance).round())}\n페이스",
                         style: const TextStyle(
                           fontFamily: 'Anton',
                           fontSize: 14,
