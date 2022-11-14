@@ -42,7 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _didUserNameCheck = false;
     _isUserNameValid = false;
     _gender = "X";
-    _selectedDate = DateTime(1980, 1, 1);
+    _selectedDate = DateTime(2000, 1, 1);
     _height = 165;
     _weight = 50;
     _image =
