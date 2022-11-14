@@ -69,6 +69,46 @@ class MemberInfo extends StatelessWidget {
       );
     }
 
+    kickMember() async {
+      var dio = await authDio(context);
+      var response = await dio.delete(
+          '$serverurl/api/user-management/group/group-member',
+          data: {"groupId": groupId, "userId": member.userId});
+      if (response.statusCode == 200) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    }
+
+    kickMemberAlert() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, StateSetter setState) {
+              return AlertDialog(
+                title: const Text('정말로 이 멤버를 추방하시겠습니까?'),
+                content: const Text('멤버를 추방하면 되돌릴 수 없습니다!'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child:
+                        const Text('취소', style: TextStyle(color: Colors.black)),
+                  ),
+                  TextButton(
+                    onPressed: kickMember,
+                    child:
+                        const Text('확인', style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    }
+
     return FutureBuilder(
       future: getUserID(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -154,12 +194,23 @@ class MemberInfo extends StatelessWidget {
                       ),
                       const Spacer(),
                       isLeader && member.userId != leaderId
-                          ? TextButton(
-                              onPressed: changeLeaderAlert,
-                              child: const Text("리더 변경하기",
-                                  style: TextStyle(
-                                      color: Color(0xff5563de),
-                                      fontWeight: FontWeight.bold)),
+                          ? Row(
+                              children: [
+                                TextButton(
+                                  onPressed: changeLeaderAlert,
+                                  child: const Text("리더 변경하기",
+                                      style: TextStyle(
+                                          color: Color(0xff5563de),
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                IconButton(
+                                  onPressed: kickMemberAlert,
+                                  icon: const Icon(
+                                    color: Colors.red,
+                                    Icons.block,
+                                  ),
+                                ),
+                              ],
                             )
                           : member.userId == leaderId
                               ? IconButton(
