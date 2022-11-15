@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sprint/screens/terms_page.dart';
 import 'package:sprint/widgets/login_page/carousel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -87,11 +88,14 @@ class LoginPage extends StatelessWidget {
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
     await storage.write(key: 'userID', value: userID.toString());
     if (!userInfo["alreadySignIn"]) {
-      await Navigator.push(
+      /* await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => const SignUpPage(isNewUser: true)),
-      );
+      ); */
+      await Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return const TermsPage();
+      }));
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

@@ -1,0 +1,86 @@
+List<Map<String, int>> pacemakerStats = [
+  {
+    "Run_Seconds": 0,
+    "Run_Pace": 0,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 2400,
+    "Run_Pace": 600,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 2700,
+    "Run_Pace": 540,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 3000,
+    "Run_Pace": 500,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 3000,
+    "Run_Pace": 430,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 3000,
+    "Run_Pace": 375,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 3000,
+    "Run_Pace": 335,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 3000,
+    "Run_Pace": 300,
+    "Rest_Seconds": 0,
+    "Rest_Pace": 0,
+  },
+  {
+    "Run_Seconds": 180,
+    "Run_Pace": 270,
+    "Rest_Seconds": 60,
+    "Rest_Pace": 450,
+  },
+  {
+    "Run_Seconds": 210,
+    "Run_Pace": 260,
+    "Rest_Seconds": 75,
+    "Rest_Pace": 430,
+  },
+  {
+    "Run_Seconds": 210,
+    "Run_Pace": 240,
+    "Rest_Seconds": 60,
+    "Rest_Pace": 450,
+  },
+  {
+    "Run_Seconds": 180,
+    "Run_Pace": 210,
+    "Rest_Seconds": 60,
+    "Rest_Pace": 450,
+  },
+  {
+    "Run_Seconds": 210,
+    "Run_Pace": 230,
+    "Rest_Seconds": 60,
+    "Rest_Pace": 400,
+  },
+  {
+    "Run_Seconds": 270,
+    "Run_Pace": 230,
+    "Rest_Seconds": 60,
+    "Rest_Pace": 400,
+  },
+];

@@ -55,6 +55,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
   late RunningStatus _runningStatus;
   late int _timer;
   late double _distance;
+  late double _pacemakerLevel;
   late List<PositionData> _positionDataList;
 
   late AnimationController controller;
@@ -66,6 +67,7 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
     _runningStatus = RunningStatus.stopped;
     _timer = 0;
     _distance = 0;
+    _pacemakerLevel = 1;
     _positionDataList = [];
 
     controller = AnimationController(vsync: this);
@@ -213,7 +215,65 @@ class _RunPageState extends State<RunPage> with SingleTickerProviderStateMixin {
                 ),
           _runningStatus == RunningStatus.paused
               ? RunningSummary(_distance, _timer)
-              : const PaceMaker(),
+              : _runningStatus == RunningStatus.running
+                  ? PaceMaker(
+                      pacemakerLevel: _pacemakerLevel.toInt(),
+                      time: _timer,
+                      distance: _distance,
+                    )
+                  : Column(
+                      children: [
+                        const Text(
+                          "페이스메이커 레벨을 지정해주세요!",
+                          style: TextStyle(
+                            color: Color(0xff5563de),
+                            fontFamily: 'Nirmala',
+                            fontSize: 20,
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.all(10)),
+                        SizedBox(
+                          width: 0.7 * MediaQuery.of(context).size.width,
+                          child: NeumorphicSlider(
+                            value: _pacemakerLevel,
+                            min: 1,
+                            max: 13,
+                            height: 10,
+                            style: const SliderStyle(
+                              accent: Color(0xfffa7531),
+                              variant: Color(0x80fa7531),
+                            ),
+                            onChanged: (double value) {
+                              setState(() {
+                                _pacemakerLevel = value;
+                              });
+                            },
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.all(10)),
+                        Text(
+                          "${_pacemakerLevel.toInt()} 레벨",
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text(
+                          _pacemakerLevel < 8
+                              ? "달리기에 흥미를 붙일 수 있는 체력 배양 목적의 초급 난이도"
+                              : _pacemakerLevel < 12
+                                  ? "파틀넥 훈련법을 적용해 스피드 구간과 휴식 구간을 혼합하여\n러닝에 재미를 제고하는 중급 난이도"
+                                  : "2시간 이상 달리기에 도전하는 숙련자들을 위한 고급 난이도",
+                          style: const TextStyle(
+                            color: Color(0xff5563de),
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: _runningStatus == RunningStatus.stopped
