@@ -96,79 +96,96 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
-            children = <Widget>[
-              Column(
-                children: [
-                  Stack(children: [
-                    Center(
-                      child: SizedBox(
-                        height: 220,
-                        width: MediaQuery.of(context).size.width,
-                        child: Image(
-                          image: NetworkImage(snapshot.data['groupPicture']),
-                        ),
-                      ),
-                    ),
-                    GroupProfile(
-                      groupName: snapshot.data['groupName'],
-                      groupDescription: snapshot.data['groupDescription'],
-                      groupPersonnel: snapshot.data['groupPersonnel'],
-                    )
-                  ]),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  Row(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.075)),
-                      const Text(
-                        "이번주 기록",
-                        style: TextStyle(
-                          fontFamily: 'Segoe UI',
-                          fontSize: 15,
-                          color: Color(0xff5563de),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  GroupRecord(
-                      distance: _groupWeeklyStat.distance,
-                      time: _groupWeeklyStat.time),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  Divider(
-                    indent: (0.075 * MediaQuery.of(context).size.width),
-                    endIndent: (0.075 * MediaQuery.of(context).size.width),
-                    thickness: 2,
-                    color: const Color(0xff5563de),
-                  ),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  Row(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.075)),
-                      Text(
-                        "그룹원 목록 (${snapshot.data['groupPersonnel']}명)",
-                        style: const TextStyle(
-                          fontFamily: 'Segoe UI',
-                          fontSize: 15,
-                          color: Color(0xff5563de),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  GroupMemberList(
-                    groupId: widget.groupId,
-                    isLeader: widget.isLeader,
-                    leaderId: snapshot.data['groupLeaderId'],
-                  ),
+            return SizedBox(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      Column(
+                        children: [
+                          const Padding(padding: EdgeInsets.all(10)),
+                          Stack(children: [
+                            Center(
+                              child: SizedBox(
+                                height: 220,
+                                width: MediaQuery.of(context).size.width,
+                                child: Image(
+                                  image: NetworkImage(
+                                      snapshot.data['groupPicture']),
+                                ),
+                              ),
+                            ),
+                            GroupProfile(
+                              groupName: snapshot.data['groupName'],
+                              groupDescription:
+                                  snapshot.data['groupDescription'],
+                              groupPersonnel: snapshot.data['groupPersonnel'],
+                            )
+                          ]),
+                          const Padding(padding: EdgeInsets.all(10)),
+                          Row(
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.075)),
+                              const Text(
+                                "이번주 기록",
+                                style: TextStyle(
+                                  fontFamily: 'Segoe UI',
+                                  fontSize: 15,
+                                  color: Color(0xff5563de),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.all(10)),
+                          GroupRecord(
+                              distance: _groupWeeklyStat.distance,
+                              time: _groupWeeklyStat.time),
+                          const Padding(padding: EdgeInsets.all(10)),
+                          Divider(
+                            indent: (0.075 * MediaQuery.of(context).size.width),
+                            endIndent:
+                                (0.075 * MediaQuery.of(context).size.width),
+                            thickness: 2,
+                            color: const Color(0xff5563de),
+                          ),
+                          const Padding(padding: EdgeInsets.all(10)),
+                          Row(
+                            children: [
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.075)),
+                              Text(
+                                "그룹원 목록 (${snapshot.data['groupPersonnel']}명)",
+                                style: const TextStyle(
+                                  fontFamily: 'Segoe UI',
+                                  fontSize: 15,
+                                  color: Color(0xff5563de),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.all(10)),
+                          GroupMemberList(
+                            groupId: widget.groupId,
+                            isLeader: widget.isLeader,
+                            leaderId: snapshot.data['groupLeaderId'],
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(40),
+                          ),
+                        ],
+                      )
+                    ]),
+                  )
                 ],
-              )
-            ];
+              ),
+            );
           } else if (snapshot.hasError) {
             children = <Widget>[
               const Icon(
