@@ -147,6 +147,7 @@ class _StatsPageState extends State<StatsPage> {
                       RunningListView(
                         userId: widget.userId,
                       ),
+                      const Padding(padding: EdgeInsets.only(top: 100)),
                     ],
                   ),
                 ],

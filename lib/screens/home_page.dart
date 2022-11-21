@@ -91,6 +91,9 @@ class HomePage extends StatelessWidget {
                   RunningListView(
                     userId: userId,
                   ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 100),
+                  )
                 ],
               ),
             ]),
