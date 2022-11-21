@@ -216,9 +216,25 @@ class _RunningListViewState extends State<RunningListView> {
       // Don't worry about displaying progress or error indicators on screen; the
       // package takes care of that. If you want to customize them, use the
       // [PagedChildBuilderDelegate] properties.
+      /*
       PagedListView<int, RunningData>(
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<RunningData>(
+          itemBuilder: (context, item, index) => RunningItem(
+            data: item,
+            userId: widget.userId,
+          ),
+          noItemsFoundIndicatorBuilder: (_) =>
+              const FirstPageExceptionIndicator(
+            title: '러닝 기록이 없습니다!',
+            message: '신나게 뛰어보세요!',
+          ),
+        ),
+      );
+      */
+      PagedSliverList<int, RunningData>(
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<RunningData>(
           itemBuilder: (context, item, index) => RunningItem(
