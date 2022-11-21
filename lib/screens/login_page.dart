@@ -88,11 +88,6 @@ class LoginPage extends StatelessWidget {
     await storage.write(key: 'refreshToken', value: refreshToken.toString());
     await storage.write(key: 'userID', value: userID.toString());
     if (!userInfo["alreadySignIn"]) {
-      /* await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const SignUpPage(isNewUser: true)),
-      ); */
       await Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const TermsPage();
       }));
