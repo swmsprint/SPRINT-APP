@@ -128,19 +128,21 @@ class MemberInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FriendsStatsPage(
-                                userId: member.userId,
-                                userNickName: member.nickname,
-                                showActions:
-                                    int.parse(snapshot.data) == member.userId
-                                        ? false
-                                        : true,
-                              ),
-                          fullscreenDialog: false),
-                    );
+                    int.parse(snapshot.data) != member.userId
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FriendsStatsPage(
+                                      userId: member.userId,
+                                      userNickName: member.nickname,
+                                      showActions: int.parse(snapshot.data) ==
+                                              member.userId
+                                          ? false
+                                          : true,
+                                    ),
+                                fullscreenDialog: false),
+                          )
+                        : null;
                   },
                   child: Row(
                     children: [
