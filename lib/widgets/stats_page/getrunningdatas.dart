@@ -91,7 +91,6 @@ class RunningItem extends StatelessWidget {
                     children: [
                       Text(
                         DateTime.parse(data.startTime)
-                            .add(const Duration(hours: 9))
                             .toString()
                             .substring(0, 16),
                         style: const TextStyle(
