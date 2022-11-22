@@ -79,10 +79,10 @@ class _PaceMakerState extends State<PaceMaker> {
       ),
       Text(
         isRun
-            ? pacemakerStats[widget.pacemakerLevel]["Run_Seconds"]! % 6 == 0
+            ? pacemakerStats[widget.pacemakerLevel]["Run_Seconds"]! % 60 == 0
                 ? '페이스로 ${(pacemakerStats[widget.pacemakerLevel]["Run_Seconds"]! / 60).round().toString()}분간 달려보아요!'
                 : '페이스로 ${(pacemakerStats[widget.pacemakerLevel]["Run_Seconds"]! / 60).round().toString()}분 ${(pacemakerStats[widget.pacemakerLevel]["Run_Seconds"]! % 60)}초간 달려보아요!'
-            : pacemakerStats[widget.pacemakerLevel]["Rest_Seconds"]! % 6 == 0
+            : pacemakerStats[widget.pacemakerLevel]["Rest_Seconds"]! % 60 == 0
                 ? '페이스로 ${(pacemakerStats[widget.pacemakerLevel]["Rest_Seconds"]! / 60).round().toString()}분간 천천히 휴식해보아요!'
                 : '페이스로 ${(pacemakerStats[widget.pacemakerLevel]["Rest_Seconds"]! / 60).round().toString()}분 ${(pacemakerStats[widget.pacemakerLevel]["Rest_Seconds"]! % 60) == 0}초간 천천히 휴식해보아요!',
         style: const TextStyle(
